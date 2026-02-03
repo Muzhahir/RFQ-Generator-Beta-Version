@@ -49,7 +49,6 @@
             this.lblCompany = new System.Windows.Forms.Label();
             this.grpCurrentItem = new System.Windows.Forms.GroupBox();
             this.txtItemDeliveryTerm = new System.Windows.Forms.TextBox();
-            this.lblItemDeliveryTerm = new System.Windows.Forms.Label();
             this.numItemDeliveryTime = new System.Windows.Forms.NumericUpDown();
             this.lblItemDeliveryTime = new System.Windows.Forms.Label();
             this.numItemUnitPrice = new System.Windows.Forms.NumericUpDown();
