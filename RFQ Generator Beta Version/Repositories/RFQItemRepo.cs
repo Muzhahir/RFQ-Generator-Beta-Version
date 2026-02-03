@@ -1,0 +1,158 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+
+namespace RFQ_Generator_System.Repositories
+{
+    public class RFQItemRepo : BaseRepo<RFQItem>
+    {
+        // Get all RFQ items
+        public List<RFQItem> GetAllRFQItems()
+        {
+            var rfqItems = new List<RFQItem>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                // Fixed: Added ALL columns to SELECT (was missing 6 columns)
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName FROM RFQItem",
+                    conn);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    rfqItems.Add(new RFQItem
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        RFQId = Convert.ToInt32(reader["RFQId"]),
+                        ItemNo = Convert.ToInt32(reader["ItemNo"]),
+                        ItemDesc = reader["ItemDesc"].ToString(),
+                        Quantity = Convert.ToInt32(reader["Quantity"]),
+                        DeliveryTime = Convert.ToInt32(reader["DeliveryTime"]),
+                        UnitPrice = Convert.ToDecimal(reader["UnitPrice"]),
+                        DeliveryTerm = reader["DeliveryTerm"].ToString(),
+                        UnitName = reader["UnitName"].ToString()
+                    });
+                }
+            }
+
+            return rfqItems;
+        }
+
+        // Get RFQ items by RFQId (important for loading items for a specific RFQ)
+        public List<RFQItem> GetRFQItemsByRFQId(int rfqId)
+        {
+            var rfqItems = new List<RFQItem>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName " +
+                    "FROM RFQItem WHERE RFQId = @RFQId ORDER BY ItemNo",
+                    conn);
+                cmd.Parameters.AddWithValue("@RFQId", rfqId);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    rfqItems.Add(new RFQItem
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        RFQId = Convert.ToInt32(reader["RFQId"]),
+                        ItemNo = Convert.ToInt32(reader["ItemNo"]),
+                        ItemDesc = reader["ItemDesc"].ToString(),
+                        Quantity = Convert.ToInt32(reader["Quantity"]),
+                        DeliveryTime = Convert.ToInt32(reader["DeliveryTime"]),
+                        UnitPrice = Convert.ToDecimal(reader["UnitPrice"]),
+                        DeliveryTerm = reader["DeliveryTerm"].ToString(),
+                        UnitName = reader["UnitName"].ToString()
+                    });
+                }
+            }
+
+            return rfqItems;
+        }
+
+        // Add a new RFQ item
+        public void AddRFQItem(RFQItem rfqItem)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(
+                    "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName) " +
+                    "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @DeliveryTerm, @UnitName)",
+                    conn
+                );
+                cmd.Parameters.AddWithValue("@RFQId", rfqItem.RFQId);
+                cmd.Parameters.AddWithValue("@ItemNo", rfqItem.ItemNo);
+                cmd.Parameters.AddWithValue("@ItemDesc", rfqItem.ItemDesc);
+                cmd.Parameters.AddWithValue("@Quantity", rfqItem.Quantity);
+                cmd.Parameters.AddWithValue("@DeliveryTime", rfqItem.DeliveryTime);
+                cmd.Parameters.AddWithValue("@UnitPrice", rfqItem.UnitPrice);
+                cmd.Parameters.AddWithValue("@DeliveryTerm", rfqItem.DeliveryTerm);
+                cmd.Parameters.AddWithValue("@UnitName", rfqItem.UnitName);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        // Add multiple RFQ items in one transaction (useful for bulk insert)
+        public void AddRFQItems(List<RFQItem> rfqItems, SqlTransaction transaction = null)
+        {
+            bool ownTransaction = (transaction == null);
+            SqlConnection conn = null;
+
+            try
+            {
+                if (ownTransaction)
+                {
+                    conn = new SqlConnection(connectionString);
+                    conn.Open();
+                    transaction = conn.BeginTransaction();
+                }
+
+                foreach (var item in rfqItems)
+                {
+                    SqlCommand cmd = new SqlCommand(
+                        "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName) " +
+                        "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @DeliveryTerm, @UnitName)",
+                        transaction.Connection,
+                        transaction
+                    );
+                    cmd.Parameters.AddWithValue("@RFQId", item.RFQId);
+                    cmd.Parameters.AddWithValue("@ItemNo", item.ItemNo);
+                    cmd.Parameters.AddWithValue("@ItemDesc", item.ItemDesc);
+                    cmd.Parameters.AddWithValue("@Quantity", item.Quantity);
+                    cmd.Parameters.AddWithValue("@DeliveryTime", item.DeliveryTime);
+                    cmd.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
+                    cmd.Parameters.AddWithValue("@DeliveryTerm", item.DeliveryTerm);
+                    cmd.Parameters.AddWithValue("@UnitName", item.UnitName);
+                    cmd.ExecuteNonQuery();
+                }
+
+                if (ownTransaction)
+                {
+                    transaction.Commit();
+                }
+            }
+            catch
+            {
+                if (ownTransaction && transaction != null)
+                {
+                    transaction.Rollback();
+                }
+                throw;
+            }
+            finally
+            {
+                if (ownTransaction && conn != null)
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
+            }
+        }
+    }
+}
