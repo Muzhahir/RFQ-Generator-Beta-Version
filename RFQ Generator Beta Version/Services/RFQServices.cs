@@ -16,7 +16,7 @@ namespace RFQ_Generator_System.Services
         private readonly FieldMappingRepo fieldMappingRepo;
         private readonly CompanyRepo companyRepo;
         private readonly ClientRepo clientRepo;
-
+        
         public RFQService()
         {
             rfqRepo = new RFQRepo();
@@ -64,14 +64,14 @@ namespace RFQ_Generator_System.Services
 
                         int newRFQId = Convert.ToInt32(cmdRFQ.ExecuteScalar());
 
-                        // 2. Save all RFQ items with the new RFQId
+                        // 2. Save all RFQ items with the new RFQId (REMOVED DeliveryTerm from items)
                         foreach (var item in items)
                         {
                             item.RFQId = newRFQId; // Set the foreign key
 
                             SqlCommand cmdItem = new SqlCommand(
-                                "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName) " +
-                                "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @DeliveryTerm, @UnitName)",
+                                "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName) " +
+                                "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @UnitName)",
                                 conn,
                                 transaction
                             );
@@ -81,7 +81,6 @@ namespace RFQ_Generator_System.Services
                             cmdItem.Parameters.AddWithValue("@Quantity", item.Quantity);
                             cmdItem.Parameters.AddWithValue("@DeliveryTime", item.DeliveryTime);
                             cmdItem.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
-                            cmdItem.Parameters.AddWithValue("@DeliveryTerm", item.DeliveryTerm);
                             cmdItem.Parameters.AddWithValue("@UnitName", item.UnitName);
                             cmdItem.ExecuteNonQuery();
                         }

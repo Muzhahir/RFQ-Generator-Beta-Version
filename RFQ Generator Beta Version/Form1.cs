@@ -151,8 +151,8 @@ namespace RFQ_Generator_System
                     Quantity = (int)numItemQuantity.Value,
                     UnitName = txtItemUnit.Text.Trim(),
                     UnitPrice = numItemUnitPrice.Value,
-                    DeliveryTime = (int)numItemDeliveryTime.Value,
-                    DeliveryTerm = txtItemDeliveryTerm.Text.Trim()
+                    DeliveryTime = (int)numItemDeliveryTime.Value
+                    // REMOVED: DeliveryTerm - it's only in the header
                 };
 
                 if (editingItemIndex >= 0)
@@ -210,7 +210,7 @@ namespace RFQ_Generator_System
             txtItemUnit.Text = item.UnitName;
             numItemUnitPrice.Value = item.UnitPrice;
             numItemDeliveryTime.Value = item.DeliveryTime;
-            txtItemDeliveryTerm.Text = item.DeliveryTerm;
+            // REMOVED: txtItemDeliveryTerm.Text = item.DeliveryTerm;
 
             btnAddItem.Text = "Update Item";
             txtItemDescription.Focus();
@@ -257,7 +257,12 @@ namespace RFQ_Generator_System
 
             foreach (var item in rfqItems)
             {
-                string itemText = $"{item.ItemNo}. {item.ItemDesc} | Qty: {item.Quantity} {item.UnitName} | " +
+                // Replace line breaks with space for display and truncate if too long
+                string shortDesc = item.ItemDesc.Replace("\r\n", " ").Replace("\n", " ");
+                if (shortDesc.Length > 40)
+                    shortDesc = shortDesc.Substring(0, 40) + "...";
+
+                string itemText = $"{item.ItemNo}. {shortDesc} | Qty: {item.Quantity} {item.UnitName} | " +
                                   $"Price: {item.UnitPrice:N2} | Del: {item.DeliveryTime} days";
                 lstItems.Items.Add(itemText);
             }
@@ -274,7 +279,7 @@ namespace RFQ_Generator_System
             txtItemUnit.Text = "PCS";
             numItemUnitPrice.Value = 0;
             numItemDeliveryTime.Value = 30;
-            txtItemDeliveryTerm.Clear();
+            // REMOVED: txtItemDeliveryTerm.Clear();
         }
 
         private bool ValidateItemForm()

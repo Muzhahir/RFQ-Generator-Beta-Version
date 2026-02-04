@@ -48,7 +48,6 @@
             this.cmbCompany = new System.Windows.Forms.ComboBox();
             this.lblCompany = new System.Windows.Forms.Label();
             this.grpCurrentItem = new System.Windows.Forms.GroupBox();
-            this.txtItemDeliveryTerm = new System.Windows.Forms.TextBox();
             this.numItemDeliveryTime = new System.Windows.Forms.NumericUpDown();
             this.lblItemDeliveryTime = new System.Windows.Forms.Label();
             this.numItemUnitPrice = new System.Windows.Forms.NumericUpDown();
@@ -282,8 +281,6 @@
             // 
             // grpCurrentItem
             // 
-            this.grpCurrentItem.Controls.Add(this.txtItemDeliveryTerm);
-            this.grpCurrentItem.Controls.Add(this.lblItemDeliveryTerm);
             this.grpCurrentItem.Controls.Add(this.numItemDeliveryTime);
             this.grpCurrentItem.Controls.Add(this.lblItemDeliveryTime);
             this.grpCurrentItem.Controls.Add(this.numItemUnitPrice);
@@ -304,28 +301,10 @@
             this.grpCurrentItem.TabStop = false;
             this.grpCurrentItem.Text = "Item Details";
             // 
-            // txtItemDeliveryTerm
-            // 
-            this.txtItemDeliveryTerm.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtItemDeliveryTerm.Location = new System.Drawing.Point(30, 170);
-            this.txtItemDeliveryTerm.Name = "txtItemDeliveryTerm";
-            this.txtItemDeliveryTerm.Size = new System.Drawing.Size(620, 23);
-            this.txtItemDeliveryTerm.TabIndex = 13;
-            // 
-            // lblItemDeliveryTerm
-            // 
-            this.lblItemDeliveryTerm.AutoSize = true;
-            this.lblItemDeliveryTerm.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemDeliveryTerm.Location = new System.Drawing.Point(30, 150);
-            this.lblItemDeliveryTerm.Name = "lblItemDeliveryTerm";
-            this.lblItemDeliveryTerm.Size = new System.Drawing.Size(84, 15);
-            this.lblItemDeliveryTerm.TabIndex = 12;
-            this.lblItemDeliveryTerm.Text = "Delivery Term:";
-            // 
             // numItemDeliveryTime
             // 
             this.numItemDeliveryTime.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemDeliveryTime.Location = new System.Drawing.Point(490, 115);
+            this.numItemDeliveryTime.Location = new System.Drawing.Point(490, 155);
             this.numItemDeliveryTime.Maximum = new decimal(new int[] { 365, 0, 0, 0 });
             this.numItemDeliveryTime.Name = "numItemDeliveryTime";
             this.numItemDeliveryTime.Size = new System.Drawing.Size(160, 23);
@@ -336,17 +315,17 @@
             // 
             this.lblItemDeliveryTime.AutoSize = true;
             this.lblItemDeliveryTime.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemDeliveryTime.Location = new System.Drawing.Point(490, 95);
+            this.lblItemDeliveryTime.Location = new System.Drawing.Point(490, 135);
             this.lblItemDeliveryTime.Name = "lblItemDeliveryTime";
             this.lblItemDeliveryTime.Size = new System.Drawing.Size(124, 15);
             this.lblItemDeliveryTime.TabIndex = 10;
-            this.lblItemDeliveryTime.Text = "Delivery Time (Days):";
+            this.lblItemDeliveryTime.Text = "Delivery Time (Weeks):";
             // 
             // numItemUnitPrice
             // 
             this.numItemUnitPrice.DecimalPlaces = 2;
             this.numItemUnitPrice.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemUnitPrice.Location = new System.Drawing.Point(340, 115);
+            this.numItemUnitPrice.Location = new System.Drawing.Point(340, 155);
             this.numItemUnitPrice.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             this.numItemUnitPrice.Name = "numItemUnitPrice";
             this.numItemUnitPrice.Size = new System.Drawing.Size(130, 23);
@@ -356,7 +335,7 @@
             // 
             this.lblItemUnitPrice.AutoSize = true;
             this.lblItemUnitPrice.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemUnitPrice.Location = new System.Drawing.Point(340, 95);
+            this.lblItemUnitPrice.Location = new System.Drawing.Point(340, 135);
             this.lblItemUnitPrice.Name = "lblItemUnitPrice";
             this.lblItemUnitPrice.Size = new System.Drawing.Size(62, 15);
             this.lblItemUnitPrice.TabIndex = 8;
@@ -365,7 +344,7 @@
             // txtItemUnit
             // 
             this.txtItemUnit.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtItemUnit.Location = new System.Drawing.Point(200, 115);
+            this.txtItemUnit.Location = new System.Drawing.Point(200, 155);
             this.txtItemUnit.Name = "txtItemUnit";
             this.txtItemUnit.Size = new System.Drawing.Size(120, 23);
             this.txtItemUnit.TabIndex = 7;
@@ -375,7 +354,7 @@
             // 
             this.lblItemUnit.AutoSize = true;
             this.lblItemUnit.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemUnit.Location = new System.Drawing.Point(200, 95);
+            this.lblItemUnit.Location = new System.Drawing.Point(200, 135);
             this.lblItemUnit.Name = "lblItemUnit";
             this.lblItemUnit.Size = new System.Drawing.Size(32, 15);
             this.lblItemUnit.TabIndex = 6;
@@ -384,7 +363,7 @@
             // numItemQuantity
             // 
             this.numItemQuantity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemQuantity.Location = new System.Drawing.Point(30, 115);
+            this.numItemQuantity.Location = new System.Drawing.Point(30, 155);
             this.numItemQuantity.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             this.numItemQuantity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             this.numItemQuantity.Name = "numItemQuantity";
@@ -396,7 +375,7 @@
             // 
             this.lblItemQuantity.AutoSize = true;
             this.lblItemQuantity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemQuantity.Location = new System.Drawing.Point(30, 95);
+            this.lblItemQuantity.Location = new System.Drawing.Point(30, 135);
             this.lblItemQuantity.Name = "lblItemQuantity";
             this.lblItemQuantity.Size = new System.Drawing.Size(56, 15);
             this.lblItemQuantity.TabIndex = 4;
@@ -404,10 +383,13 @@
             // 
             // txtItemDescription
             // 
+            this.txtItemDescription.AcceptsReturn = true;
             this.txtItemDescription.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtItemDescription.Location = new System.Drawing.Point(30, 55);
+            this.txtItemDescription.Multiline = true;
             this.txtItemDescription.Name = "txtItemDescription";
-            this.txtItemDescription.Size = new System.Drawing.Size(620, 23);
+            this.txtItemDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtItemDescription.Size = new System.Drawing.Size(620, 65);
             this.txtItemDescription.TabIndex = 3;
             // 
             // lblItemDescription
@@ -423,7 +405,7 @@
             // btnAddItem
             // 
             this.btnAddItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnAddItem.Location = new System.Drawing.Point(30, 210);
+            this.btnAddItem.Location = new System.Drawing.Point(30, 200);
             this.btnAddItem.Name = "btnAddItem";
             this.btnAddItem.Size = new System.Drawing.Size(120, 30);
             this.btnAddItem.TabIndex = 0;
@@ -434,7 +416,7 @@
             // btnClearItem
             // 
             this.btnClearItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnClearItem.Location = new System.Drawing.Point(160, 210);
+            this.btnClearItem.Location = new System.Drawing.Point(160, 200);
             this.btnClearItem.Name = "btnClearItem";
             this.btnClearItem.Size = new System.Drawing.Size(120, 30);
             this.btnClearItem.TabIndex = 1;
@@ -633,8 +615,6 @@
         private System.Windows.Forms.Label lblItemUnitPrice;
         private System.Windows.Forms.NumericUpDown numItemDeliveryTime;
         private System.Windows.Forms.Label lblItemDeliveryTime;
-        private System.Windows.Forms.TextBox txtItemDeliveryTerm;
-        private System.Windows.Forms.Label lblItemDeliveryTerm;
         private System.Windows.Forms.Button btnAddItem;
         private System.Windows.Forms.Button btnClearItem;
         private System.Windows.Forms.GroupBox grpItemsList;

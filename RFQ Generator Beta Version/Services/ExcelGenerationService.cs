@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using RFQ_Generator_System.Repositories;
 
 namespace RFQ_Generator_System.Services
@@ -37,8 +39,8 @@ namespace RFQ_Generator_System.Services
                 // Fill Header Fields
                 FillHeaderFields(worksheet, mappingDict, rfq, clientName);
 
-                // Fill Item Rows with dynamic row insertion (3 rows per item)
-                FillItemRowsWithDynamicInsertion(worksheet, mappingDict, items);
+                // Fill Item Rows with dynamic row insertion (multi-line descriptions)
+                FillItemRowsWithMultiLineSupport(worksheet, mappingDict, items);
 
                 // Calculate and Fill Summary using placeholder search
                 FillSummaryWithPlaceholders(worksheet, items, rfq.Discount);
@@ -85,6 +87,13 @@ namespace RFQ_Generator_System.Services
                 cell.Value = ": " + (rfq.DeliveryTerm ?? "");
             }
 
+            //Delivery Point - ":"
+            if (mappings.ContainsKey("DeliveryPoint"))
+            {
+                var cell = worksheet.Cell(mappings["DeliveryPoint"]);
+                cell.Value = ": " + (rfq.DeliveryPoint ?? "");
+            }
+
             // Validity - ":" + G19
             if (mappings.ContainsKey("Validity"))
             {
@@ -93,67 +102,77 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        private void FillItemRowsWithDynamicInsertion(IXLWorksheet worksheet, Dictionary<string, string> mappings, List<RFQItem> items)
+        private void FillItemRowsWithMultiLineSupport(IXLWorksheet worksheet, Dictionary<string, string> mappings, List<RFQItem> items)
         {
             if (!mappings.ContainsKey("ItemStartRow"))
                 return;
 
-            int startRow = int.Parse(mappings["ItemStartRow"]);
+            int currentRow = int.Parse(mappings["ItemStartRow"]);
+            int templateStartRow = currentRow; // Save the template start row
 
-            // In the CG template, each item takes 3 rows (27-29 for item 1)
-            // Row 1: Item No, Description, Delivery, Quantity, Unit Price, Total Price
-            // Row 2: Unit/Packaging info, "WEEKS", Unit name
-            // Row 3: Manufacturer/additional info
-            int rowsPerItem = 3;
+            // Base rows per item in template (3: desc line, unit info, blank)
+            int baseRowsPerItem = 3;
 
-            // If we have more than 1 item, we need to insert additional row groups
-            if (items.Count > 1)
+            // Calculate total rows needed for ALL items
+            int totalRowsNeeded = 0;
+            foreach (var item in items)
             {
-                // We need to insert (items.Count - 1) groups of 3 rows
-                int rowsToInsert = (items.Count - 1) * rowsPerItem;
+                // Split description by newlines
+                string[] descLines = item.ItemDesc.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                int descLineCount = descLines.Length;
 
-                // Insert rows after the first item group
-                worksheet.Row(startRow + rowsPerItem).InsertRowsAbove(rowsToInsert);
+                // Each item needs: description lines + 1 unit info row + 1 blank row
+                int rowsForThisItem = descLineCount + 2;
+                totalRowsNeeded += rowsForThisItem;
+            }
 
-                // Copy formatting from the template rows to all new rows
-                for (int i = 1; i < items.Count; i++)
+            // Calculate how many rows to insert (total needed - template's 3 rows)
+            int rowsToInsert = totalRowsNeeded - baseRowsPerItem;
+
+            if (rowsToInsert > 0)
+            {
+                // Insert rows after the first template group
+                worksheet.Row(templateStartRow + baseRowsPerItem).InsertRowsAbove(rowsToInsert);
+
+                // Copy formatting from template rows to all new rows
+                for (int r = 0; r < rowsToInsert; r++)
                 {
-                    int newStartRow = startRow + (i * rowsPerItem);
+                    int newRow = templateStartRow + baseRowsPerItem + r;
 
-                    // Copy formatting from template rows (27, 28, 29) to new rows
-                    for (int r = 0; r < rowsPerItem; r++)
+                    // Copy formatting from the first template row (row 27)
+                    var templateRow = worksheet.Row(templateStartRow);
+                    var newRowObj = worksheet.Row(newRow);
+                    newRowObj.Height = templateRow.Height;
+
+                    // Copy cell formatting for columns A-H
+                    for (int col = 1; col <= 8; col++)
                     {
-                        var templateRow = worksheet.Row(startRow + r);
-                        var newRow = worksheet.Row(newStartRow + r);
-                        newRow.Height = templateRow.Height;
-
-                        // Copy cell formatting for all columns A-H
-                        for (int col = 1; col <= 8; col++)
-                        {
-                            var templateCell = worksheet.Cell(startRow + r, col);
-                            var newCell = worksheet.Cell(newStartRow + r, col);
-                            newCell.Style = templateCell.Style;
-                        }
+                        var templateCell = worksheet.Cell(templateStartRow, col);
+                        var newCell = worksheet.Cell(newRow, col);
+                        newCell.Style = templateCell.Style;
                     }
                 }
             }
 
-            // Now fill in all the items
-            for (int i = 0; i < items.Count; i++)
+            // Now fill in all items with their multi-line descriptions
+            currentRow = templateStartRow;
+
+            for (int itemIndex = 0; itemIndex < items.Count; itemIndex++)
             {
-                var item = items[i];
-                int currentRow = startRow + (i * rowsPerItem);
+                var item = items[itemIndex];
 
-                // Row 1 of item (e.g., row 27)
+                // Split description into lines
+                string[] descLines = item.ItemDesc.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+                // FIRST ROW: Item No, First line of description, Delivery Time, Quantity, Unit Price, Total Price
                 worksheet.Cell($"A{currentRow}").Value = item.ItemNo;
-                worksheet.Cell($"B{currentRow}").Value = item.ItemDesc;
+                worksheet.Cell($"B{currentRow}").Value = descLines.Length > 0 ? descLines[0] : "";
 
-                // Delivery Time - convert days to weeks
-                int weeks = item.DeliveryTime / 7;
-                worksheet.Cell($"E{currentRow}").Value = weeks;
+                // Delivery Time
+                worksheet.Cell($"E{currentRow}").Value = item.DeliveryTime + "WEEKS";
 
-                // Quantity (just the number)
-                worksheet.Cell($"F{currentRow}").Value = item.Quantity;
+                // Quantity
+                worksheet.Cell($"F{currentRow}").Value = item.Quantity + item.UnitName;
 
                 // Unit Price
                 worksheet.Cell($"G{currentRow}").Value = item.UnitPrice;
@@ -163,13 +182,18 @@ namespace RFQ_Generator_System.Services
                 worksheet.Cell($"H{currentRow}").FormulaA1 = $"=G{currentRow}*F{currentRow}";
                 worksheet.Cell($"H{currentRow}").Style.NumberFormat.Format = "#,##0.00";
 
-                // Row 2 of item (e.g., row 28) - Unit info
-                worksheet.Cell($"B{currentRow + 1}").Value = item.DeliveryTerm ?? ""; // Additional item info
-                worksheet.Cell($"E{currentRow + 1}").Value = "WEEKS";
-                worksheet.Cell($"F{currentRow + 1}").Value = item.UnitName;
+                currentRow++;
 
-                // Row 3 of item (e.g., row 29) - can be left for manufacturer info or notes
-                // worksheet.Cell($"B{currentRow + 2}").Value = "Manufacturer :"; // Optional
+                // ADDITIONAL DESCRIPTION LINES (if any)
+                for (int i = 1; i < descLines.Length; i++)
+                {
+                    worksheet.Cell($"B{currentRow}").Value = descLines[i];
+                    currentRow++;
+                }
+
+
+                // BLANK/SPACING ROW (for visual separation between items)
+                currentRow++;
             }
         }
 
@@ -217,38 +241,6 @@ namespace RFQ_Generator_System.Services
                         cell.Style.NumberFormat.Format = "#,##0.00";
                     }
                 }
-            }
-        }
-
-        // Alternative method if you still want to use field mappings for summary
-        private void FillSummary(IXLWorksheet worksheet, Dictionary<string, string> mappings, List<RFQItem> items, decimal discount)
-        {
-            // Calculate subtotal (sum of all item totals)
-            decimal subtotal = items.Sum(item => item.UnitPrice * item.Quantity);
-
-            // Subtotal - H32
-            if (mappings.ContainsKey("Subtotal"))
-            {
-                var cell = worksheet.Cell(mappings["Subtotal"]);
-                cell.Value = subtotal;
-                cell.Style.NumberFormat.Format = "#,##0.00";
-            }
-
-            // Discount - H33
-            if (mappings.ContainsKey("Discount"))
-            {
-                var cell = worksheet.Cell(mappings["Discount"]);
-                cell.Value = discount;
-                cell.Style.NumberFormat.Format = "#,##0.00";
-            }
-
-            // Total Price - H34 = Subtotal - Discount
-            if (mappings.ContainsKey("TotalPrice"))
-            {
-                var cell = worksheet.Cell(mappings["TotalPrice"]);
-                decimal totalPrice = subtotal - discount;
-                cell.Value = totalPrice;
-                cell.Style.NumberFormat.Format = "#,##0.00";
             }
         }
     }

@@ -15,7 +15,8 @@ namespace RFQ_Generator_System
         public int Quantity { get; set; }
         public int DeliveryTime { get; set; }
         public decimal UnitPrice { get; set; }
-        public string DeliveryTerm { get; set; }
         public string UnitName { get; set; }
+
+        public string DeliveryPoint { get; set; }
     }
 }

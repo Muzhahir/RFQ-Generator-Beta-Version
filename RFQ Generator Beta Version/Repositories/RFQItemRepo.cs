@@ -16,7 +16,7 @@ namespace RFQ_Generator_System.Repositories
                 conn.Open();
                 // Fixed: Added ALL columns to SELECT (was missing 6 columns)
                 SqlCommand cmd = new SqlCommand(
-                    "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName FROM RFQItem",
+                    "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName FROM RFQItem",
                     conn);
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -31,7 +31,6 @@ namespace RFQ_Generator_System.Repositories
                         Quantity = Convert.ToInt32(reader["Quantity"]),
                         DeliveryTime = Convert.ToInt32(reader["DeliveryTime"]),
                         UnitPrice = Convert.ToDecimal(reader["UnitPrice"]),
-                        DeliveryTerm = reader["DeliveryTerm"].ToString(),
                         UnitName = reader["UnitName"].ToString()
                     });
                 }
@@ -49,7 +48,7 @@ namespace RFQ_Generator_System.Repositories
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand(
-                    "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName " +
+                    "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName " +
                     "FROM RFQItem WHERE RFQId = @RFQId ORDER BY ItemNo",
                     conn);
                 cmd.Parameters.AddWithValue("@RFQId", rfqId);
@@ -66,7 +65,6 @@ namespace RFQ_Generator_System.Repositories
                         Quantity = Convert.ToInt32(reader["Quantity"]),
                         DeliveryTime = Convert.ToInt32(reader["DeliveryTime"]),
                         UnitPrice = Convert.ToDecimal(reader["UnitPrice"]),
-                        DeliveryTerm = reader["DeliveryTerm"].ToString(),
                         UnitName = reader["UnitName"].ToString()
                     });
                 }
@@ -82,8 +80,8 @@ namespace RFQ_Generator_System.Repositories
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand(
-                    "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName) " +
-                    "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @DeliveryTerm, @UnitName)",
+                    "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice,  UnitName) " +
+                    "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @UnitName)",
                     conn
                 );
                 cmd.Parameters.AddWithValue("@RFQId", rfqItem.RFQId);
@@ -92,7 +90,6 @@ namespace RFQ_Generator_System.Repositories
                 cmd.Parameters.AddWithValue("@Quantity", rfqItem.Quantity);
                 cmd.Parameters.AddWithValue("@DeliveryTime", rfqItem.DeliveryTime);
                 cmd.Parameters.AddWithValue("@UnitPrice", rfqItem.UnitPrice);
-                cmd.Parameters.AddWithValue("@DeliveryTerm", rfqItem.DeliveryTerm);
                 cmd.Parameters.AddWithValue("@UnitName", rfqItem.UnitName);
                 cmd.ExecuteNonQuery();
             }
@@ -127,7 +124,6 @@ namespace RFQ_Generator_System.Repositories
                     cmd.Parameters.AddWithValue("@Quantity", item.Quantity);
                     cmd.Parameters.AddWithValue("@DeliveryTime", item.DeliveryTime);
                     cmd.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
-                    cmd.Parameters.AddWithValue("@DeliveryTerm", item.DeliveryTerm);
                     cmd.Parameters.AddWithValue("@UnitName", item.UnitName);
                     cmd.ExecuteNonQuery();
                 }
