@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Vml;
+using RFQ_Generator_System.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using RFQ_Generator_System.Repositories;
 
 namespace RFQ_Generator_System.Services
 {
@@ -39,8 +40,8 @@ namespace RFQ_Generator_System.Services
                 // Fill Header Fields
                 FillHeaderFields(worksheet, mappingDict, rfq, clientName);
 
-                // Fill Item Rows with dynamic row insertion (multi-line descriptions)
-                FillItemRowsWithMultiLineSupport(worksheet, mappingDict, items);
+                // Fill Items - Each description line gets its own row
+                FillItemsWithMultilineDesc(worksheet, mappingDict, items);
 
                 // Calculate and Fill Summary using placeholder search
                 FillSummaryWithPlaceholders(worksheet, items, rfq.Discount);
@@ -87,7 +88,7 @@ namespace RFQ_Generator_System.Services
                 cell.Value = ": " + (rfq.DeliveryTerm ?? "");
             }
 
-            //Delivery Point - ":"
+            // Delivery Point - ":"
             if (mappings.ContainsKey("DeliveryPoint"))
             {
                 var cell = worksheet.Cell(mappings["DeliveryPoint"]);
@@ -102,98 +103,99 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        private void FillItemRowsWithMultiLineSupport(IXLWorksheet worksheet, Dictionary<string, string> mappings, List<RFQItem> items)
+        /// <summary>
+        /// Each item can have multi-line descriptions, where each line takes a separate row
+        /// After the last description line, there's one empty row as spacing
+        /// </summary>
+        private void FillItemsWithMultilineDesc(IXLWorksheet worksheet, Dictionary<string, string> mappings, List<RFQItem> items)
         {
             if (!mappings.ContainsKey("ItemStartRow"))
                 return;
 
-            int currentRow = int.Parse(mappings["ItemStartRow"]);
-            int templateStartRow = currentRow; // Save the template start row
+            // Get column mappings (with defaults if not found)
+            string itemNoCol = mappings.ContainsKey("ItemNoColumn") ? mappings["ItemNoColumn"] : "A";
+            string descCol = mappings.ContainsKey("ItemDescColumn") ? mappings["ItemDescColumn"] : "B";
+            string deliveryCol = mappings.ContainsKey("DeliveryColumn") ? mappings["DeliveryColumn"] : "E";
+            string qtyCol = mappings.ContainsKey("QuantityColumn") ? mappings["QuantityColumn"] : "F";
+            string priceCol = mappings.ContainsKey("PriceColumn") ? mappings["PriceColumn"] : "G";
+            string totalCol = mappings.ContainsKey("TotalColumn") ? mappings["TotalColumn"] : "H";
 
-            // Base rows per item in template (3: desc line, unit info, blank)
-            int baseRowsPerItem = 3;
+            int startRow = int.Parse(mappings["ItemStartRow"]);
+            int rowsPerItem = mappings.ContainsKey("RowsPerItem") ? int.Parse(mappings["RowsPerItem"]) : 3;
 
-            // Calculate total rows needed for ALL items
+            // Calculate total rows needed based on description lines + 1 empty row per item
             int totalRowsNeeded = 0;
             foreach (var item in items)
             {
                 // Split description by newlines
-                string[] descLines = item.ItemDesc.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                int descLineCount = descLines.Length;
+                string[] descLines = (item.ItemDesc ?? "").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                int linesCount = descLines.Length;
 
-                // Each item needs: description lines + 1 unit info row + 1 blank row
-                int rowsForThisItem = descLineCount + 2;
+                // Each item needs: description lines + 1 empty row for spacing
+                int rowsForThisItem = linesCount + 1;
                 totalRowsNeeded += rowsForThisItem;
             }
 
-            // Calculate how many rows to insert (total needed - template's 3 rows)
-            int rowsToInsert = totalRowsNeeded - baseRowsPerItem;
+            // Calculate how many rows to insert
+            int templateRows = rowsPerItem;
+            int rowsToInsert = totalRowsNeeded - templateRows;
 
+            // Insert additional rows if needed
             if (rowsToInsert > 0)
             {
-                // Insert rows after the first template group
-                worksheet.Row(templateStartRow + baseRowsPerItem).InsertRowsAbove(rowsToInsert);
+                worksheet.Row(startRow + rowsPerItem).InsertRowsAbove(rowsToInsert);
 
-                // Copy formatting from template rows to all new rows
+                // Copy formatting from template rows to new rows
                 for (int r = 0; r < rowsToInsert; r++)
                 {
-                    int newRow = templateStartRow + baseRowsPerItem + r;
+                    int sourceRow = startRow + (r % rowsPerItem);
+                    int targetRow = startRow + rowsPerItem + r;
 
-                    // Copy formatting from the first template row (row 27)
-                    var templateRow = worksheet.Row(templateStartRow);
-                    var newRowObj = worksheet.Row(newRow);
-                    newRowObj.Height = templateRow.Height;
+                    worksheet.Row(targetRow).Height = worksheet.Row(sourceRow).Height;
 
-                    // Copy cell formatting for columns A-H
+                    // Copy cell styles
                     for (int col = 1; col <= 8; col++)
                     {
-                        var templateCell = worksheet.Cell(templateStartRow, col);
-                        var newCell = worksheet.Cell(newRow, col);
-                        newCell.Style = templateCell.Style;
+                        worksheet.Cell(targetRow, col).Style = worksheet.Cell(sourceRow, col).Style;
                     }
                 }
             }
 
-            // Now fill in all items with their multi-line descriptions
-            currentRow = templateStartRow;
-
-            for (int itemIndex = 0; itemIndex < items.Count; itemIndex++)
+            // Fill each item
+            int currentRow = startRow;
+            foreach (var item in items)
             {
-                var item = items[itemIndex];
+                // Split description by newlines
+                string[] descLines = (item.ItemDesc ?? "").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                int linesCount = descLines.Length;
 
-                // Split description into lines
-                string[] descLines = item.ItemDesc.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                // Item Number - only on first row
+                worksheet.Cell($"{itemNoCol}{currentRow}").Value = item.ItemNo;
 
-                // FIRST ROW: Item No, First line of description, Delivery Time, Quantity, Unit Price, Total Price
-                worksheet.Cell($"A{currentRow}").Value = item.ItemNo;
-                worksheet.Cell($"B{currentRow}").Value = descLines.Length > 0 ? descLines[0] : "";
-
-                // Delivery Time
-                worksheet.Cell($"E{currentRow}").Value = item.DeliveryTime + "WEEKS";
-
-                // Quantity
-                worksheet.Cell($"F{currentRow}").Value = item.Quantity + item.UnitName;
-
-                // Unit Price
-                worksheet.Cell($"G{currentRow}").Value = item.UnitPrice;
-                worksheet.Cell($"G{currentRow}").Style.NumberFormat.Format = "#,##0.00";
-
-                // Total Price formula
-                worksheet.Cell($"H{currentRow}").FormulaA1 = $"=G{currentRow}*F{currentRow}";
-                worksheet.Cell($"H{currentRow}").Style.NumberFormat.Format = "#,##0.00";
-
-                currentRow++;
-
-                // ADDITIONAL DESCRIPTION LINES (if any)
-                for (int i = 1; i < descLines.Length; i++)
+                // Description lines - each on separate row
+                for (int i = 0; i < descLines.Length; i++)
                 {
-                    worksheet.Cell($"B{currentRow}").Value = descLines[i];
-                    currentRow++;
+                    worksheet.Cell($"{descCol}{currentRow + i}").Value = descLines[i];
+                    worksheet.Cell($"{descCol}{currentRow + i}").Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
                 }
 
+                // Delivery Time (in weeks) - only on first row
+                int weeks = item.DeliveryTime / 7;
+                worksheet.Cell($"{deliveryCol}{currentRow}").Value = weeks + " WEEKS";
 
-                // BLANK/SPACING ROW (for visual separation between items)
-                currentRow++;
+                // Quantity with Unit - only on first row
+                worksheet.Cell($"{qtyCol}{currentRow}").Value = item.Quantity + " " + item.UnitName;
+
+                // Unit Price - only on first row
+                worksheet.Cell($"{priceCol}{currentRow}").Value = item.UnitPrice;
+                worksheet.Cell($"{priceCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+
+                // Total Price (formula) - only on first row
+                worksheet.Cell($"{totalCol}{currentRow}").FormulaA1 = $"={priceCol}{currentRow}*{item.Quantity}";
+                worksheet.Cell($"{totalCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+
+                // Move to next item row (description lines + 1 empty row for spacing)
+                currentRow += linesCount + 1;
             }
         }
 
@@ -213,10 +215,9 @@ namespace RFQ_Generator_System.Services
 
                 string cellValue = cell.GetString().ToLower();
 
-                // Check for subtotal placeholder (looking for "sub_total", "_subtotal_", etc.)
+                // Check for subtotal placeholder
                 if (cellValue.Contains("sub_total") || cellValue.Contains("subtotal"))
                 {
-                    // Only replace if it's not a label (check if it's in a value column like H)
                     if (cell.Address.ColumnLetter == "H")
                     {
                         cell.Value = subtotal;
