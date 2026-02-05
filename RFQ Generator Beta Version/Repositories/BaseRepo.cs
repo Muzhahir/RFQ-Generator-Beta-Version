@@ -8,7 +8,7 @@ namespace RFQ_Generator_System.Repositories
 {
     public class BaseRepo<T> where T : class, new()
     {
-        protected string connectionString =
+        public string connectionString =
     @"Data Source=(LocalDB)\MSSQLLocalDB;
       Initial Catalog=RFQDB;
       Integrated Security=True";
