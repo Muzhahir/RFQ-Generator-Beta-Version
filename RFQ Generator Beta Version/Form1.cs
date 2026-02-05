@@ -428,13 +428,7 @@ namespace RFQ_Generator_System
                     return;
                 }
 
-                // Check if template file exists
-                if (!File.Exists(currentTemplate.TemplatePath))
-                {
-                    MessageBox.Show($"Template file not found:\n{currentTemplate.TemplatePath}\n\nPlease update the template path in the database.",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                // REMOVED: File.Exists check - let ExcelGenerationService handle it
 
                 // Get RFQ data
                 var (rfq, items) = rfqService.GetRFQWithItems(currentRFQId);
@@ -461,9 +455,9 @@ namespace RFQ_Generator_System
 
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {
-                        // Generate Excel file
+                        // Generate Excel file - pass just the filename from database
                         excelService.GenerateRFQExcel(
-                            currentTemplate.TemplatePath,
+                            currentTemplate.TemplatePath,  // This should be just "CG TEMPLATE.xlsx"
                             sfd.FileName,
                             rfq,
                             items,
@@ -490,7 +484,6 @@ namespace RFQ_Generator_System
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         #endregion
 
         #region New RFQ

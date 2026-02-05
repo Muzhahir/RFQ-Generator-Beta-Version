@@ -162,13 +162,6 @@
     <None Include="RFQDBDataSet.xss">
       <DependentUpon>RFQDBDataSet.xsd</DependentUpon>
     </None>
-    <None Include="Templates\CG TEMPLATE.xlsx" />
-    <None Include="Templates\DE TEMPLATE.xlsx" />
-    <None Include="Templates\GA TEMPLATE.xlsx" />
-    <None Include="Templates\MA TEMPLATE.xlsx" />
-    <None Include="Templates\OGIT TEMPLATE.xlsx" />
-    <None Include="Templates\OP TEMPLATE.xlsx" />
-    <None Include="Templates\PO TEMPLATE.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

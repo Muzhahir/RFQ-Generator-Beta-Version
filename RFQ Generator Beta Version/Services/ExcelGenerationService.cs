@@ -2,6 +2,7 @@
 using RFQ_Generator_System.Repositories;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace RFQ_Generator_System.Services
@@ -9,12 +10,10 @@ namespace RFQ_Generator_System.Services
     public class ExcelGenerationService
     {
         private readonly ClientRepo clientRepo;
-        private readonly RFQItemRepo rfqItemRepo; // <- Added RFQItemRepo
+        private readonly RFQItemRepo rfqItemRepo;
 
-        // HARDCODED PLACEHOLDERS - No database needed!
         private static class Placeholders
         {
-            // Header placeholders
             public const string ClientName = "client_name";
             public const string Date = "_date";
             public const string RFQCode = "rfq_code";
@@ -23,16 +22,12 @@ namespace RFQ_Generator_System.Services
             public const string PaymentTerm = "payment_term";
             public const string DeliveryTerm = "delivery_term";
             public const string DeliveryPoint = "delivery_point";
-
-            // Item table column placeholders
             public const string ItemNo = "_num";
             public const string ItemDesc = "_desc";
             public const string DeliveryTime = "delivery_time";
             public const string Quantity = "_qty";
             public const string UnitPrice = "unit_price";
             public const string TotalPrice = "total_price";
-
-            // Summary placeholders
             public const string Subtotal = "sub_total";
             public const string Discount = "_discount";
             public const string SummaryTotal = "summary_total_price";
@@ -41,27 +36,23 @@ namespace RFQ_Generator_System.Services
         public ExcelGenerationService()
         {
             clientRepo = new ClientRepo();
-            rfqItemRepo = new RFQItemRepo(); // <- Initialize RFQItemRepo
+            rfqItemRepo = new RFQItemRepo();
         }
 
-        /// <summary>
-        /// Generate Excel file from template with RFQ data
-        /// Templates just need to have the standard placeholders in their cells
-        /// </summary>
         public void GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId)
         {
-            using (var workbook = new XLWorkbook(templatePath))
+            // Convert database path (filename only) to full path
+            string fullTemplatePath = GetFullTemplatePath(templatePath);
+
+            using (var workbook = new XLWorkbook(fullTemplatePath))
             {
                 var worksheet = workbook.Worksheet(1);
 
-                // Get client name
                 var client = clientRepo.GetClientById(rfq.ClientId);
                 string clientName = client?.ClientName ?? "";
 
-                // Find item table start row
                 var itemStartCell = FindPlaceholderCell(worksheet, Placeholders.ItemNo);
 
-                // Fill all sections
                 FillHeaderFields(worksheet, rfq, clientName);
 
                 if (itemStartCell != null)
@@ -71,14 +62,113 @@ namespace RFQ_Generator_System.Services
 
                 FillSummary(worksheet, items, rfq.Discount);
 
-                // Save
                 workbook.SaveAs(outputPath);
             }
         }
 
         /// <summary>
-        /// Find a cell containing the specified placeholder text
+        /// Converts the template filename from database to full path
+        /// Database stores: "CG TEMPLATE.xlsx"
+        /// Returns full path based on application directory
+        /// Tries multiple locations to find the template
         /// </summary>
+        private string GetFullTemplatePath(string templateFileName)
+        {
+            string foundPath = null;
+
+            // Try multiple possible locations
+            List<string> possiblePaths = new List<string>();
+
+            // 1. Application base directory (bin\Debug or bin\Release)
+            string appDir = AppDomain.CurrentDomain.BaseDirectory;
+            possiblePaths.Add(Path.Combine(appDir, "Templates", templateFileName));
+
+            // 2. Two levels up from bin\Debug (project root during development)
+            string projectRoot = Path.GetFullPath(Path.Combine(appDir, @"..\..\"));
+            possiblePaths.Add(Path.Combine(projectRoot, "Templates", templateFileName));
+
+            // 3. Current directory
+            possiblePaths.Add(Path.Combine(Directory.GetCurrentDirectory(), "Templates", templateFileName));
+
+            // Check each possible path
+            foreach (string path in possiblePaths)
+            {
+                if (File.Exists(path))
+                {
+                    foundPath = path;
+                    break;
+                }
+            }
+
+            // If still not found, show detailed error
+            if (foundPath == null)
+            {
+                string errorMessage = $"Template file not found: {templateFileName}\n\n";
+                errorMessage += "Searched in the following locations:\n";
+
+                for (int i = 0; i < possiblePaths.Count; i++)
+                {
+                    errorMessage += $"{i + 1}. {possiblePaths[i]}\n";
+                    errorMessage += $"   Exists: {File.Exists(possiblePaths[i])}\n\n";
+                }
+
+                errorMessage += $"Application Directory: {appDir}\n";
+                errorMessage += $"Current Directory: {Directory.GetCurrentDirectory()}\n\n";
+
+                // Check if Templates folder exists anywhere
+                string templatesFolder1 = Path.Combine(appDir, "Templates");
+                string templatesFolder2 = Path.Combine(projectRoot, "Templates");
+
+                errorMessage += $"Templates folder status:\n";
+                errorMessage += $"1. {templatesFolder1}\n   Exists: {Directory.Exists(templatesFolder1)}\n\n";
+                errorMessage += $"2. {templatesFolder2}\n   Exists: {Directory.Exists(templatesFolder2)}\n\n";
+
+                // Show what files are in Templates folder if it exists
+                if (Directory.Exists(templatesFolder2))
+                {
+                    errorMessage += $"Files found in {templatesFolder2}:\n";
+                    string[] files = Directory.GetFiles(templatesFolder2);
+                    if (files.Length > 0)
+                    {
+                        foreach (string file in files)
+                        {
+                            errorMessage += $"- {Path.GetFileName(file)}\n";
+                        }
+                    }
+                    else
+                    {
+                        errorMessage += "(No files found)\n";
+                    }
+                }
+                else if (Directory.Exists(templatesFolder1))
+                {
+                    errorMessage += $"Files found in {templatesFolder1}:\n";
+                    string[] files = Directory.GetFiles(templatesFolder1);
+                    if (files.Length > 0)
+                    {
+                        foreach (string file in files)
+                        {
+                            errorMessage += $"- {Path.GetFileName(file)}\n";
+                        }
+                    }
+                    else
+                    {
+                        errorMessage += "(No files found)\n";
+                    }
+                }
+
+                errorMessage += "\nPlease ensure:\n";
+                errorMessage += "1. The Templates folder exists in your project root\n";
+                errorMessage += "2. The template file is in the Templates folder\n";
+                errorMessage += "3. In Visual Studio, right-click Templates folder → Properties → 'Copy to Output Directory' = 'Copy if newer'\n";
+                errorMessage += "4. Rebuild your solution";
+
+                throw new FileNotFoundException(errorMessage);
+            }
+
+            return foundPath;
+        }
+
         private IXLCell FindPlaceholderCell(IXLWorksheet worksheet, string placeholder)
         {
             var usedCells = worksheet.CellsUsed();
@@ -92,9 +182,6 @@ namespace RFQ_Generator_System.Services
             return null;
         }
 
-        /// <summary>
-        /// Fill header fields by finding and replacing placeholders
-        /// </summary>
         private void FillHeaderFields(IXLWorksheet worksheet, RFQ rfq, string clientName)
         {
             var usedCells = worksheet.CellsUsed();
@@ -106,7 +193,6 @@ namespace RFQ_Generator_System.Services
 
                 string cellValue = cell.GetString();
 
-                // Match placeholder and fill with data
                 if (cellValue.Equals(Placeholders.ClientName, StringComparison.OrdinalIgnoreCase))
                 {
                     cell.Value = clientName;
@@ -135,18 +221,13 @@ namespace RFQ_Generator_System.Services
                 {
                     cell.Value = (rfq.Validity ?? "");
                 }
-                
             }
         }
 
-        /// <summary>
-        /// Fill items by finding placeholder columns and filling data
-        /// </summary>
         private void FillItems(IXLWorksheet worksheet, List<RFQItem> items, IXLCell startCell)
         {
             int headerRow = startCell.Address.RowNumber;
 
-            // Find columns by searching for placeholders in header row
             string itemNoCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.ItemNo);
             string descCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.ItemDesc);
             string deliveryCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.DeliveryTime);
@@ -156,34 +237,47 @@ namespace RFQ_Generator_System.Services
 
             int startRow = headerRow;
 
-            // Calculate total rows needed (multi-line descriptions)
+            // Calculate total rows needed
             int totalRowsNeeded = 0;
             foreach (var item in items)
             {
                 string[] descLines = (item.ItemDesc ?? "").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                totalRowsNeeded += descLines.Length + 1; // +1 for spacing
+                totalRowsNeeded += descLines.Length + 1;
             }
 
-            // Insert rows if needed
             int templateRows = 1;
             int rowsToInsert = totalRowsNeeded - templateRows;
 
             if (rowsToInsert > 0)
             {
+                // Get merged cells info BEFORE inserting rows
+                var mergedCellsInTemplateRow = GetMergedCellsInRow(worksheet, startRow);
+
                 worksheet.Row(startRow + templateRows).InsertRowsAbove(rowsToInsert);
 
-                // Copy formatting
+                // Copy formatting AND merged cells
                 for (int r = 0; r < rowsToInsert; r++)
                 {
                     int targetRow = startRow + templateRows + r;
                     worksheet.Row(targetRow).Height = worksheet.Row(startRow).Height;
 
+                    // Copy cell styles
                     foreach (var cell in worksheet.Row(startRow).Cells())
                     {
                         if (!cell.IsEmpty() || cell.Style.Fill.BackgroundColor.HasValue)
                         {
                             worksheet.Cell(targetRow, cell.Address.ColumnNumber).Style = cell.Style;
                         }
+                    }
+
+                    // Copy merged cells
+                    foreach (var mergedRange in mergedCellsInTemplateRow)
+                    {
+                        int startCol = mergedRange.Item1;
+                        int endCol = mergedRange.Item2;
+
+                        var newRange = worksheet.Range(targetRow, startCol, targetRow, endCol);
+                        newRange.Merge();
                     }
                 }
             }
@@ -194,13 +288,11 @@ namespace RFQ_Generator_System.Services
             {
                 string[] descLines = (item.ItemDesc ?? "").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
-                // Item Number
                 if (itemNoCol != null)
                 {
                     worksheet.Cell($"{itemNoCol}{currentRow}").Value = item.ItemNo;
                 }
 
-                // Description (multi-line)
                 if (descCol != null)
                 {
                     for (int i = 0; i < descLines.Length; i++)
@@ -210,27 +302,23 @@ namespace RFQ_Generator_System.Services
                     }
                 }
 
-                // Delivery Time
                 if (deliveryCol != null)
                 {
                     int weeks = item.DeliveryTime / 7;
                     worksheet.Cell($"{deliveryCol}{currentRow}").Value = weeks + " WEEKS";
                 }
 
-                // Quantity
                 if (qtyCol != null)
                 {
                     worksheet.Cell($"{qtyCol}{currentRow}").Value = item.Quantity + " " + item.UnitName;
                 }
 
-                // Unit Price
                 if (priceCol != null)
                 {
                     worksheet.Cell($"{priceCol}{currentRow}").Value = item.UnitPrice;
                     worksheet.Cell($"{priceCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
                 }
 
-                // Total Price (formula)
                 if (totalCol != null && priceCol != null)
                 {
                     worksheet.Cell($"{totalCol}{currentRow}").FormulaA1 = $"={priceCol}{currentRow}*{item.Quantity}";
@@ -242,8 +330,31 @@ namespace RFQ_Generator_System.Services
         }
 
         /// <summary>
-        /// Find column by searching for placeholder in specific row
+        /// Get all merged cell ranges in a specific row
+        /// Returns list of (startColumn, endColumn) tuples
         /// </summary>
+        private List<Tuple<int, int>> GetMergedCellsInRow(IXLWorksheet worksheet, int rowNumber)
+        {
+            var mergedRanges = new List<Tuple<int, int>>();
+
+            foreach (var mergedRange in worksheet.MergedRanges)
+            {
+                var rangeAddress = mergedRange.RangeAddress;
+
+                // Check if this merged range includes our row
+                if (rangeAddress.FirstAddress.RowNumber <= rowNumber &&
+                    rangeAddress.LastAddress.RowNumber >= rowNumber)
+                {
+                    mergedRanges.Add(new Tuple<int, int>(
+                        rangeAddress.FirstAddress.ColumnNumber,
+                        rangeAddress.LastAddress.ColumnNumber
+                    ));
+                }
+            }
+
+            return mergedRanges;
+        }
+
         private string FindColumnByPlaceholder(IXLWorksheet worksheet, int row, string placeholder)
         {
             if (string.IsNullOrEmpty(placeholder))
@@ -260,9 +371,6 @@ namespace RFQ_Generator_System.Services
             return null;
         }
 
-        /// <summary>
-        /// Fill summary by finding placeholders and replacing with calculations
-        /// </summary>
         private void FillSummary(IXLWorksheet worksheet, List<RFQItem> items, decimal discount)
         {
             decimal subtotal = items.Sum(item => item.UnitPrice * item.Quantity);
