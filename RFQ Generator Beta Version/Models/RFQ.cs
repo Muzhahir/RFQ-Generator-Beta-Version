@@ -15,10 +15,8 @@ namespace RFQ_Generator_System
         public string RFQCode { get; set; }
         public string QuoteCode { get; set; }
         public string DeliveryPoint { get; set; }
-
         public decimal Discount { get; set; }
         public string DeliveryTerm { get; set; }
-
         public string Validity { get; set; }
     }
 }

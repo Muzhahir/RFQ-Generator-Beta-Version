@@ -1,6 +1,4 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Vml;
 using RFQ_Generator_System.Repositories;
 using System;
 using System.Collections.Generic;
@@ -10,153 +8,182 @@ namespace RFQ_Generator_System.Services
 {
     public class ExcelGenerationService
     {
-        private readonly FieldMappingRepo fieldMappingRepo;
         private readonly ClientRepo clientRepo;
+        private readonly RFQItemRepo rfqItemRepo; // <- Added RFQItemRepo
+
+        // HARDCODED PLACEHOLDERS - No database needed!
+        private static class Placeholders
+        {
+            // Header placeholders
+            public const string ClientName = "client_name";
+            public const string Date = "_date";
+            public const string RFQCode = "rfq_code";
+            public const string QuoteCode = "quote_code";
+            public const string Validity = "_validity";
+            public const string PaymentTerm = "payment_term";
+            public const string DeliveryTerm = "delivery_term";
+            public const string DeliveryPoint = "delivery_point";
+
+            // Item table column placeholders
+            public const string ItemNo = "_num";
+            public const string ItemDesc = "_desc";
+            public const string DeliveryTime = "delivery_time";
+            public const string Quantity = "_qty";
+            public const string UnitPrice = "unit_price";
+            public const string TotalPrice = "total_price";
+
+            // Summary placeholders
+            public const string Subtotal = "sub_total";
+            public const string Discount = "_discount";
+            public const string SummaryTotal = "summary_total_price";
+        }
 
         public ExcelGenerationService()
         {
-            fieldMappingRepo = new FieldMappingRepo();
             clientRepo = new ClientRepo();
+            rfqItemRepo = new RFQItemRepo(); // <- Initialize RFQItemRepo
         }
 
         /// <summary>
         /// Generate Excel file from template with RFQ data
+        /// Templates just need to have the standard placeholders in their cells
         /// </summary>
         public void GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId)
         {
-            // Load the template
             using (var workbook = new XLWorkbook(templatePath))
             {
-                var worksheet = workbook.Worksheet(1); // First worksheet
-
-                // Get field mappings for this template
-                var mappings = fieldMappingRepo.GetFieldMappingsByTemplateId(templateId);
-                var mappingDict = mappings.ToDictionary(m => m.FieldKey, m => m.ExcellCell);
+                var worksheet = workbook.Worksheet(1);
 
                 // Get client name
                 var client = clientRepo.GetClientById(rfq.ClientId);
                 string clientName = client?.ClientName ?? "";
 
-                // Fill Header Fields
-                FillHeaderFields(worksheet, mappingDict, rfq, clientName);
+                // Find item table start row
+                var itemStartCell = FindPlaceholderCell(worksheet, Placeholders.ItemNo);
 
-                // Fill Items - Each description line gets its own row
-                FillItemsWithMultilineDesc(worksheet, mappingDict, items);
+                // Fill all sections
+                FillHeaderFields(worksheet, rfq, clientName);
 
-                // Calculate and Fill Summary using placeholder search
-                FillSummaryWithPlaceholders(worksheet, items, rfq.Discount);
+                if (itemStartCell != null)
+                {
+                    FillItems(worksheet, items, itemStartCell);
+                }
 
-                // Save the file
+                FillSummary(worksheet, items, rfq.Discount);
+
+                // Save
                 workbook.SaveAs(outputPath);
             }
         }
 
-        private void FillHeaderFields(IXLWorksheet worksheet, Dictionary<string, string> mappings, RFQ rfq, string clientName)
+        /// <summary>
+        /// Find a cell containing the specified placeholder text
+        /// </summary>
+        private IXLCell FindPlaceholderCell(IXLWorksheet worksheet, string placeholder)
         {
-            // Client Name - "To: " + A15
-            if (mappings.ContainsKey("ClientName"))
+            var usedCells = worksheet.CellsUsed();
+            foreach (var cell in usedCells)
             {
-                var cell = worksheet.Cell(mappings["ClientName"]);
-                cell.Value = "TO : " + clientName;
+                if (cell.GetString().Equals(placeholder, StringComparison.OrdinalIgnoreCase))
+                {
+                    return cell;
+                }
             }
+            return null;
+        }
 
-            // RFQ Code - "RFQ No: " + A19
-            if (mappings.ContainsKey("RFQCode"))
-            {
-                var cell = worksheet.Cell(mappings["RFQCode"]);
-                cell.Value = "RFQ NO : " + rfq.RFQCode;
-            }
+        /// <summary>
+        /// Fill header fields by finding and replacing placeholders
+        /// </summary>
+        private void FillHeaderFields(IXLWorksheet worksheet, RFQ rfq, string clientName)
+        {
+            var usedCells = worksheet.CellsUsed();
 
-            // Date - ":" + G15
-            if (mappings.ContainsKey("Date"))
+            foreach (var cell in usedCells)
             {
-                var cell = worksheet.Cell(mappings["Date"]);
-                cell.Value = ": " + rfq.CreatedAt.ToString("dd MMMM yyyy");
-            }
+                if (cell.IsEmpty())
+                    continue;
 
-            // Quote Code - ":" + G16
-            if (mappings.ContainsKey("QuoteCode"))
-            {
-                var cell = worksheet.Cell(mappings["QuoteCode"]);
-                cell.Value = ": " + rfq.QuoteCode;
-            }
+                string cellValue = cell.GetString();
 
-            // Delivery Term - ":" + G17
-            if (mappings.ContainsKey("DeliveryTerm"))
-            {
-                var cell = worksheet.Cell(mappings["DeliveryTerm"]);
-                cell.Value = ": " + (rfq.DeliveryTerm ?? "");
-            }
-
-            // Delivery Point - ":"
-            if (mappings.ContainsKey("DeliveryPoint"))
-            {
-                var cell = worksheet.Cell(mappings["DeliveryPoint"]);
-                cell.Value = ": " + (rfq.DeliveryPoint ?? "");
-            }
-
-            // Validity - ":" + G19
-            if (mappings.ContainsKey("Validity"))
-            {
-                var cell = worksheet.Cell(mappings["Validity"]);
-                cell.Value = ": " + (rfq.Validity ?? "");
+                // Match placeholder and fill with data
+                if (cellValue.Equals(Placeholders.ClientName, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value = clientName;
+                }
+                else if (cellValue.Equals(Placeholders.RFQCode, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value = rfq.RFQCode;
+                }
+                else if (cellValue.Equals(Placeholders.Date, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value = rfq.CreatedAt.ToString("dd MMMM yyyy");
+                }
+                else if (cellValue.Equals(Placeholders.QuoteCode, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value = rfq.QuoteCode;
+                }
+                else if (cellValue.Equals(Placeholders.DeliveryTerm, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value = (rfq.DeliveryTerm ?? "");
+                }
+                else if (cellValue.Equals(Placeholders.DeliveryPoint, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value = (rfq.DeliveryPoint ?? "");
+                }
+                else if (cellValue.Equals(Placeholders.Validity, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value = (rfq.Validity ?? "");
+                }
+                
             }
         }
 
         /// <summary>
-        /// Each item can have multi-line descriptions, where each line takes a separate row
-        /// After the last description line, there's one empty row as spacing
+        /// Fill items by finding placeholder columns and filling data
         /// </summary>
-        private void FillItemsWithMultilineDesc(IXLWorksheet worksheet, Dictionary<string, string> mappings, List<RFQItem> items)
+        private void FillItems(IXLWorksheet worksheet, List<RFQItem> items, IXLCell startCell)
         {
-            if (!mappings.ContainsKey("ItemStartRow"))
-                return;
+            int headerRow = startCell.Address.RowNumber;
 
-            // Get column mappings (with defaults if not found)
-            string itemNoCol = mappings.ContainsKey("ItemNoColumn") ? mappings["ItemNoColumn"] : "A";
-            string descCol = mappings.ContainsKey("ItemDescColumn") ? mappings["ItemDescColumn"] : "B";
-            string deliveryCol = mappings.ContainsKey("DeliveryColumn") ? mappings["DeliveryColumn"] : "E";
-            string qtyCol = mappings.ContainsKey("QuantityColumn") ? mappings["QuantityColumn"] : "F";
-            string priceCol = mappings.ContainsKey("PriceColumn") ? mappings["PriceColumn"] : "G";
-            string totalCol = mappings.ContainsKey("TotalColumn") ? mappings["TotalColumn"] : "H";
+            // Find columns by searching for placeholders in header row
+            string itemNoCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.ItemNo);
+            string descCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.ItemDesc);
+            string deliveryCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.DeliveryTime);
+            string qtyCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.Quantity);
+            string priceCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.UnitPrice);
+            string totalCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.TotalPrice);
 
-            int startRow = int.Parse(mappings["ItemStartRow"]);
-            int rowsPerItem = mappings.ContainsKey("RowsPerItem") ? int.Parse(mappings["RowsPerItem"]) : 3;
+            int startRow = headerRow;
 
-            // Calculate total rows needed based on description lines + 1 empty row per item
+            // Calculate total rows needed (multi-line descriptions)
             int totalRowsNeeded = 0;
             foreach (var item in items)
             {
-                // Split description by newlines
                 string[] descLines = (item.ItemDesc ?? "").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                int linesCount = descLines.Length;
-
-                // Each item needs: description lines + 1 empty row for spacing
-                int rowsForThisItem = linesCount + 1;
-                totalRowsNeeded += rowsForThisItem;
+                totalRowsNeeded += descLines.Length + 1; // +1 for spacing
             }
 
-            // Calculate how many rows to insert
-            int templateRows = rowsPerItem;
+            // Insert rows if needed
+            int templateRows = 1;
             int rowsToInsert = totalRowsNeeded - templateRows;
 
-            // Insert additional rows if needed
             if (rowsToInsert > 0)
             {
-                worksheet.Row(startRow + rowsPerItem).InsertRowsAbove(rowsToInsert);
+                worksheet.Row(startRow + templateRows).InsertRowsAbove(rowsToInsert);
 
-                // Copy formatting from template rows to new rows
+                // Copy formatting
                 for (int r = 0; r < rowsToInsert; r++)
                 {
-                    int sourceRow = startRow + (r % rowsPerItem);
-                    int targetRow = startRow + rowsPerItem + r;
+                    int targetRow = startRow + templateRows + r;
+                    worksheet.Row(targetRow).Height = worksheet.Row(startRow).Height;
 
-                    worksheet.Row(targetRow).Height = worksheet.Row(sourceRow).Height;
-
-                    // Copy cell styles
-                    for (int col = 1; col <= 8; col++)
+                    foreach (var cell in worksheet.Row(startRow).Cells())
                     {
-                        worksheet.Cell(targetRow, col).Style = worksheet.Cell(sourceRow, col).Style;
+                        if (!cell.IsEmpty() || cell.Style.Fill.BackgroundColor.HasValue)
+                        {
+                            worksheet.Cell(targetRow, cell.Address.ColumnNumber).Style = cell.Style;
+                        }
                     }
                 }
             }
@@ -165,47 +192,82 @@ namespace RFQ_Generator_System.Services
             int currentRow = startRow;
             foreach (var item in items)
             {
-                // Split description by newlines
                 string[] descLines = (item.ItemDesc ?? "").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                int linesCount = descLines.Length;
 
-                // Item Number - only on first row
-                worksheet.Cell($"{itemNoCol}{currentRow}").Value = item.ItemNo;
-
-                // Description lines - each on separate row
-                for (int i = 0; i < descLines.Length; i++)
+                // Item Number
+                if (itemNoCol != null)
                 {
-                    worksheet.Cell($"{descCol}{currentRow + i}").Value = descLines[i];
-                    worksheet.Cell($"{descCol}{currentRow + i}").Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+                    worksheet.Cell($"{itemNoCol}{currentRow}").Value = item.ItemNo;
                 }
 
-                // Delivery Time (in weeks) - only on first row
-                int weeks = item.DeliveryTime / 7;
-                worksheet.Cell($"{deliveryCol}{currentRow}").Value = weeks + " WEEKS";
+                // Description (multi-line)
+                if (descCol != null)
+                {
+                    for (int i = 0; i < descLines.Length; i++)
+                    {
+                        worksheet.Cell($"{descCol}{currentRow + i}").Value = descLines[i];
+                        worksheet.Cell($"{descCol}{currentRow + i}").Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+                    }
+                }
 
-                // Quantity with Unit - only on first row
-                worksheet.Cell($"{qtyCol}{currentRow}").Value = item.Quantity + " " + item.UnitName;
+                // Delivery Time
+                if (deliveryCol != null)
+                {
+                    int weeks = item.DeliveryTime / 7;
+                    worksheet.Cell($"{deliveryCol}{currentRow}").Value = weeks + " WEEKS";
+                }
 
-                // Unit Price - only on first row
-                worksheet.Cell($"{priceCol}{currentRow}").Value = item.UnitPrice;
-                worksheet.Cell($"{priceCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+                // Quantity
+                if (qtyCol != null)
+                {
+                    worksheet.Cell($"{qtyCol}{currentRow}").Value = item.Quantity + " " + item.UnitName;
+                }
 
-                // Total Price (formula) - only on first row
-                worksheet.Cell($"{totalCol}{currentRow}").FormulaA1 = $"={priceCol}{currentRow}*{item.Quantity}";
-                worksheet.Cell($"{totalCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+                // Unit Price
+                if (priceCol != null)
+                {
+                    worksheet.Cell($"{priceCol}{currentRow}").Value = item.UnitPrice;
+                    worksheet.Cell($"{priceCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+                }
 
-                // Move to next item row (description lines + 1 empty row for spacing)
-                currentRow += linesCount + 1;
+                // Total Price (formula)
+                if (totalCol != null && priceCol != null)
+                {
+                    worksheet.Cell($"{totalCol}{currentRow}").FormulaA1 = $"={priceCol}{currentRow}*{item.Quantity}";
+                    worksheet.Cell($"{totalCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+                }
+
+                currentRow += descLines.Length + 1;
             }
         }
 
-        private void FillSummaryWithPlaceholders(IXLWorksheet worksheet, List<RFQItem> items, decimal discount)
+        /// <summary>
+        /// Find column by searching for placeholder in specific row
+        /// </summary>
+        private string FindColumnByPlaceholder(IXLWorksheet worksheet, int row, string placeholder)
         {
-            // Calculate subtotal (sum of all item totals)
+            if (string.IsNullOrEmpty(placeholder))
+                return null;
+
+            var rowCells = worksheet.Row(row).Cells();
+            foreach (var cell in rowCells)
+            {
+                if (cell.GetString().Equals(placeholder, StringComparison.OrdinalIgnoreCase))
+                {
+                    return cell.Address.ColumnLetter;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Fill summary by finding placeholders and replacing with calculations
+        /// </summary>
+        private void FillSummary(IXLWorksheet worksheet, List<RFQItem> items, decimal discount)
+        {
             decimal subtotal = items.Sum(item => item.UnitPrice * item.Quantity);
             decimal totalPrice = subtotal - discount;
 
-            // Search for placeholder cells and replace them
             var usedCells = worksheet.CellsUsed();
 
             foreach (var cell in usedCells)
@@ -213,34 +275,22 @@ namespace RFQ_Generator_System.Services
                 if (cell.IsEmpty())
                     continue;
 
-                string cellValue = cell.GetString().ToLower();
+                string cellValue = cell.GetString();
 
-                // Check for subtotal placeholder
-                if (cellValue.Contains("sub_total") || cellValue.Contains("subtotal"))
+                if (cellValue.Equals(Placeholders.Subtotal, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (cell.Address.ColumnLetter == "H")
-                    {
-                        cell.Value = subtotal;
-                        cell.Style.NumberFormat.Format = "#,##0.00";
-                    }
+                    cell.Value = subtotal;
+                    cell.Style.NumberFormat.Format = "#,##0.00";
                 }
-                // Check for discount placeholder
-                else if (cellValue.Contains("discount") && cellValue.Contains("_"))
+                else if (cellValue.Equals(Placeholders.Discount, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (cell.Address.ColumnLetter == "H")
-                    {
-                        cell.Value = discount;
-                        cell.Style.NumberFormat.Format = "#,##0.00";
-                    }
+                    cell.Value = discount;
+                    cell.Style.NumberFormat.Format = "#,##0.00";
                 }
-                // Check for total price placeholder
-                else if (cellValue.Contains("total_price") || (cellValue.Contains("total") && cellValue.Contains("price") && cellValue.Contains("_")))
+                else if (cellValue.Equals(Placeholders.SummaryTotal, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (cell.Address.ColumnLetter == "H")
-                    {
-                        cell.Value = totalPrice;
-                        cell.Style.NumberFormat.Format = "#,##0.00";
-                    }
+                    cell.Value = totalPrice;
+                    cell.Style.NumberFormat.Format = "#,##0.00";
                 }
             }
         }

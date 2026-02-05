@@ -16,7 +16,7 @@ namespace RFQ_Generator_System.Services
         private readonly FieldMappingRepo fieldMappingRepo;
         private readonly CompanyRepo companyRepo;
         private readonly ClientRepo clientRepo;
-        
+
         public RFQService()
         {
             rfqRepo = new RFQRepo();
