@@ -127,7 +127,7 @@
             this.lblDiscount.Name = "lblDiscount";
             this.lblDiscount.Size = new System.Drawing.Size(57, 15);
             this.lblDiscount.TabIndex = 16;
-            this.lblDiscount.Text = "Discount:";
+            this.lblDiscount.Text = "Discount (%):";
             // 
             // txtValidity
             // 

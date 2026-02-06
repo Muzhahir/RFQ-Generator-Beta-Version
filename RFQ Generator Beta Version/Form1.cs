@@ -263,7 +263,7 @@ namespace RFQ_Generator_System
                     shortDesc = shortDesc.Substring(0, 40) + "...";
 
                 string itemText = $"{item.ItemNo}. {shortDesc} | Qty: {item.Quantity} {item.UnitName} | " +
-                                  $"Price: {item.UnitPrice:N2} | Del: {item.DeliveryTime} days";
+                                  $"Price: {item.UnitPrice:N2} | Del: {item.DeliveryTime} Weeks";
                 lstItems.Items.Add(itemText);
             }
 
@@ -278,7 +278,7 @@ namespace RFQ_Generator_System
             numItemQuantity.Value = 1;
             txtItemUnit.Text = "PCS";
             numItemUnitPrice.Value = 0;
-            numItemDeliveryTime.Value = 30;
+            numItemDeliveryTime.Value = 0;
             // REMOVED: txtItemDeliveryTerm.Clear();
         }
 

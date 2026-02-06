@@ -31,6 +31,7 @@ namespace RFQ_Generator_System.Services
             public const string Subtotal = "sub_total";
             public const string Discount = "_discount";
             public const string SummaryTotal = "summary_total_price";
+            public const string HeaderDeliveryTime = "header_delivery_time";
         }
 
         public ExcelGenerationService()
@@ -53,7 +54,8 @@ namespace RFQ_Generator_System.Services
 
                 var itemStartCell = FindPlaceholderCell(worksheet, Placeholders.ItemNo);
 
-                FillHeaderFields(worksheet, rfq, clientName);
+                // Fill header fields including header_delivery_time placeholder
+                FillHeaderFields(worksheet, rfq, clientName, items);
 
                 if (itemStartCell != null)
                 {
@@ -182,9 +184,28 @@ namespace RFQ_Generator_System.Services
             return null;
         }
 
-        private void FillHeaderFields(IXLWorksheet worksheet, RFQ rfq, string clientName)
+        private void FillHeaderFields(IXLWorksheet worksheet, RFQ rfq, string clientName, List<RFQItem> items)
         {
             var usedCells = worksheet.CellsUsed();
+
+            // Collect all unique delivery times from items (already in weeks)
+            var deliveryWeeks = items
+                .Select(item => item.DeliveryTime)
+                .Distinct()
+                .OrderBy(w => w)
+                .ToList();
+
+            // Format: "2, 3 WEEKS" or "1 WEEK" (not "2 WEEKS, 3 WEEKS")
+            string headerDeliveryTimeText = "";
+            if (deliveryWeeks.Count > 0)
+            {
+                // Determine if we need singular or plural based on the maximum value
+                int maxWeeks = deliveryWeeks.Max();
+                string weekText = maxWeeks < 2 ? "WEEK" : "WEEKS";
+
+                // Join numbers with comma, then add WEEK/WEEKS at the end
+                headerDeliveryTimeText = string.Join(", ", deliveryWeeks) + " " + weekText;
+            }
 
             foreach (var cell in usedCells)
             {
@@ -221,6 +242,10 @@ namespace RFQ_Generator_System.Services
                 {
                     cell.Value = (rfq.Validity ?? "");
                 }
+                else if (cellValue.Equals(Placeholders.HeaderDeliveryTime, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value = headerDeliveryTimeText;
+                }
             }
         }
 
@@ -235,6 +260,9 @@ namespace RFQ_Generator_System.Services
             string priceCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.UnitPrice);
             string totalCol = FindColumnByPlaceholder(worksheet, headerRow, Placeholders.TotalPrice);
 
+            // Check if template has delivery_time column
+            bool hasDeliveryColumn = deliveryCol != null;
+
             int startRow = headerRow;
 
             // Calculate total rows needed
@@ -242,7 +270,17 @@ namespace RFQ_Generator_System.Services
             foreach (var item in items)
             {
                 string[] descLines = (item.ItemDesc ?? "").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                totalRowsNeeded += descLines.Length + 1;
+
+                if (hasDeliveryColumn)
+                {
+                    // Template has delivery column, no extra row needed under description
+                    totalRowsNeeded += descLines.Length + 1; // +1 for spacing between items
+                }
+                else
+                {
+                    // No delivery column, add extra row for delivery time under description
+                    totalRowsNeeded += descLines.Length + 1 + 1; // +1 for delivery time row, +1 for spacing
+                }
             }
 
             int templateRows = 1;
@@ -287,12 +325,15 @@ namespace RFQ_Generator_System.Services
             foreach (var item in items)
             {
                 string[] descLines = (item.ItemDesc ?? "").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                int weeks = item.DeliveryTime; // Already in weeks
+                string weekText = weeks < 2 ? "WEEK" : "WEEKS";
 
                 if (itemNoCol != null)
                 {
                     worksheet.Cell($"{itemNoCol}{currentRow}").Value = item.ItemNo;
                 }
 
+                // Fill description lines
                 if (descCol != null)
                 {
                     for (int i = 0; i < descLines.Length; i++)
@@ -300,12 +341,21 @@ namespace RFQ_Generator_System.Services
                         worksheet.Cell($"{descCol}{currentRow + i}").Value = descLines[i];
                         worksheet.Cell($"{descCol}{currentRow + i}").Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
                     }
+
+                    // Only add delivery time under description if template has NO delivery_time column
+                    if (!hasDeliveryColumn)
+                    {
+                        int deliveryTextRow = currentRow + descLines.Length;
+                        worksheet.Cell($"{descCol}{deliveryTextRow}").Value = $"(Delivery: {weeks} {weekText})";
+                        worksheet.Cell($"{descCol}{deliveryTextRow}").Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+                        worksheet.Cell($"{descCol}{deliveryTextRow}").Style.Font.Italic = true;
+                    }
                 }
 
-                if (deliveryCol != null)
+                // If template has delivery_time column, fill it
+                if (hasDeliveryColumn)
                 {
-                    int weeks = item.DeliveryTime / 7;
-                    worksheet.Cell($"{deliveryCol}{currentRow}").Value = weeks + " WEEKS";
+                    worksheet.Cell($"{deliveryCol}{currentRow}").Value = weeks + " " + weekText;
                 }
 
                 if (qtyCol != null)
@@ -325,7 +375,17 @@ namespace RFQ_Generator_System.Services
                     worksheet.Cell($"{totalCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
                 }
 
-                currentRow += descLines.Length + 1;
+                // Move to next item
+                if (hasDeliveryColumn)
+                {
+                    // Template has delivery column: description lines + spacing
+                    currentRow += descLines.Length + 1;
+                }
+                else
+                {
+                    // No delivery column: description lines + delivery line + spacing
+                    currentRow += descLines.Length + 1 + 1;
+                }
             }
         }
 
@@ -374,7 +434,7 @@ namespace RFQ_Generator_System.Services
         private void FillSummary(IXLWorksheet worksheet, List<RFQItem> items, decimal discount)
         {
             decimal subtotal = items.Sum(item => item.UnitPrice * item.Quantity);
-            decimal totalPrice = subtotal - discount;
+            decimal totalPrice = subtotal - (subtotal/discount);
 
             var usedCells = worksheet.CellsUsed();
 
@@ -392,8 +452,8 @@ namespace RFQ_Generator_System.Services
                 }
                 else if (cellValue.Equals(Placeholders.Discount, StringComparison.OrdinalIgnoreCase))
                 {
-                    cell.Value = discount;
-                    cell.Style.NumberFormat.Format = "#,##0.00";
+                    cell.Value = discount/100;
+                    cell.Style.NumberFormat.Format = "#,##0.00 %";
                 }
                 else if (cellValue.Equals(Placeholders.SummaryTotal, StringComparison.OrdinalIgnoreCase))
                 {
