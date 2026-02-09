@@ -20,7 +20,9 @@ namespace RFQ_Generator_System
         private Template currentTemplate;
         private int currentRFQId = 0;
         private List<RFQItem> rfqItems;
-        private int editingItemIndex = -1; // Track which item is being edited
+        private int editingItemIndex = -1;
+        private List<Company> allCompanies;
+        private List<Client> allClients;
 
         public Form1()
         {
@@ -34,6 +36,10 @@ namespace RFQ_Generator_System
         {
             try
             {
+                // CRITICAL: Change DropDownStyle to DropDown for searchable capability
+                cmbCompany.DropDownStyle = ComboBoxStyle.DropDown;
+                cmbClient.DropDownStyle = ComboBoxStyle.DropDown;
+
                 // Load companies and clients into dropdowns
                 LoadCompanies();
                 LoadClients();
@@ -44,6 +50,15 @@ namespace RFQ_Generator_System
                 // Initialize item form
                 ClearItemForm();
                 UpdateItemsList();
+
+                // Make quote code textbox read-only since it's auto-generated
+                txtQuoteCode.ReadOnly = true;
+                txtQuoteCode.BackColor = Color.LightYellow;
+
+                // CRITICAL: Manually attach event handlers AFTER loading data
+                // This ensures they fire when user makes changes
+                cmbCompany.SelectedIndexChanged += HandleCompanyOrClientChange;
+                cmbClient.SelectedIndexChanged += HandleCompanyOrClientChange;
             }
             catch (Exception ex)
             {
@@ -58,16 +73,21 @@ namespace RFQ_Generator_System
         {
             try
             {
-                var companies = rfqService.GetAllCompanies();
+                allCompanies = rfqService.GetAllCompanies();
 
-                cmbCompany.DataSource = companies;
+                // Create a list with a placeholder item
+                var companiesWithPlaceholder = new List<Company>();
+                companiesWithPlaceholder.Add(new Company { Id = 0, CompanyName = "-- Select Company --", CompanyCode = "" });
+                companiesWithPlaceholder.AddRange(allCompanies);
+
+                cmbCompany.DataSource = companiesWithPlaceholder;
                 cmbCompany.DisplayMember = "CompanyName";
                 cmbCompany.ValueMember = "Id";
+                cmbCompany.SelectedIndex = 0;
 
-                if (companies.Count > 0)
-                {
-                    cmbCompany.SelectedIndex = 0;
-                }
+                // Enable autocomplete
+                cmbCompany.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                cmbCompany.AutoCompleteSource = AutoCompleteSource.ListItems;
             }
             catch (Exception ex)
             {
@@ -80,16 +100,21 @@ namespace RFQ_Generator_System
         {
             try
             {
-                var clients = rfqService.GetAllClients();
+                allClients = rfqService.GetAllClients();
 
-                cmbClient.DataSource = clients;
+                // Create a list with a placeholder item
+                var clientsWithPlaceholder = new List<Client>();
+                clientsWithPlaceholder.Add(new Client { Id = 0, ClientName = "-- Select Client --", ClientCode = "" });
+                clientsWithPlaceholder.AddRange(allClients);
+
+                cmbClient.DataSource = clientsWithPlaceholder;
                 cmbClient.DisplayMember = "ClientName";
                 cmbClient.ValueMember = "Id";
+                cmbClient.SelectedIndex = 0;
 
-                if (clients.Count > 0)
-                {
-                    cmbClient.SelectedIndex = 0;
-                }
+                // Enable autocomplete
+                cmbClient.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                cmbClient.AutoCompleteSource = AutoCompleteSource.ListItems;
             }
             catch (Exception ex)
             {
@@ -100,18 +125,40 @@ namespace RFQ_Generator_System
 
         #endregion
 
-        #region Company Selection & Template Loading
+        #region Quote Code Generation
 
-        private void cmbCompany_SelectedIndexChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Single handler for both company and client changes
+        /// This ensures quote code updates whenever either dropdown changes
+        /// </summary>
+        private void HandleCompanyOrClientChange(object sender, EventArgs e)
         {
-            if (cmbCompany.SelectedValue == null || !(cmbCompany.SelectedValue is int))
+            // Update template if company changed
+            if (sender == cmbCompany)
+            {
+                UpdateTemplateDisplay();
+            }
+
+            // Always update quote code when either changes
+            GenerateAndDisplayQuoteCode();
+        }
+
+        /// <summary>
+        /// Update template display based on selected company
+        /// </summary>
+        private void UpdateTemplateDisplay()
+        {
+            if (cmbCompany.SelectedValue == null || !(cmbCompany.SelectedValue is int) || (int)cmbCompany.SelectedValue == 0)
+            {
+                lblTemplatePath.Text = "No template selected";
+                lblTemplatePath.ForeColor = Color.Gray;
+                currentTemplate = null;
                 return;
+            }
 
             try
             {
                 int companyId = (int)cmbCompany.SelectedValue;
-
-                // Load template for selected company
                 currentTemplate = rfqService.GetTemplateByCompanyId(companyId);
 
                 if (currentTemplate != null)
@@ -133,6 +180,86 @@ namespace RFQ_Generator_System
             }
         }
 
+        /// <summary>
+        /// Generate and display quote code
+        /// </summary>
+        private void GenerateAndDisplayQuoteCode()
+        {
+            try
+            {
+                // Clear if either selection is invalid
+                if (cmbCompany.SelectedValue == null || !(cmbCompany.SelectedValue is int) || (int)cmbCompany.SelectedValue == 0)
+                {
+                    txtQuoteCode.Text = "";
+                    txtQuoteCode.BackColor = Color.LightYellow;
+                    return;
+                }
+
+                if (cmbClient.SelectedValue == null || !(cmbClient.SelectedValue is int) || (int)cmbClient.SelectedValue == 0)
+                {
+                    txtQuoteCode.Text = "";
+                    txtQuoteCode.BackColor = Color.LightYellow;
+                    return;
+                }
+
+                // Get selected company and client
+                int companyId = (int)cmbCompany.SelectedValue;
+                int clientId = (int)cmbClient.SelectedValue;
+
+                var selectedCompany = allCompanies.FirstOrDefault(c => c.Id == companyId);
+                var selectedClient = allClients.FirstOrDefault(c => c.Id == clientId);
+
+                if (selectedCompany != null && selectedClient != null)
+                {
+                    string companyCode = selectedCompany.CompanyCode;
+                    string clientCode = selectedClient.ClientCode ?? "";
+
+                    if (string.IsNullOrEmpty(companyCode))
+                    {
+                        txtQuoteCode.Text = "[Company code not set in database]";
+                        txtQuoteCode.BackColor = Color.LightCoral;
+                        MessageBox.Show($"Company '{selectedCompany.CompanyName}' does not have a CompanyCode set in the database.\n\nPlease run the UpdateCompanyClientCodes.sql script.",
+                            "Missing Company Code", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Generate quote code
+                    string quoteCode = rfqService.GenerateQuoteCode(companyCode, clientCode);
+
+                    if (string.IsNullOrEmpty(quoteCode))
+                    {
+                        txtQuoteCode.Text = "[Error generating code]";
+                        txtQuoteCode.BackColor = Color.LightCoral;
+                    }
+                    else
+                    {
+                        txtQuoteCode.Text = quoteCode;
+                        txtQuoteCode.BackColor = Color.LightGreen;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                txtQuoteCode.Text = "[Error]";
+                txtQuoteCode.BackColor = Color.LightCoral;
+                MessageBox.Show($"Error generating quote code:\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        #endregion
+
+        #region Company Selection & Template Loading (FROM DESIGNER)
+
+        /// <summary>
+        /// This is called from the designer - we'll keep it but it now just calls our unified handler
+        /// </summary>
+        private void cmbCompany_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Designer event - redirect to our unified handler
+            HandleCompanyOrClientChange(sender, e);
+        }
+
         #endregion
 
         #region Item Management
@@ -141,7 +268,6 @@ namespace RFQ_Generator_System
         {
             try
             {
-                // Validate item fields
                 if (!ValidateItemForm())
                     return;
 
@@ -152,23 +278,19 @@ namespace RFQ_Generator_System
                     UnitName = txtItemUnit.Text.Trim(),
                     UnitPrice = numItemUnitPrice.Value,
                     DeliveryTime = (int)numItemDeliveryTime.Value
-                    // REMOVED: DeliveryTerm - it's only in the header
                 };
 
                 if (editingItemIndex >= 0)
                 {
-                    // Update existing item
                     rfqItems[editingItemIndex] = item;
                     editingItemIndex = -1;
                     btnAddItem.Text = "Add Item";
                 }
                 else
                 {
-                    // Add new item
                     rfqItems.Add(item);
                 }
 
-                // Renumber items
                 for (int i = 0; i < rfqItems.Count; i++)
                 {
                     rfqItems[i].ItemNo = i + 1;
@@ -204,13 +326,11 @@ namespace RFQ_Generator_System
             editingItemIndex = lstItems.SelectedIndex;
             var item = rfqItems[editingItemIndex];
 
-            // Load item data into form
             txtItemDescription.Text = item.ItemDesc;
             numItemQuantity.Value = item.Quantity;
             txtItemUnit.Text = item.UnitName;
             numItemUnitPrice.Value = item.UnitPrice;
             numItemDeliveryTime.Value = item.DeliveryTime;
-            // REMOVED: txtItemDeliveryTerm.Text = item.DeliveryTerm;
 
             btnAddItem.Text = "Update Item";
             txtItemDescription.Focus();
@@ -232,7 +352,6 @@ namespace RFQ_Generator_System
             {
                 rfqItems.RemoveAt(lstItems.SelectedIndex);
 
-                // Renumber items
                 for (int i = 0; i < rfqItems.Count; i++)
                 {
                     rfqItems[i].ItemNo = i + 1;
@@ -245,7 +364,6 @@ namespace RFQ_Generator_System
 
         private void lstItems_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Enable/disable edit and remove buttons based on selection
             bool hasSelection = lstItems.SelectedIndex >= 0;
             btnEditItem.Enabled = hasSelection;
             btnRemoveItem.Enabled = hasSelection;
@@ -257,7 +375,6 @@ namespace RFQ_Generator_System
 
             foreach (var item in rfqItems)
             {
-                // Replace line breaks with space for display and truncate if too long
                 string shortDesc = item.ItemDesc.Replace("\r\n", " ").Replace("\n", " ");
                 if (shortDesc.Length > 40)
                     shortDesc = shortDesc.Substring(0, 40) + "...";
@@ -279,7 +396,6 @@ namespace RFQ_Generator_System
             txtItemUnit.Text = "PCS";
             numItemUnitPrice.Value = 0;
             numItemDeliveryTime.Value = 0;
-            // REMOVED: txtItemDeliveryTerm.Clear();
         }
 
         private bool ValidateItemForm()
@@ -317,7 +433,7 @@ namespace RFQ_Generator_System
 
         private bool ValidateRFQHeader()
         {
-            if (cmbCompany.SelectedValue == null)
+            if (cmbCompany.SelectedValue == null || (int)cmbCompany.SelectedValue == 0)
             {
                 MessageBox.Show("Please select a company.", "Validation Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -325,7 +441,7 @@ namespace RFQ_Generator_System
                 return false;
             }
 
-            if (cmbClient.SelectedValue == null)
+            if (cmbClient.SelectedValue == null || (int)cmbClient.SelectedValue == 0)
             {
                 MessageBox.Show("Please select a client.", "Validation Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -341,11 +457,11 @@ namespace RFQ_Generator_System
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtQuoteCode.Text))
+            if (string.IsNullOrWhiteSpace(txtQuoteCode.Text) || txtQuoteCode.Text.Contains("[Error"))
             {
-                MessageBox.Show("Please enter Quote Code.", "Validation Error",
+                MessageBox.Show("Quote Code was not generated. Please reselect company and client.", "Validation Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtQuoteCode.Focus();
+                cmbCompany.Focus();
                 return false;
             }
 
@@ -372,11 +488,9 @@ namespace RFQ_Generator_System
         {
             try
             {
-                // Validate input
                 if (!ValidateRFQHeader() || !ValidateRFQItems())
                     return;
 
-                // Create RFQ header
                 var rfq = new RFQ
                 {
                     CompanyId = (int)cmbCompany.SelectedValue,
@@ -390,13 +504,11 @@ namespace RFQ_Generator_System
                     Discount = numDiscount.Value
                 };
 
-                // Save using service (transaction)
                 currentRFQId = rfqService.SaveRFQ(rfq, rfqItems);
 
-                MessageBox.Show($"RFQ saved successfully!\nRFQ ID: {currentRFQId}", "Success",
+                MessageBox.Show($"RFQ saved successfully!\nRFQ ID: {currentRFQId}\nQuote Code: {rfq.QuoteCode}", "Success",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Enable Generate PDF button
                 btnGeneratePDF.Enabled = true;
             }
             catch (Exception ex)
@@ -428,26 +540,18 @@ namespace RFQ_Generator_System
                     return;
                 }
 
-                // REMOVED: File.Exists check - let ExcelGenerationService handle it
-
-                // Get RFQ data
                 var (rfq, items) = rfqService.GetRFQWithItems(currentRFQId);
-
-                // Create default filename
                 string defaultFileName = $"RFQ_{rfq.RFQCode}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
 
-                // Show SaveFileDialog
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
                     sfd.Filter = "Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*";
                     sfd.FileName = defaultFileName;
                     sfd.Title = "Save RFQ Excel File";
 
-                    // Set initial directory to user's Documents folder
                     string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     string rfqFolder = Path.Combine(documentsPath, "RFQ Generator");
 
-                    // Create folder if it doesn't exist
                     if (!Directory.Exists(rfqFolder))
                         Directory.CreateDirectory(rfqFolder);
 
@@ -455,9 +559,8 @@ namespace RFQ_Generator_System
 
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {
-                        // Generate Excel file - pass just the filename from database
                         excelService.GenerateRFQExcel(
-                            currentTemplate.TemplatePath,  // This should be just "CG TEMPLATE.xlsx"
+                            currentTemplate.TemplatePath,
                             sfd.FileName,
                             rfq,
                             items,
@@ -467,7 +570,6 @@ namespace RFQ_Generator_System
                         MessageBox.Show($"RFQ Excel file generated successfully!\n\nSaved to:\n{sfd.FileName}",
                             "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                        // Ask if user wants to open the file
                         var result = MessageBox.Show("Do you want to open the generated file?",
                             "Open File", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
@@ -504,33 +606,28 @@ namespace RFQ_Generator_System
 
         private void ClearForm()
         {
-            // Reset header fields
-            if (cmbCompany.Items.Count > 0)
-                cmbCompany.SelectedIndex = 0;
-            if (cmbClient.Items.Count > 0)
-                cmbClient.SelectedIndex = 0;
+            cmbCompany.SelectedIndex = 0;
+            cmbClient.SelectedIndex = 0;
 
             txtRFQCode.Clear();
             txtQuoteCode.Clear();
+            txtQuoteCode.BackColor = Color.LightYellow;
             txtDeliveryPoint.Clear();
             txtDeliveryTerm.Clear();
             txtValidity.Clear();
             numDiscount.Value = 0;
             dtpCreatedAt.Value = DateTime.Now;
 
-            // Clear items
             rfqItems.Clear();
             UpdateItemsList();
             ClearItemForm();
 
-            // Reset state
             currentRFQId = 0;
             editingItemIndex = -1;
             btnGeneratePDF.Enabled = false;
             btnAddItem.Text = "Add Item";
 
-            // Focus on first input
-            txtRFQCode.Focus();
+            cmbCompany.Focus();
         }
 
         #endregion

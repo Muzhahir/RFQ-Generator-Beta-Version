@@ -434,7 +434,11 @@ namespace RFQ_Generator_System.Services
         private void FillSummary(IXLWorksheet worksheet, List<RFQItem> items, decimal discount)
         {
             decimal subtotal = items.Sum(item => item.UnitPrice * item.Quantity);
-            decimal totalPrice = subtotal - (subtotal/discount);
+
+            // Calculate discount amount and total price
+            // If discount is 0, no discount is applied
+            decimal discountAmount = (discount > 0) ? (subtotal * discount / 100) : 0;
+            decimal totalPrice = subtotal - discountAmount;
 
             var usedCells = worksheet.CellsUsed();
 
@@ -452,7 +456,7 @@ namespace RFQ_Generator_System.Services
                 }
                 else if (cellValue.Equals(Placeholders.Discount, StringComparison.OrdinalIgnoreCase))
                 {
-                    cell.Value = discount/100;
+                    cell.Value = discount / 100;
                     cell.Style.NumberFormat.Format = "#,##0.00 %";
                 }
                 else if (cellValue.Equals(Placeholders.SummaryTotal, StringComparison.OrdinalIgnoreCase))

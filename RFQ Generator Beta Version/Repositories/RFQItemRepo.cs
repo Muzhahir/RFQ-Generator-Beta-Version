@@ -150,5 +150,10 @@ namespace RFQ_Generator_System.Repositories
                 }
             }
         }
+
+        internal List<RFQItem> GetItemsByRFQId(int rfqId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -240,13 +240,14 @@
             // 
             // cmbClient
             // 
-            this.cmbClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
             this.cmbClient.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.cmbClient.FormattingEnabled = true;
             this.cmbClient.Location = new System.Drawing.Point(340, 40);
             this.cmbClient.Name = "cmbClient";
             this.cmbClient.Size = new System.Drawing.Size(280, 23);
             this.cmbClient.TabIndex = 3;
+            // NOTE: Event handler will be attached programmatically in Form1_Load
             // 
             // lblClient
             // 
@@ -260,7 +261,7 @@
             // 
             // cmbCompany
             // 
-            this.cmbCompany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCompany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
             this.cmbCompany.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.cmbCompany.FormattingEnabled = true;
             this.cmbCompany.Location = new System.Drawing.Point(30, 40);

@@ -16,6 +16,7 @@ namespace RFQ_Generator_System.Services
         private readonly FieldMappingRepo fieldMappingRepo;
         private readonly CompanyRepo companyRepo;
         private readonly ClientRepo clientRepo;
+        private readonly QuoteCodeSequenceRepo quoteCodeSequenceRepo;
 
         public RFQService()
         {
@@ -25,6 +26,68 @@ namespace RFQ_Generator_System.Services
             fieldMappingRepo = new FieldMappingRepo();
             companyRepo = new CompanyRepo();
             clientRepo = new ClientRepo();
+            quoteCodeSequenceRepo = new QuoteCodeSequenceRepo();
+        }
+
+
+
+        /// <summary>
+        /// Generate quote code based on company code and client code
+        /// </summary>
+        public string GenerateQuoteCode(string companyCode, string clientCode)
+        {
+            if (string.IsNullOrEmpty(companyCode))
+                return "";
+
+            // Get company to retrieve its ID for sequence
+            var companies = companyRepo.GetAllCompanies();
+            var company = companies.FirstOrDefault(c => c.CompanyCode == companyCode);
+
+            if (company == null)
+                return "";
+
+            int sequence = quoteCodeSequenceRepo.GetNextSequence(company.Id);
+            int currentYear = DateTime.Now.Year;
+            string yearShort = currentYear.ToString().Substring(2, 2); // Get last 2 digits of year
+            string monthDay = DateTime.Now.ToString("MMdd");
+
+            switch (companyCode)
+            {
+                case "CG":
+                    // Format: CG-MMYY-NNNNNN
+                    return $"CG-{DateTime.Now:MMyy}-{sequence:D6}";
+
+                case "DE":
+                    // Format: RFP-NNNNNNNNNNNN
+                    return $"RFP-{sequence:D12}";
+
+                case "GA":
+                    // Format: GASB/NNNN/DDMMYY
+                    return $"GASB/{sequence:D4}/{DateTime.Now:ddMMyy}";
+
+                case "MA":
+                    // Format: QUO-ML-NNNN
+                    return $"QUO-ML-{sequence:D4}";
+
+                case "OGIT":
+                    // Format: OGITMMDD-YY-NNN (has year)
+                    return $"OGIT{monthDay}-{yearShort}-{sequence:D3}";
+
+                case "OP":
+                    // Format: Q-NNNNNN-CLIENTCODE (has client name)
+                    return $"Q-{sequence:D6}-{clientCode}";
+
+                case "PO":
+                    // Format: CLIENTCODE/NNNNNNN/EPOMS (has client name)
+                    return $"{clientCode}/{sequence:D7}/EPOMS";
+
+                case "SC":
+                    // Format: CLIENTCODE/QUO/SC/NNNNNN (has client name)
+                    return $"{clientCode}/QUO/SC/{sequence:D6}";
+
+                default:
+                    return $"{companyCode}-{sequence:D6}";
+            }
         }
 
         /// <summary>
@@ -64,7 +127,7 @@ namespace RFQ_Generator_System.Services
 
                         int newRFQId = Convert.ToInt32(cmdRFQ.ExecuteScalar());
 
-                        // 2. Save all RFQ items with the new RFQId (REMOVED DeliveryTerm from items)
+                        // 2. Save all RFQ items with the new RFQId
                         foreach (var item in items)
                         {
                             item.RFQId = newRFQId; // Set the foreign key
@@ -147,6 +210,14 @@ namespace RFQ_Generator_System.Services
         public List<RFQ> GetAllRFQs()
         {
             return rfqRepo.GetAllRFQs();
+        }
+
+        /// <summary>
+        /// Reset all quote code sequences
+        /// </summary>
+        public void ResetAllQuoteCodeSequences()
+        {
+            quoteCodeSequenceRepo.ResetAllSequences();
         }
     }
 }

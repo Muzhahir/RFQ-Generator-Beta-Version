@@ -10,5 +10,6 @@ namespace RFQ_Generator_System
     {
         public int Id { get; set; }
         public string ClientName { get; set; }
+        public string ClientCode { get; internal set; }
     }
 }

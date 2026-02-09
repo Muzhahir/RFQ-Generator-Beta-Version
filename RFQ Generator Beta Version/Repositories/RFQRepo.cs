@@ -89,8 +89,8 @@ namespace RFQ_Generator_System.Repositories
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand(
-                    "INSERT INTO RFQ (CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, DeliveryTerm, Validity, Discount) " +
-                    "VALUES (@CompanyId, @ClientId, @CreatedAt, @RFQCode, @QuoteCode, @DeliveryPoint, @DeliveryTerm, @Validity, @Discount); " +
+                    "INSERT INTO RFQ (CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, DeliveryTerm, Validity, Discount, QuoteCodeCounter) " +
+                    "VALUES (@CompanyId, @ClientId, @CreatedAt, @RFQCode, @QuoteCode, @DeliveryPoint, @DeliveryTerm, @Validity, @Discount, @QuoteCodeCounter); " +
                     "SELECT SCOPE_IDENTITY();",  // Returns the new Id
                     conn
                 );
@@ -103,9 +103,33 @@ namespace RFQ_Generator_System.Repositories
                 cmd.Parameters.AddWithValue("@DeliveryTerm", string.IsNullOrEmpty(rfq.DeliveryTerm) ? (object)DBNull.Value : rfq.DeliveryTerm);
                 cmd.Parameters.AddWithValue("@Validity", string.IsNullOrEmpty(rfq.Validity) ? (object)DBNull.Value : rfq.Validity);
                 cmd.Parameters.AddWithValue("@Discount", rfq.Discount);
+                cmd.Parameters.AddWithValue("@QuoteCodeCounter", rfq.QuoteCodeCounter);
 
                 // ExecuteScalar returns the new Id
                 return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        /// <summary>
+        /// Get the last quote code number for a specific company
+        /// This tracks the sequential number for each company
+        /// </summary>
+        public int GetLastQuoteCodeNumber(int companyId)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = @"
+                    SELECT ISNULL(MAX(QuoteCodeCounter), 0) 
+                    FROM RFQ 
+                    WHERE CompanyId = @CompanyId";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@CompanyId", companyId);
+                    object result = cmd.ExecuteScalar();
+                    return result != DBNull.Value ? Convert.ToInt32(result) : 0;
+                }
             }
         }
     }

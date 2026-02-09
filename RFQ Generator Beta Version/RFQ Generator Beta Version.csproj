@@ -101,15 +101,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="View\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="View\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\FieldMapping.cs" />
+    <Compile Include="Models\QuoteCodeSequence.cs" />
     <Compile Include="Models\RFQ.cs" />
     <Compile Include="Models\RFQItem.cs" />
     <Compile Include="Models\Template.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Repositories\ClientRepo.cs" />
     <Compile Include="Repositories\CompanyRepo.cs" />
     <Compile Include="Repositories\FieldMappingRepo.cs" />
+    <Compile Include="Repositories\QuoteCodeSequenceRepo.cs" />
     <Compile Include="Repositories\RFQItemRepo.cs" />
     <Compile Include="Repositories\RFQRepo.cs" />
     <Compile Include="Repositories\TemplateRepo.cs" />
@@ -129,7 +131,7 @@
     </Compile>
     <Compile Include="Services\ExcelGenerationService.cs" />
     <Compile Include="Services\RFQService.cs" />
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="View\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

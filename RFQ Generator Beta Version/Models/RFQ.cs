@@ -18,7 +18,6 @@ namespace RFQ_Generator_System
         public decimal Discount { get; set; }
         public string DeliveryTerm { get; set; }
         public string Validity { get; set; }
-
-  
+        public object QuoteCodeCounter { get; internal set; }
     }
 }
