@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.grpHeader = new System.Windows.Forms.GroupBox();
+            this.cmbDeliveryTerm = new System.Windows.Forms.ComboBox();
+            this.lblDeliveryTerm = new System.Windows.Forms.Label();
             this.numDiscount = new System.Windows.Forms.NumericUpDown();
             this.lblDiscount = new System.Windows.Forms.Label();
             this.txtValidity = new System.Windows.Forms.TextBox();
             this.lblValidity = new System.Windows.Forms.Label();
-            this.txtDeliveryTerm = new System.Windows.Forms.TextBox();
-            this.lblDeliveryTerm = new System.Windows.Forms.Label();
             this.dtpCreatedAt = new System.Windows.Forms.DateTimePicker();
             this.lblCreatedAt = new System.Windows.Forms.Label();
             this.txtDeliveryPoint = new System.Windows.Forms.TextBox();
@@ -66,10 +66,10 @@
             this.btnEditItem = new System.Windows.Forms.Button();
             this.lblItemCount = new System.Windows.Forms.Label();
             this.grpActions = new System.Windows.Forms.GroupBox();
+            this.btnGeneratePDFDirect = new System.Windows.Forms.Button();     // ← NEW PDF button
             this.lblTemplatePath = new System.Windows.Forms.Label();
             this.lblTemplateLabel = new System.Windows.Forms.Label();
-            this.btnGeneratePDF = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.btnGeneratePDF = new System.Windows.Forms.Button();           // (Excel button - renamed for clarity if needed)
             this.btnNew = new System.Windows.Forms.Button();
             this.grpHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDiscount)).BeginInit();
@@ -83,12 +83,12 @@
             // 
             // grpHeader
             // 
+            this.grpHeader.Controls.Add(this.cmbDeliveryTerm);
+            this.grpHeader.Controls.Add(this.lblDeliveryTerm);
             this.grpHeader.Controls.Add(this.numDiscount);
             this.grpHeader.Controls.Add(this.lblDiscount);
             this.grpHeader.Controls.Add(this.txtValidity);
             this.grpHeader.Controls.Add(this.lblValidity);
-            this.grpHeader.Controls.Add(this.txtDeliveryTerm);
-            this.grpHeader.Controls.Add(this.lblDeliveryTerm);
             this.grpHeader.Controls.Add(this.dtpCreatedAt);
             this.grpHeader.Controls.Add(this.lblCreatedAt);
             this.grpHeader.Controls.Add(this.txtDeliveryPoint);
@@ -108,6 +108,29 @@
             this.grpHeader.TabIndex = 0;
             this.grpHeader.TabStop = false;
             this.grpHeader.Text = "RFQ Header Information";
+            // 
+            // cmbDeliveryTerm
+            // 
+            this.cmbDeliveryTerm.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDeliveryTerm.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.cmbDeliveryTerm.FormattingEnabled = true;
+            this.cmbDeliveryTerm.Items.AddRange(new object[] {
+            "DAP",
+            "DDP"});
+            this.cmbDeliveryTerm.Location = new System.Drawing.Point(30, 165);
+            this.cmbDeliveryTerm.Name = "cmbDeliveryTerm";
+            this.cmbDeliveryTerm.Size = new System.Drawing.Size(280, 23);
+            this.cmbDeliveryTerm.TabIndex = 13;
+            // 
+            // lblDeliveryTerm
+            // 
+            this.lblDeliveryTerm.AutoSize = true;
+            this.lblDeliveryTerm.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblDeliveryTerm.Location = new System.Drawing.Point(30, 145);
+            this.lblDeliveryTerm.Name = "lblDeliveryTerm";
+            this.lblDeliveryTerm.Size = new System.Drawing.Size(110, 15);
+            this.lblDeliveryTerm.TabIndex = 12;
+            this.lblDeliveryTerm.Text = "Delivery Term:";
             // 
             // numDiscount
             // 
@@ -146,24 +169,6 @@
             this.lblValidity.Size = new System.Drawing.Size(49, 15);
             this.lblValidity.TabIndex = 14;
             this.lblValidity.Text = "Validity:";
-            // 
-            // txtDeliveryTerm
-            // 
-            this.txtDeliveryTerm.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtDeliveryTerm.Location = new System.Drawing.Point(30, 165);
-            this.txtDeliveryTerm.Name = "txtDeliveryTerm";
-            this.txtDeliveryTerm.Size = new System.Drawing.Size(280, 23);
-            this.txtDeliveryTerm.TabIndex = 13;
-            // 
-            // lblDeliveryTerm
-            // 
-            this.lblDeliveryTerm.AutoSize = true;
-            this.lblDeliveryTerm.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblDeliveryTerm.Location = new System.Drawing.Point(30, 145);
-            this.lblDeliveryTerm.Name = "lblDeliveryTerm";
-            this.lblDeliveryTerm.Size = new System.Drawing.Size(84, 15);
-            this.lblDeliveryTerm.TabIndex = 12;
-            this.lblDeliveryTerm.Text = "Delivery Term:";
             // 
             // dtpCreatedAt
             // 
@@ -247,7 +252,6 @@
             this.cmbClient.Name = "cmbClient";
             this.cmbClient.Size = new System.Drawing.Size(280, 23);
             this.cmbClient.TabIndex = 3;
-            // NOTE: Event handler will be attached programmatically in Form1_Load
             // 
             // lblClient
             // 
@@ -485,10 +489,10 @@
             // 
             // grpActions
             // 
+            this.grpActions.Controls.Add(this.btnGeneratePDFDirect);
             this.grpActions.Controls.Add(this.lblTemplatePath);
             this.grpActions.Controls.Add(this.lblTemplateLabel);
             this.grpActions.Controls.Add(this.btnGeneratePDF);
-            this.grpActions.Controls.Add(this.btnSave);
             this.grpActions.Controls.Add(this.btnNew);
             this.grpActions.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.grpActions.Location = new System.Drawing.Point(12, 484);
@@ -497,6 +501,18 @@
             this.grpActions.TabIndex = 3;
             this.grpActions.TabStop = false;
             this.grpActions.Text = "Actions";
+            // 
+            // btnGeneratePDFDirect     ← NEW BUTTON
+            // 
+            this.btnGeneratePDFDirect.Enabled = false;
+            this.btnGeneratePDFDirect.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnGeneratePDFDirect.Location = new System.Drawing.Point(390, 25);
+            this.btnGeneratePDFDirect.Name = "btnGeneratePDFDirect";
+            this.btnGeneratePDFDirect.Size = new System.Drawing.Size(120, 30);
+            this.btnGeneratePDFDirect.TabIndex = 5;
+            this.btnGeneratePDFDirect.Text = "Generate PDF";
+            this.btnGeneratePDFDirect.UseVisualStyleBackColor = true;
+            this.btnGeneratePDFDirect.Click += new System.EventHandler(this.btnGeneratePDF_Click);
             // 
             // lblTemplatePath
             // 
@@ -519,7 +535,7 @@
             this.lblTemplateLabel.TabIndex = 3;
             this.lblTemplateLabel.Text = "Template:";
             // 
-            // btnGeneratePDF
+            // btnGenerateExcel           ← original Excel button
             // 
             this.btnGeneratePDF.Enabled = false;
             this.btnGeneratePDF.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -529,18 +545,7 @@
             this.btnGeneratePDF.TabIndex = 2;
             this.btnGeneratePDF.Text = "Generate Excel";
             this.btnGeneratePDF.UseVisualStyleBackColor = true;
-            this.btnGeneratePDF.Click += new System.EventHandler(this.btnGeneratePDF_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnSave.Location = new System.Drawing.Point(145, 25);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(100, 30);
-            this.btnSave.TabIndex = 1;
-            this.btnSave.Text = "Save RFQ";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnGeneratePDF.Click += new System.EventHandler(this.btnGenerateExcel_Click);
             // 
             // btnNew
             // 
@@ -581,7 +586,6 @@
             this.grpActions.ResumeLayout(false);
             this.grpActions.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -599,7 +603,7 @@
         private System.Windows.Forms.Label lblDeliveryPoint;
         private System.Windows.Forms.DateTimePicker dtpCreatedAt;
         private System.Windows.Forms.Label lblCreatedAt;
-        private System.Windows.Forms.TextBox txtDeliveryTerm;
+        private System.Windows.Forms.ComboBox cmbDeliveryTerm;
         private System.Windows.Forms.Label lblDeliveryTerm;
         private System.Windows.Forms.TextBox txtValidity;
         private System.Windows.Forms.Label lblValidity;
@@ -624,9 +628,9 @@
         private System.Windows.Forms.Button btnEditItem;
         private System.Windows.Forms.Label lblItemCount;
         private System.Windows.Forms.GroupBox grpActions;
-        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnNew;
-        private System.Windows.Forms.Button btnGeneratePDF;
+        private System.Windows.Forms.Button btnGeneratePDF;           
+        private System.Windows.Forms.Button btnGeneratePDFDirect;    
         private System.Windows.Forms.Label lblTemplatePath;
         private System.Windows.Forms.Label lblTemplateLabel;
     }

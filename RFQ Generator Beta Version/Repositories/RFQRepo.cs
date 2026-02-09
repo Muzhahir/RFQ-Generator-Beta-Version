@@ -132,5 +132,57 @@ namespace RFQ_Generator_System.Repositories
                 }
             }
         }
+        public List<RFQ> GetAllRFQ()
+        {
+            var rfqs = new List<RFQ>();
+            string query = @"
+            SELECT Id, CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, 
+                   DeliveryPoint, DeliveryTerm, Validity, Discount
+            FROM RFQ
+            ORDER BY CreatedAt DESC";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    rfqs.Add(new RFQ
+                    {
+                        Id = (int)reader["Id"],
+                        CompanyId = (int)reader["CompanyId"],
+                        ClientId = (int)reader["ClientId"],
+                        CreatedAt = (DateTime)reader["CreatedAt"],
+                        RFQCode = reader["RFQCode"].ToString(),
+                        QuoteCode = reader["QuoteCode"].ToString(),
+                        DeliveryPoint = reader["DeliveryPoint"] == DBNull.Value ? "" : reader["DeliveryPoint"].ToString(),
+                        DeliveryTerm = reader["DeliveryTerm"] == DBNull.Value ? "" : reader["DeliveryTerm"].ToString(),
+                        Validity = reader["Validity"] == DBNull.Value ? "" : reader["Validity"].ToString(),
+                        Discount = reader["Discount"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["Discount"])
+                    });
+                }
+            }
+
+            return rfqs;
+        }
+
+        /// <summary>
+        /// Get count of items for a specific RFQ
+        /// </summary>
+        public int GetRFQItemCount(int rfqId)
+        {
+            string query = "SELECT COUNT(*) FROM RFQItem WHERE RFQId = @RFQId";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@RFQId", rfqId);
+                conn.Open();
+                return (int)cmd.ExecuteScalar();
+            }
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -29,10 +29,31 @@ namespace RFQ_Generator_System.Services
             quoteCodeSequenceRepo = new QuoteCodeSequenceRepo();
         }
 
+        /// <summary>
+        /// Generate quote code PREVIEW based on company code and client code.
+        /// Shows what the NEXT saved quote code will be (peeks at sequence without incrementing).
+        /// </summary>
+        public string GenerateQuoteCodePreview(string companyCode, string clientCode)
+        {
+            if (string.IsNullOrEmpty(companyCode))
+                return "";
 
+            // Get company to retrieve its ID for sequence
+            var companies = companyRepo.GetAllCompanies();
+            var company = companies.FirstOrDefault(c => c.CompanyCode == companyCode);
+
+            if (company == null)
+                return "";
+
+            // PEEK at next sequence WITHOUT incrementing
+            int sequence = quoteCodeSequenceRepo.PeekNextSequence(company.Id);
+
+            return FormatQuoteCode(companyCode, clientCode, sequence);
+        }
 
         /// <summary>
-        /// Generate quote code based on company code and client code
+        /// Generate quote code based on company code and client code.
+        /// This COMMITS the sequence increment - use ONLY when saving.
         /// </summary>
         public string GenerateQuoteCode(string companyCode, string clientCode)
         {
@@ -46,7 +67,18 @@ namespace RFQ_Generator_System.Services
             if (company == null)
                 return "";
 
+            // GET and INCREMENT sequence
             int sequence = quoteCodeSequenceRepo.GetNextSequence(company.Id);
+
+            return FormatQuoteCode(companyCode, clientCode, sequence);
+        }
+
+        /// <summary>
+        /// Format the quote code based on company-specific rules.
+        /// Extracted to avoid code duplication.
+        /// </summary>
+        private string FormatQuoteCode(string companyCode, string clientCode, int sequence)
+        {
             int currentYear = DateTime.Now.Year;
             string yearShort = currentYear.ToString().Substring(2, 2); // Get last 2 digits of year
             string monthDay = DateTime.Now.ToString("MMdd");
@@ -91,8 +123,10 @@ namespace RFQ_Generator_System.Services
         }
 
         /// <summary>
-        /// Save RFQ header and items in a single transaction
-        /// Returns the new RFQ Id
+        /// Save RFQ header and items in a single transaction.
+        /// If QuoteCode is already set (user manually entered), it will be used.
+        /// Otherwise, generates it automatically with sequence increment.
+        /// Returns the new RFQ Id.
         /// </summary>
         public int SaveRFQ(RFQ rfq, List<RFQItem> items)
         {
@@ -219,5 +253,7 @@ namespace RFQ_Generator_System.Services
         {
             quoteCodeSequenceRepo.ResetAllSequences();
         }
+
+
     }
 }
