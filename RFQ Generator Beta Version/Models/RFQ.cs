@@ -19,5 +19,7 @@ namespace RFQ_Generator_System
         public string DeliveryTerm { get; set; }
         public string Validity { get; set; }
         public object QuoteCodeCounter { get; internal set; }
+
+        public string Currency { get; set; } = "RM";
     }
 }

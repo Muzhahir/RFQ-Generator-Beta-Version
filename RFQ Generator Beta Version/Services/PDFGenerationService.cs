@@ -1,16 +1,12 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office2010.PowerPoint;
-using DocumentFormat.OpenXml.Wordprocessing;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using RFQ_Generator_System.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using Document = iTextSharp.text.Document;
 using Font = iTextSharp.text.Font;
 using PageSize = iTextSharp.text.PageSize;
@@ -22,6 +18,7 @@ namespace RFQ_Generator_System.Services
     {
         /// <summary>
         /// Generate PDF by first creating Excel from template, then converting to PDF
+        /// Uses Excel's built-in Print to PDF functionality for best results
         /// </summary>
         public void GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId)
         {
@@ -34,8 +31,24 @@ namespace RFQ_Generator_System.Services
                 var excelService = new ExcelGenerationService();
                 excelService.GenerateRFQExcel(templatePath, tempExcelPath, rfq, items, templateId);
 
-                // Step 2: Convert Excel to PDF
-                ConvertExcelToPDF(tempExcelPath, outputPdfPath);
+                // Step 2: Convert Excel to PDF - Try multiple methods
+                bool success = false;
+
+                // Method 1: Try using Microsoft.Office.Interop.Excel (best quality, preserves all formatting)
+                try
+                {
+                    success = ConvertExcelToPDFUsingInterop(tempExcelPath, outputPdfPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Interop conversion failed: {ex.Message}");
+                }
+
+                // Method 2: If Interop failed, try using ClosedXML with improved rendering
+                if (!success)
+                {
+                    ConvertExcelToPDFImproved(tempExcelPath, outputPdfPath);
+                }
             }
             finally
             {
@@ -44,6 +57,8 @@ namespace RFQ_Generator_System.Services
                 {
                     try
                     {
+                        // Give some time for Excel to release the file
+                        System.Threading.Thread.Sleep(500);
                         File.Delete(tempExcelPath);
                     }
                     catch
@@ -55,65 +70,301 @@ namespace RFQ_Generator_System.Services
         }
 
         /// <summary>
-        /// Convert Excel workbook to PDF using iTextSharp
+        /// Convert Excel to PDF using Microsoft Office Interop (BEST QUALITY - preserves exact layout)
+        /// Requires Microsoft Excel to be installed on the machine
         /// </summary>
-        private void ConvertExcelToPDF(string excelPath, string pdfPath)
+        private bool ConvertExcelToPDFUsingInterop(string excelPath, string pdfPath)
+        {
+            object excelApp = null;
+            object workbook = null;
+
+            try
+            {
+                // Check if Excel is installed by trying to create the type
+                Type excelType = Type.GetTypeFromProgID("Excel.Application");
+                if (excelType == null)
+                {
+                    return false; // Excel not installed
+                }
+
+                excelApp = Activator.CreateInstance(excelType);
+
+                // Set properties using reflection to avoid dynamic issues
+                excelType.InvokeMember("Visible",
+                    System.Reflection.BindingFlags.SetProperty,
+                    null, excelApp, new object[] { false });
+
+                excelType.InvokeMember("DisplayAlerts",
+                    System.Reflection.BindingFlags.SetProperty,
+                    null, excelApp, new object[] { false });
+
+                // Get Workbooks collection
+                object workbooks = excelType.InvokeMember("Workbooks",
+                    System.Reflection.BindingFlags.GetProperty,
+                    null, excelApp, null);
+
+                // Open workbook
+                workbook = workbooks.GetType().InvokeMember("Open",
+                    System.Reflection.BindingFlags.InvokeMethod,
+                    null, workbooks, new object[] { excelPath });
+
+                // Export as PDF
+                // XlFixedFormatType.xlTypePDF = 0
+                // XlFixedFormatQuality.xlQualityStandard = 0
+                workbook.GetType().InvokeMember("ExportAsFixedFormat",
+                    System.Reflection.BindingFlags.InvokeMethod,
+                    null, workbook, new object[] {
+                        0,      // Type: xlTypePDF
+                        pdfPath, // Filename
+                        0,      // Quality: xlQualityStandard
+                        true,   // IncludeDocProperties
+                        false,  // IgnorePrintAreas
+                        Type.Missing,
+                        Type.Missing,
+                        false,  // OpenAfterPublish
+                        Type.Missing
+                    });
+
+                // Close workbook without saving
+                workbook.GetType().InvokeMember("Close",
+                    System.Reflection.BindingFlags.InvokeMethod,
+                    null, workbook, new object[] { false });
+
+                // Release workbook
+                if (workbook != null)
+                {
+                    System.Runtime.InteropServices.Marshal.FinalReleaseComObject(workbook);
+                    workbook = null;
+                }
+
+                // Release workbooks collection
+                if (workbooks != null)
+                {
+                    System.Runtime.InteropServices.Marshal.FinalReleaseComObject(workbooks);
+                    workbooks = null;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Excel Interop error: {ex.Message}");
+                return false;
+            }
+            finally
+            {
+                // Quit Excel
+                if (excelApp != null)
+                {
+                    try
+                    {
+                        excelApp.GetType().InvokeMember("Quit",
+                            System.Reflection.BindingFlags.InvokeMethod,
+                            null, excelApp, null);
+                    }
+                    catch { }
+
+                    // Release Excel application
+                    System.Runtime.InteropServices.Marshal.FinalReleaseComObject(excelApp);
+                    excelApp = null;
+                }
+
+                // Force garbage collection to clean up COM objects
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
+        }
+
+        /// <summary>
+        /// Improved Excel to PDF conversion that preserves more formatting
+        /// This is a fallback when Excel Interop is not available
+        /// </summary>
+        private void ConvertExcelToPDFImproved(string excelPath, string pdfPath)
         {
             using (var workbook = new XLWorkbook(excelPath))
             {
                 var worksheet = workbook.Worksheet(1);
 
-                // Create PDF document
-                Document document = new Document(PageSize.A4.Rotate(), 25, 25, 30, 30);
+                // Get actual page setup from Excel
+                var pageSetup = worksheet.PageSetup;
+
+                // Determine page size and orientation
+                iTextSharp.text.Rectangle pageSize = PageSize.A4;
+                if (pageSetup.PageOrientation == XLPageOrientation.Landscape)
+                {
+                    pageSize = pageSize.Rotate();
+                }
+
+                // Create PDF document with proper margins
+                Document document = new Document(pageSize, 40, 40, 40, 40);
 
                 using (FileStream fs = new FileStream(pdfPath, FileMode.Create))
                 {
                     PdfWriter writer = PdfWriter.GetInstance(document, fs);
                     document.Open();
 
-                    // Add title
-                    Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
-                    Paragraph title = new Paragraph("REQUEST FOR QUOTATION", titleFont);
-                    title.Alignment = Element.ALIGN_CENTER;
-                    document.Add(title);
-                    document.Add(new Paragraph(" ")); // Space
-
                     // Get the used range
                     var range = worksheet.RangeUsed();
-                    int rowCount = range.RowCount();
-                    int colCount = range.ColumnCount();
+                    if (range == null)
+                    {
+                        document.Close();
+                        return;
+                    }
+
+                    int firstRow = range.FirstRow().RowNumber();
+                    int lastRow = range.LastRow().RowNumber();
+                    int firstCol = range.FirstColumn().ColumnNumber();
+                    int lastCol = range.LastColumn().ColumnNumber();
+
+                    int colCount = lastCol - firstCol + 1;
+
+                    // Calculate column widths based on Excel column widths
+                    float[] columnWidths = new float[colCount];
+                    float totalWidth = 0;
+
+                    for (int col = firstCol; col <= lastCol; col++)
+                    {
+                        float width = (float)worksheet.Column(col).Width * 7; // Approximate conversion
+                        columnWidths[col - firstCol] = width;
+                        totalWidth += width;
+                    }
+
+                    // Normalize widths to fit page
+                    float pageWidth = pageSize.Width - document.LeftMargin - document.RightMargin;
+                    for (int i = 0; i < columnWidths.Length; i++)
+                    {
+                        columnWidths[i] = (columnWidths[i] / totalWidth) * pageWidth;
+                    }
 
                     // Create PDF table
                     PdfPTable table = new PdfPTable(colCount);
                     table.WidthPercentage = 100;
+                    table.SetWidths(columnWidths);
 
-                    // Define fonts
-                    Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 10);
-                    Font cellFont = FontFactory.GetFont(FontFactory.HELVETICA, 9);
-
-                    // Add cells to PDF table
-                    for (int row = 1; row <= rowCount; row++)
+                    // Process each row
+                    for (int row = firstRow; row <= lastRow; row++)
                     {
-                        for (int col = 1; col <= colCount; col++)
+                        float maxRowHeight = 0;
+
+                        for (int col = firstCol; col <= lastCol; col++)
                         {
                             var cell = worksheet.Cell(row, col);
-                            string cellValue = cell.GetString();
 
-                            PdfPCell pdfCell = new PdfPCell(new Phrase(cellValue, row <= 2 ? headerFont : cellFont));
-
-                            // Style header rows
-                            if (row <= 2)
+                            // Skip if this cell is part of a merged range but not the first cell
+                            if (cell.IsMerged())
                             {
-                                pdfCell.BackgroundColor = new BaseColor(200, 200, 200);
-                                pdfCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                var mergedRange = cell.MergedRange();
+                                if (mergedRange.FirstCell().Address.RowNumber != row ||
+                                    mergedRange.FirstCell().Address.ColumnNumber != col)
+                                {
+                                    continue; // Skip merged cells that aren't the first cell
+                                }
                             }
+
+                            string cellValue = cell.GetFormattedString();
+
+                            // Determine font
+                            var xlFont = cell.Style.Font;
+                            int fontSize = (int)xlFont.FontSize;
+                            bool isBold = xlFont.Bold;
+                            bool isItalic = xlFont.Italic;
+
+                            int fontStyle = iTextSharp.text.Font.NORMAL;
+                            if (isBold && isItalic)
+                                fontStyle = iTextSharp.text.Font.BOLDITALIC;
+                            else if (isBold)
+                                fontStyle = iTextSharp.text.Font.BOLD;
+                            else if (isItalic)
+                                fontStyle = iTextSharp.text.Font.ITALIC;
+
+                            Font cellFont = FontFactory.GetFont(FontFactory.HELVETICA, fontSize, fontStyle);
+
+                            // Create PDF cell
+                            PdfPCell pdfCell = new PdfPCell(new Phrase(cellValue, cellFont));
+
+                            // Handle merged cells
+                            if (cell.IsMerged())
+                            {
+                                var mergedRange = cell.MergedRange();
+                                int rowspan = mergedRange.RowCount();
+                                int colspan = mergedRange.ColumnCount();
+
+                                pdfCell.Rowspan = rowspan;
+                                pdfCell.Colspan = colspan;
+                            }
+
+                            // Background color
+                            if (cell.Style.Fill.BackgroundColor.HasValue)
+                            {
+                                var bgColor = cell.Style.Fill.BackgroundColor.Color;
+                                pdfCell.BackgroundColor = new BaseColor(bgColor.R, bgColor.G, bgColor.B);
+                            }
+
+                            // Alignment
+                            switch (cell.Style.Alignment.Horizontal)
+                            {
+                                case XLAlignmentHorizontalValues.Center:
+                                    pdfCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                    break;
+                                case XLAlignmentHorizontalValues.Right:
+                                    pdfCell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                                    break;
+                                case XLAlignmentHorizontalValues.Left:
+                                default:
+                                    pdfCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                                    break;
+                            }
+
+                            switch (cell.Style.Alignment.Vertical)
+                            {
+                                case XLAlignmentVerticalValues.Center:
+                                    pdfCell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                                    break;
+                                case XLAlignmentVerticalValues.Top:
+                                    pdfCell.VerticalAlignment = Element.ALIGN_TOP;
+                                    break;
+                                case XLAlignmentVerticalValues.Bottom:
+                                    pdfCell.VerticalAlignment = Element.ALIGN_BOTTOM;
+                                    break;
+                            }
+
+                            // Borders
+                            if (cell.Style.Border.TopBorder != XLBorderStyleValues.None)
+                                pdfCell.BorderWidthTop = 1f;
                             else
-                            {
-                                pdfCell.HorizontalAlignment = Element.ALIGN_LEFT;
-                            }
+                                pdfCell.BorderWidthTop = 0f;
 
+                            if (cell.Style.Border.BottomBorder != XLBorderStyleValues.None)
+                                pdfCell.BorderWidthBottom = 1f;
+                            else
+                                pdfCell.BorderWidthBottom = 0f;
+
+                            if (cell.Style.Border.LeftBorder != XLBorderStyleValues.None)
+                                pdfCell.BorderWidthLeft = 1f;
+                            else
+                                pdfCell.BorderWidthLeft = 0f;
+
+                            if (cell.Style.Border.RightBorder != XLBorderStyleValues.None)
+                                pdfCell.BorderWidthRight = 1f;
+                            else
+                                pdfCell.BorderWidthRight = 0f;
+
+                            // Padding
                             pdfCell.Padding = 5;
+
+                            // Row height
+                            float rowHeight = (float)worksheet.Row(row).Height * 1.5f;
+                            if (rowHeight > maxRowHeight)
+                                maxRowHeight = rowHeight;
+
                             table.AddCell(pdfCell);
+                        }
+
+                        // Set minimum height for the row
+                        if (maxRowHeight > 0)
+                        {
+                            // This is handled by cell padding and content
                         }
                     }
 

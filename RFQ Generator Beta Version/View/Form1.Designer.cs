@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.grpHeader = new System.Windows.Forms.GroupBox();
+            this.cmbCurrency = new System.Windows.Forms.ComboBox();
+            this.lblCurrency = new System.Windows.Forms.Label();
             this.cmbDeliveryTerm = new System.Windows.Forms.ComboBox();
             this.lblDeliveryTerm = new System.Windows.Forms.Label();
             this.numDiscount = new System.Windows.Forms.NumericUpDown();
@@ -66,10 +68,10 @@
             this.btnEditItem = new System.Windows.Forms.Button();
             this.lblItemCount = new System.Windows.Forms.Label();
             this.grpActions = new System.Windows.Forms.GroupBox();
-            this.btnGeneratePDFDirect = new System.Windows.Forms.Button();     // ← NEW PDF button
+            this.btnGeneratePDFDirect = new System.Windows.Forms.Button();
             this.lblTemplatePath = new System.Windows.Forms.Label();
             this.lblTemplateLabel = new System.Windows.Forms.Label();
-            this.btnGeneratePDF = new System.Windows.Forms.Button();           // (Excel button - renamed for clarity if needed)
+            this.btnGeneratePDF = new System.Windows.Forms.Button();
             this.btnNew = new System.Windows.Forms.Button();
             this.grpHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDiscount)).BeginInit();
@@ -83,6 +85,8 @@
             // 
             // grpHeader
             // 
+            this.grpHeader.Controls.Add(this.cmbCurrency);
+            this.grpHeader.Controls.Add(this.lblCurrency);
             this.grpHeader.Controls.Add(this.cmbDeliveryTerm);
             this.grpHeader.Controls.Add(this.lblDeliveryTerm);
             this.grpHeader.Controls.Add(this.numDiscount);
@@ -102,12 +106,47 @@
             this.grpHeader.Controls.Add(this.cmbCompany);
             this.grpHeader.Controls.Add(this.lblCompany);
             this.grpHeader.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grpHeader.Location = new System.Drawing.Point(12, 12);
+            this.grpHeader.Location = new System.Drawing.Point(16, 15);
+            this.grpHeader.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpHeader.Name = "grpHeader";
-            this.grpHeader.Size = new System.Drawing.Size(1060, 210);
+            this.grpHeader.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpHeader.Size = new System.Drawing.Size(1413, 258);
             this.grpHeader.TabIndex = 0;
             this.grpHeader.TabStop = false;
             this.grpHeader.Text = "RFQ Header Information";
+            // 
+            // cmbCurrency
+            // 
+            this.cmbCurrency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCurrency.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.cmbCurrency.FormattingEnabled = true;
+            this.cmbCurrency.Items.AddRange(new object[] {
+            "RM",
+            "USD",
+            "SGD",
+            "EUR",
+            "GBP",
+            "JPY",
+            "CNY",
+            "AUD",
+            "CAD",
+            "CHF"});
+            this.cmbCurrency.Location = new System.Drawing.Point(1087, 117);
+            this.cmbCurrency.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbCurrency.Name = "cmbCurrency";
+            this.cmbCurrency.Size = new System.Drawing.Size(285, 28);
+            this.cmbCurrency.TabIndex = 19;
+            // 
+            // lblCurrency
+            // 
+            this.lblCurrency.AutoSize = true;
+            this.lblCurrency.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblCurrency.Location = new System.Drawing.Point(1087, 92);
+            this.lblCurrency.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCurrency.Name = "lblCurrency";
+            this.lblCurrency.Size = new System.Drawing.Size(72, 20);
+            this.lblCurrency.TabIndex = 18;
+            this.lblCurrency.Text = "Currency:";
             // 
             // cmbDeliveryTerm
             // 
@@ -117,18 +156,20 @@
             this.cmbDeliveryTerm.Items.AddRange(new object[] {
             "DAP",
             "DDP"});
-            this.cmbDeliveryTerm.Location = new System.Drawing.Point(30, 165);
+            this.cmbDeliveryTerm.Location = new System.Drawing.Point(40, 203);
+            this.cmbDeliveryTerm.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cmbDeliveryTerm.Name = "cmbDeliveryTerm";
-            this.cmbDeliveryTerm.Size = new System.Drawing.Size(280, 23);
+            this.cmbDeliveryTerm.Size = new System.Drawing.Size(372, 28);
             this.cmbDeliveryTerm.TabIndex = 13;
             // 
             // lblDeliveryTerm
             // 
             this.lblDeliveryTerm.AutoSize = true;
             this.lblDeliveryTerm.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblDeliveryTerm.Location = new System.Drawing.Point(30, 145);
+            this.lblDeliveryTerm.Location = new System.Drawing.Point(40, 178);
+            this.lblDeliveryTerm.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDeliveryTerm.Name = "lblDeliveryTerm";
-            this.lblDeliveryTerm.Size = new System.Drawing.Size(110, 15);
+            this.lblDeliveryTerm.Size = new System.Drawing.Size(103, 20);
             this.lblDeliveryTerm.TabIndex = 12;
             this.lblDeliveryTerm.Text = "Delivery Term:";
             // 
@@ -136,37 +177,45 @@
             // 
             this.numDiscount.DecimalPlaces = 2;
             this.numDiscount.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numDiscount.Location = new System.Drawing.Point(650, 165);
-            this.numDiscount.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            this.numDiscount.Location = new System.Drawing.Point(867, 203);
+            this.numDiscount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numDiscount.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
             this.numDiscount.Name = "numDiscount";
-            this.numDiscount.Size = new System.Drawing.Size(380, 23);
+            this.numDiscount.Size = new System.Drawing.Size(507, 27);
             this.numDiscount.TabIndex = 17;
             // 
             // lblDiscount
             // 
             this.lblDiscount.AutoSize = true;
             this.lblDiscount.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblDiscount.Location = new System.Drawing.Point(650, 145);
+            this.lblDiscount.Location = new System.Drawing.Point(867, 178);
+            this.lblDiscount.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDiscount.Name = "lblDiscount";
-            this.lblDiscount.Size = new System.Drawing.Size(57, 15);
+            this.lblDiscount.Size = new System.Drawing.Size(96, 20);
             this.lblDiscount.TabIndex = 16;
             this.lblDiscount.Text = "Discount (%):";
             // 
             // txtValidity
             // 
             this.txtValidity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtValidity.Location = new System.Drawing.Point(340, 165);
+            this.txtValidity.Location = new System.Drawing.Point(453, 203);
+            this.txtValidity.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtValidity.Name = "txtValidity";
-            this.txtValidity.Size = new System.Drawing.Size(280, 23);
+            this.txtValidity.Size = new System.Drawing.Size(372, 27);
             this.txtValidity.TabIndex = 15;
             // 
             // lblValidity
             // 
             this.lblValidity.AutoSize = true;
             this.lblValidity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblValidity.Location = new System.Drawing.Point(340, 145);
+            this.lblValidity.Location = new System.Drawing.Point(453, 178);
+            this.lblValidity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblValidity.Name = "lblValidity";
-            this.lblValidity.Size = new System.Drawing.Size(49, 15);
+            this.lblValidity.Size = new System.Drawing.Size(61, 20);
             this.lblValidity.TabIndex = 14;
             this.lblValidity.Text = "Validity:";
             // 
@@ -174,103 +223,112 @@
             // 
             this.dtpCreatedAt.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.dtpCreatedAt.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpCreatedAt.Location = new System.Drawing.Point(650, 95);
+            this.dtpCreatedAt.Location = new System.Drawing.Point(867, 117);
+            this.dtpCreatedAt.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dtpCreatedAt.Name = "dtpCreatedAt";
-            this.dtpCreatedAt.Size = new System.Drawing.Size(380, 23);
+            this.dtpCreatedAt.Size = new System.Drawing.Size(200, 27);
             this.dtpCreatedAt.TabIndex = 11;
             // 
             // lblCreatedAt
             // 
             this.lblCreatedAt.AutoSize = true;
             this.lblCreatedAt.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblCreatedAt.Location = new System.Drawing.Point(650, 75);
+            this.lblCreatedAt.Location = new System.Drawing.Point(867, 92);
+            this.lblCreatedAt.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCreatedAt.Name = "lblCreatedAt";
-            this.lblCreatedAt.Size = new System.Drawing.Size(76, 15);
+            this.lblCreatedAt.Size = new System.Drawing.Size(100, 20);
             this.lblCreatedAt.TabIndex = 10;
             this.lblCreatedAt.Text = "Created Date:";
             // 
             // txtDeliveryPoint
             // 
             this.txtDeliveryPoint.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtDeliveryPoint.Location = new System.Drawing.Point(650, 40);
+            this.txtDeliveryPoint.Location = new System.Drawing.Point(867, 49);
+            this.txtDeliveryPoint.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtDeliveryPoint.Name = "txtDeliveryPoint";
-            this.txtDeliveryPoint.Size = new System.Drawing.Size(380, 23);
+            this.txtDeliveryPoint.Size = new System.Drawing.Size(505, 27);
             this.txtDeliveryPoint.TabIndex = 9;
             // 
             // lblDeliveryPoint
             // 
             this.lblDeliveryPoint.AutoSize = true;
             this.lblDeliveryPoint.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblDeliveryPoint.Location = new System.Drawing.Point(650, 20);
+            this.lblDeliveryPoint.Location = new System.Drawing.Point(867, 25);
+            this.lblDeliveryPoint.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDeliveryPoint.Name = "lblDeliveryPoint";
-            this.lblDeliveryPoint.Size = new System.Drawing.Size(85, 15);
+            this.lblDeliveryPoint.Size = new System.Drawing.Size(103, 20);
             this.lblDeliveryPoint.TabIndex = 8;
             this.lblDeliveryPoint.Text = "Delivery Point:";
             // 
             // txtQuoteCode
             // 
             this.txtQuoteCode.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtQuoteCode.Location = new System.Drawing.Point(340, 95);
+            this.txtQuoteCode.Location = new System.Drawing.Point(453, 117);
+            this.txtQuoteCode.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtQuoteCode.Name = "txtQuoteCode";
-            this.txtQuoteCode.Size = new System.Drawing.Size(280, 23);
+            this.txtQuoteCode.Size = new System.Drawing.Size(372, 27);
             this.txtQuoteCode.TabIndex = 7;
             // 
             // lblQuoteCode
             // 
             this.lblQuoteCode.AutoSize = true;
             this.lblQuoteCode.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblQuoteCode.Location = new System.Drawing.Point(340, 75);
+            this.lblQuoteCode.Location = new System.Drawing.Point(453, 92);
+            this.lblQuoteCode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblQuoteCode.Name = "lblQuoteCode";
-            this.lblQuoteCode.Size = new System.Drawing.Size(75, 15);
+            this.lblQuoteCode.Size = new System.Drawing.Size(92, 20);
             this.lblQuoteCode.TabIndex = 6;
             this.lblQuoteCode.Text = "Quote Code:";
             // 
             // txtRFQCode
             // 
             this.txtRFQCode.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtRFQCode.Location = new System.Drawing.Point(30, 95);
+            this.txtRFQCode.Location = new System.Drawing.Point(40, 117);
+            this.txtRFQCode.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtRFQCode.Name = "txtRFQCode";
-            this.txtRFQCode.Size = new System.Drawing.Size(280, 23);
+            this.txtRFQCode.Size = new System.Drawing.Size(372, 27);
             this.txtRFQCode.TabIndex = 5;
             // 
             // lblRFQCode
             // 
             this.lblRFQCode.AutoSize = true;
             this.lblRFQCode.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblRFQCode.Location = new System.Drawing.Point(30, 75);
+            this.lblRFQCode.Location = new System.Drawing.Point(40, 92);
+            this.lblRFQCode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblRFQCode.Name = "lblRFQCode";
-            this.lblRFQCode.Size = new System.Drawing.Size(66, 15);
+            this.lblRFQCode.Size = new System.Drawing.Size(78, 20);
             this.lblRFQCode.TabIndex = 4;
             this.lblRFQCode.Text = "RFQ Code:";
             // 
             // cmbClient
             // 
-            this.cmbClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
             this.cmbClient.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.cmbClient.FormattingEnabled = true;
-            this.cmbClient.Location = new System.Drawing.Point(340, 40);
+            this.cmbClient.Location = new System.Drawing.Point(453, 49);
+            this.cmbClient.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cmbClient.Name = "cmbClient";
-            this.cmbClient.Size = new System.Drawing.Size(280, 23);
+            this.cmbClient.Size = new System.Drawing.Size(372, 28);
             this.cmbClient.TabIndex = 3;
             // 
             // lblClient
             // 
             this.lblClient.AutoSize = true;
             this.lblClient.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblClient.Location = new System.Drawing.Point(340, 20);
+            this.lblClient.Location = new System.Drawing.Point(453, 25);
+            this.lblClient.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblClient.Name = "lblClient";
-            this.lblClient.Size = new System.Drawing.Size(41, 15);
+            this.lblClient.Size = new System.Drawing.Size(50, 20);
             this.lblClient.TabIndex = 2;
             this.lblClient.Text = "Client:";
             // 
             // cmbCompany
             // 
-            this.cmbCompany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
             this.cmbCompany.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.cmbCompany.FormattingEnabled = true;
-            this.cmbCompany.Location = new System.Drawing.Point(30, 40);
+            this.cmbCompany.Location = new System.Drawing.Point(40, 49);
+            this.cmbCompany.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cmbCompany.Name = "cmbCompany";
-            this.cmbCompany.Size = new System.Drawing.Size(280, 23);
+            this.cmbCompany.Size = new System.Drawing.Size(372, 28);
             this.cmbCompany.TabIndex = 1;
             this.cmbCompany.SelectedIndexChanged += new System.EventHandler(this.cmbCompany_SelectedIndexChanged);
             // 
@@ -278,9 +336,10 @@
             // 
             this.lblCompany.AutoSize = true;
             this.lblCompany.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblCompany.Location = new System.Drawing.Point(30, 20);
+            this.lblCompany.Location = new System.Drawing.Point(40, 25);
+            this.lblCompany.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCompany.Name = "lblCompany";
-            this.lblCompany.Size = new System.Drawing.Size(62, 15);
+            this.lblCompany.Size = new System.Drawing.Size(75, 20);
             this.lblCompany.TabIndex = 0;
             this.lblCompany.Text = "Company:";
             // 
@@ -299,9 +358,11 @@
             this.grpCurrentItem.Controls.Add(this.btnAddItem);
             this.grpCurrentItem.Controls.Add(this.btnClearItem);
             this.grpCurrentItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grpCurrentItem.Location = new System.Drawing.Point(12, 228);
+            this.grpCurrentItem.Location = new System.Drawing.Point(16, 281);
+            this.grpCurrentItem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpCurrentItem.Name = "grpCurrentItem";
-            this.grpCurrentItem.Size = new System.Drawing.Size(680, 250);
+            this.grpCurrentItem.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpCurrentItem.Size = new System.Drawing.Size(672, 308);
             this.grpCurrentItem.TabIndex = 1;
             this.grpCurrentItem.TabStop = false;
             this.grpCurrentItem.Text = "Item Details";
@@ -309,20 +370,30 @@
             // numItemDeliveryTime
             // 
             this.numItemDeliveryTime.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemDeliveryTime.Location = new System.Drawing.Point(490, 155);
-            this.numItemDeliveryTime.Maximum = new decimal(new int[] { 365, 0, 0, 0 });
+            this.numItemDeliveryTime.Location = new System.Drawing.Point(471, 190);
+            this.numItemDeliveryTime.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numItemDeliveryTime.Maximum = new decimal(new int[] {
+            365,
+            0,
+            0,
+            0});
             this.numItemDeliveryTime.Name = "numItemDeliveryTime";
-            this.numItemDeliveryTime.Size = new System.Drawing.Size(160, 23);
+            this.numItemDeliveryTime.Size = new System.Drawing.Size(155, 27);
             this.numItemDeliveryTime.TabIndex = 11;
-            this.numItemDeliveryTime.Value = new decimal(new int[] { 30, 0, 0, 0 });
+            this.numItemDeliveryTime.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
             // 
             // lblItemDeliveryTime
             // 
             this.lblItemDeliveryTime.AutoSize = true;
             this.lblItemDeliveryTime.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemDeliveryTime.Location = new System.Drawing.Point(490, 135);
+            this.lblItemDeliveryTime.Location = new System.Drawing.Point(467, 167);
+            this.lblItemDeliveryTime.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblItemDeliveryTime.Name = "lblItemDeliveryTime";
-            this.lblItemDeliveryTime.Size = new System.Drawing.Size(124, 15);
+            this.lblItemDeliveryTime.Size = new System.Drawing.Size(159, 20);
             this.lblItemDeliveryTime.TabIndex = 10;
             this.lblItemDeliveryTime.Text = "Delivery Time (Weeks):";
             // 
@@ -330,28 +401,35 @@
             // 
             this.numItemUnitPrice.DecimalPlaces = 2;
             this.numItemUnitPrice.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemUnitPrice.Location = new System.Drawing.Point(340, 155);
-            this.numItemUnitPrice.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            this.numItemUnitPrice.Location = new System.Drawing.Point(279, 191);
+            this.numItemUnitPrice.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numItemUnitPrice.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
             this.numItemUnitPrice.Name = "numItemUnitPrice";
-            this.numItemUnitPrice.Size = new System.Drawing.Size(130, 23);
+            this.numItemUnitPrice.Size = new System.Drawing.Size(173, 27);
             this.numItemUnitPrice.TabIndex = 9;
             // 
             // lblItemUnitPrice
             // 
             this.lblItemUnitPrice.AutoSize = true;
             this.lblItemUnitPrice.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemUnitPrice.Location = new System.Drawing.Point(340, 135);
+            this.lblItemUnitPrice.Location = new System.Drawing.Point(275, 167);
+            this.lblItemUnitPrice.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblItemUnitPrice.Name = "lblItemUnitPrice";
-            this.lblItemUnitPrice.Size = new System.Drawing.Size(62, 15);
+            this.lblItemUnitPrice.Size = new System.Drawing.Size(75, 20);
             this.lblItemUnitPrice.TabIndex = 8;
             this.lblItemUnitPrice.Text = "Unit Price:";
             // 
             // txtItemUnit
             // 
             this.txtItemUnit.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtItemUnit.Location = new System.Drawing.Point(200, 155);
+            this.txtItemUnit.Location = new System.Drawing.Point(192, 191);
+            this.txtItemUnit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtItemUnit.Name = "txtItemUnit";
-            this.txtItemUnit.Size = new System.Drawing.Size(120, 23);
+            this.txtItemUnit.Size = new System.Drawing.Size(69, 27);
             this.txtItemUnit.TabIndex = 7;
             this.txtItemUnit.Text = "PCS";
             // 
@@ -359,30 +437,45 @@
             // 
             this.lblItemUnit.AutoSize = true;
             this.lblItemUnit.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemUnit.Location = new System.Drawing.Point(200, 135);
+            this.lblItemUnit.Location = new System.Drawing.Point(188, 167);
+            this.lblItemUnit.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblItemUnit.Name = "lblItemUnit";
-            this.lblItemUnit.Size = new System.Drawing.Size(32, 15);
+            this.lblItemUnit.Size = new System.Drawing.Size(39, 20);
             this.lblItemUnit.TabIndex = 6;
             this.lblItemUnit.Text = "Unit:";
             // 
             // numItemQuantity
             // 
             this.numItemQuantity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemQuantity.Location = new System.Drawing.Point(30, 155);
-            this.numItemQuantity.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
-            this.numItemQuantity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            this.numItemQuantity.Location = new System.Drawing.Point(40, 191);
+            this.numItemQuantity.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numItemQuantity.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numItemQuantity.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numItemQuantity.Name = "numItemQuantity";
-            this.numItemQuantity.Size = new System.Drawing.Size(150, 23);
+            this.numItemQuantity.Size = new System.Drawing.Size(133, 27);
             this.numItemQuantity.TabIndex = 5;
-            this.numItemQuantity.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            this.numItemQuantity.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // lblItemQuantity
             // 
             this.lblItemQuantity.AutoSize = true;
             this.lblItemQuantity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemQuantity.Location = new System.Drawing.Point(30, 135);
+            this.lblItemQuantity.Location = new System.Drawing.Point(40, 166);
+            this.lblItemQuantity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblItemQuantity.Name = "lblItemQuantity";
-            this.lblItemQuantity.Size = new System.Drawing.Size(56, 15);
+            this.lblItemQuantity.Size = new System.Drawing.Size(68, 20);
             this.lblItemQuantity.TabIndex = 4;
             this.lblItemQuantity.Text = "Quantity:";
             // 
@@ -390,29 +483,32 @@
             // 
             this.txtItemDescription.AcceptsReturn = true;
             this.txtItemDescription.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtItemDescription.Location = new System.Drawing.Point(30, 55);
+            this.txtItemDescription.Location = new System.Drawing.Point(40, 68);
+            this.txtItemDescription.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtItemDescription.Multiline = true;
             this.txtItemDescription.Name = "txtItemDescription";
             this.txtItemDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtItemDescription.Size = new System.Drawing.Size(620, 65);
+            this.txtItemDescription.Size = new System.Drawing.Size(586, 79);
             this.txtItemDescription.TabIndex = 3;
             // 
             // lblItemDescription
             // 
             this.lblItemDescription.AutoSize = true;
             this.lblItemDescription.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemDescription.Location = new System.Drawing.Point(30, 35);
+            this.lblItemDescription.Location = new System.Drawing.Point(40, 43);
+            this.lblItemDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblItemDescription.Name = "lblItemDescription";
-            this.lblItemDescription.Size = new System.Drawing.Size(70, 15);
+            this.lblItemDescription.Size = new System.Drawing.Size(88, 20);
             this.lblItemDescription.TabIndex = 2;
             this.lblItemDescription.Text = "Description:";
             // 
             // btnAddItem
             // 
             this.btnAddItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnAddItem.Location = new System.Drawing.Point(30, 200);
+            this.btnAddItem.Location = new System.Drawing.Point(40, 246);
+            this.btnAddItem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnAddItem.Name = "btnAddItem";
-            this.btnAddItem.Size = new System.Drawing.Size(120, 30);
+            this.btnAddItem.Size = new System.Drawing.Size(160, 37);
             this.btnAddItem.TabIndex = 0;
             this.btnAddItem.Text = "Add Item";
             this.btnAddItem.UseVisualStyleBackColor = true;
@@ -421,9 +517,10 @@
             // btnClearItem
             // 
             this.btnClearItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnClearItem.Location = new System.Drawing.Point(160, 200);
+            this.btnClearItem.Location = new System.Drawing.Point(213, 246);
+            this.btnClearItem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnClearItem.Name = "btnClearItem";
-            this.btnClearItem.Size = new System.Drawing.Size(120, 30);
+            this.btnClearItem.Size = new System.Drawing.Size(160, 37);
             this.btnClearItem.TabIndex = 1;
             this.btnClearItem.Text = "Clear";
             this.btnClearItem.UseVisualStyleBackColor = true;
@@ -436,9 +533,11 @@
             this.grpItemsList.Controls.Add(this.btnEditItem);
             this.grpItemsList.Controls.Add(this.lblItemCount);
             this.grpItemsList.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grpItemsList.Location = new System.Drawing.Point(698, 228);
+            this.grpItemsList.Location = new System.Drawing.Point(714, 281);
+            this.grpItemsList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpItemsList.Name = "grpItemsList";
-            this.grpItemsList.Size = new System.Drawing.Size(374, 250);
+            this.grpItemsList.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpItemsList.Size = new System.Drawing.Size(716, 308);
             this.grpItemsList.TabIndex = 2;
             this.grpItemsList.TabStop = false;
             this.grpItemsList.Text = "Items List";
@@ -447,19 +546,21 @@
             // 
             this.lstItems.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstItems.FormattingEnabled = true;
-            this.lstItems.ItemHeight = 13;
-            this.lstItems.Location = new System.Drawing.Point(20, 35);
+            this.lstItems.ItemHeight = 17;
+            this.lstItems.Location = new System.Drawing.Point(27, 43);
+            this.lstItems.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lstItems.Name = "lstItems";
-            this.lstItems.Size = new System.Drawing.Size(334, 160);
+            this.lstItems.Size = new System.Drawing.Size(649, 191);
             this.lstItems.TabIndex = 0;
             this.lstItems.SelectedIndexChanged += new System.EventHandler(this.lstItems_SelectedIndexChanged);
             // 
             // btnRemoveItem
             // 
             this.btnRemoveItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnRemoveItem.Location = new System.Drawing.Point(140, 210);
+            this.btnRemoveItem.Location = new System.Drawing.Point(187, 258);
+            this.btnRemoveItem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnRemoveItem.Name = "btnRemoveItem";
-            this.btnRemoveItem.Size = new System.Drawing.Size(100, 30);
+            this.btnRemoveItem.Size = new System.Drawing.Size(133, 37);
             this.btnRemoveItem.TabIndex = 2;
             this.btnRemoveItem.Text = "Remove";
             this.btnRemoveItem.UseVisualStyleBackColor = true;
@@ -468,9 +569,10 @@
             // btnEditItem
             // 
             this.btnEditItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnEditItem.Location = new System.Drawing.Point(20, 210);
+            this.btnEditItem.Location = new System.Drawing.Point(27, 258);
+            this.btnEditItem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnEditItem.Name = "btnEditItem";
-            this.btnEditItem.Size = new System.Drawing.Size(100, 30);
+            this.btnEditItem.Size = new System.Drawing.Size(133, 37);
             this.btnEditItem.TabIndex = 1;
             this.btnEditItem.Text = "Edit";
             this.btnEditItem.UseVisualStyleBackColor = true;
@@ -481,9 +583,10 @@
             this.lblItemCount.AutoSize = true;
             this.lblItemCount.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lblItemCount.ForeColor = System.Drawing.Color.Gray;
-            this.lblItemCount.Location = new System.Drawing.Point(250, 215);
+            this.lblItemCount.Location = new System.Drawing.Point(333, 265);
+            this.lblItemCount.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblItemCount.Name = "lblItemCount";
-            this.lblItemCount.Size = new System.Drawing.Size(82, 13);
+            this.lblItemCount.Size = new System.Drawing.Size(91, 19);
             this.lblItemCount.TabIndex = 3;
             this.lblItemCount.Text = "Total Items: 0";
             // 
@@ -495,20 +598,22 @@
             this.grpActions.Controls.Add(this.btnGeneratePDF);
             this.grpActions.Controls.Add(this.btnNew);
             this.grpActions.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grpActions.Location = new System.Drawing.Point(12, 484);
+            this.grpActions.Location = new System.Drawing.Point(16, 596);
+            this.grpActions.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpActions.Name = "grpActions";
-            this.grpActions.Size = new System.Drawing.Size(1060, 90);
+            this.grpActions.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpActions.Size = new System.Drawing.Size(1413, 111);
             this.grpActions.TabIndex = 3;
             this.grpActions.TabStop = false;
             this.grpActions.Text = "Actions";
             // 
-            // btnGeneratePDFDirect     ← NEW BUTTON
+            // btnGeneratePDFDirect
             // 
-            this.btnGeneratePDFDirect.Enabled = false;
             this.btnGeneratePDFDirect.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnGeneratePDFDirect.Location = new System.Drawing.Point(390, 25);
+            this.btnGeneratePDFDirect.Location = new System.Drawing.Point(349, 31);
+            this.btnGeneratePDFDirect.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnGeneratePDFDirect.Name = "btnGeneratePDFDirect";
-            this.btnGeneratePDFDirect.Size = new System.Drawing.Size(120, 30);
+            this.btnGeneratePDFDirect.Size = new System.Drawing.Size(160, 37);
             this.btnGeneratePDFDirect.TabIndex = 5;
             this.btnGeneratePDFDirect.Text = "Generate PDF";
             this.btnGeneratePDFDirect.UseVisualStyleBackColor = true;
@@ -519,9 +624,10 @@
             this.lblTemplatePath.AutoSize = true;
             this.lblTemplatePath.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Italic);
             this.lblTemplatePath.ForeColor = System.Drawing.Color.Gray;
-            this.lblTemplatePath.Location = new System.Drawing.Point(100, 60);
+            this.lblTemplatePath.Location = new System.Drawing.Point(133, 74);
+            this.lblTemplatePath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblTemplatePath.Name = "lblTemplatePath";
-            this.lblTemplatePath.Size = new System.Drawing.Size(120, 13);
+            this.lblTemplatePath.Size = new System.Drawing.Size(142, 19);
             this.lblTemplatePath.TabIndex = 4;
             this.lblTemplatePath.Text = "No template selected";
             // 
@@ -529,19 +635,20 @@
             // 
             this.lblTemplateLabel.AutoSize = true;
             this.lblTemplateLabel.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblTemplateLabel.Location = new System.Drawing.Point(30, 60);
+            this.lblTemplateLabel.Location = new System.Drawing.Point(40, 74);
+            this.lblTemplateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblTemplateLabel.Name = "lblTemplateLabel";
-            this.lblTemplateLabel.Size = new System.Drawing.Size(58, 13);
+            this.lblTemplateLabel.Size = new System.Drawing.Size(67, 19);
             this.lblTemplateLabel.TabIndex = 3;
             this.lblTemplateLabel.Text = "Template:";
             // 
-            // btnGenerateExcel           ← original Excel button
+            // btnGeneratePDF
             // 
-            this.btnGeneratePDF.Enabled = false;
             this.btnGeneratePDF.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnGeneratePDF.Location = new System.Drawing.Point(260, 25);
+            this.btnGeneratePDF.Location = new System.Drawing.Point(181, 31);
+            this.btnGeneratePDF.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnGeneratePDF.Name = "btnGeneratePDF";
-            this.btnGeneratePDF.Size = new System.Drawing.Size(120, 30);
+            this.btnGeneratePDF.Size = new System.Drawing.Size(160, 37);
             this.btnGeneratePDF.TabIndex = 2;
             this.btnGeneratePDF.Text = "Generate Excel";
             this.btnGeneratePDF.UseVisualStyleBackColor = true;
@@ -550,9 +657,10 @@
             // btnNew
             // 
             this.btnNew.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnNew.Location = new System.Drawing.Point(30, 25);
+            this.btnNew.Location = new System.Drawing.Point(40, 31);
+            this.btnNew.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(100, 30);
+            this.btnNew.Size = new System.Drawing.Size(133, 37);
             this.btnNew.TabIndex = 0;
             this.btnNew.Text = "New RFQ";
             this.btnNew.UseVisualStyleBackColor = true;
@@ -560,14 +668,15 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1084, 586);
+            this.ClientSize = new System.Drawing.Size(1445, 721);
             this.Controls.Add(this.grpActions);
             this.Controls.Add(this.grpItemsList);
             this.Controls.Add(this.grpCurrentItem);
             this.Controls.Add(this.grpHeader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -586,6 +695,7 @@
             this.grpActions.ResumeLayout(false);
             this.grpActions.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -609,6 +719,8 @@
         private System.Windows.Forms.Label lblValidity;
         private System.Windows.Forms.NumericUpDown numDiscount;
         private System.Windows.Forms.Label lblDiscount;
+        private System.Windows.Forms.ComboBox cmbCurrency;
+        private System.Windows.Forms.Label lblCurrency;
         private System.Windows.Forms.GroupBox grpCurrentItem;
         private System.Windows.Forms.TextBox txtItemDescription;
         private System.Windows.Forms.Label lblItemDescription;
@@ -629,8 +741,8 @@
         private System.Windows.Forms.Label lblItemCount;
         private System.Windows.Forms.GroupBox grpActions;
         private System.Windows.Forms.Button btnNew;
-        private System.Windows.Forms.Button btnGeneratePDF;           
-        private System.Windows.Forms.Button btnGeneratePDFDirect;    
+        private System.Windows.Forms.Button btnGeneratePDF;
+        private System.Windows.Forms.Button btnGeneratePDFDirect;
         private System.Windows.Forms.Label lblTemplatePath;
         private System.Windows.Forms.Label lblTemplateLabel;
     }

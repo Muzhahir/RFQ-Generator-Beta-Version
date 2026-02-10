@@ -131,8 +131,8 @@ namespace RFQ_Generator_System.Services
         public int SaveRFQ(RFQ rfq, List<RFQItem> items)
         {
             string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;
-      Initial Catalog=RFQDB;
-      Integrated Security=True";
+  Initial Catalog=RFQDB;
+  Integrated Security=True";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -143,8 +143,8 @@ namespace RFQ_Generator_System.Services
                     {
                         // 1. Save RFQ header and get the new Id
                         SqlCommand cmdRFQ = new SqlCommand(
-                            "INSERT INTO RFQ (CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, DeliveryTerm, Validity, Discount) " +
-                            "VALUES (@CompanyId, @ClientId, @CreatedAt, @RFQCode, @QuoteCode, @DeliveryPoint, @DeliveryTerm, @Validity, @Discount); " +
+                            "INSERT INTO RFQ (CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, DeliveryTerm, Validity, Discount, Currency) " +
+                            "VALUES (@CompanyId, @ClientId, @CreatedAt, @RFQCode, @QuoteCode, @DeliveryPoint, @DeliveryTerm, @Validity, @Discount, @Currency); " +
                             "SELECT SCOPE_IDENTITY();",
                             conn,
                             transaction
@@ -158,6 +158,7 @@ namespace RFQ_Generator_System.Services
                         cmdRFQ.Parameters.AddWithValue("@DeliveryTerm", string.IsNullOrEmpty(rfq.DeliveryTerm) ? (object)DBNull.Value : rfq.DeliveryTerm);
                         cmdRFQ.Parameters.AddWithValue("@Validity", string.IsNullOrEmpty(rfq.Validity) ? (object)DBNull.Value : rfq.Validity);
                         cmdRFQ.Parameters.AddWithValue("@Discount", rfq.Discount);
+                        cmdRFQ.Parameters.AddWithValue("@Currency", string.IsNullOrEmpty(rfq.Currency) ? "RM" : rfq.Currency); // ADD THIS LINE
 
                         int newRFQId = Convert.ToInt32(cmdRFQ.ExecuteScalar());
 
@@ -195,7 +196,6 @@ namespace RFQ_Generator_System.Services
                 }
             }
         }
-
         /// <summary>
         /// Get template based on selected CompanyId
         /// </summary>

@@ -42,7 +42,6 @@ namespace RFQ_Generator_System.Services
 
         public void GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId)
         {
-            // Convert database path (filename only) to full path
             string fullTemplatePath = GetFullTemplatePath(templatePath);
 
             using (var workbook = new XLWorkbook(fullTemplatePath))
@@ -54,15 +53,25 @@ namespace RFQ_Generator_System.Services
 
                 var itemStartCell = FindPlaceholderCell(worksheet, Placeholders.ItemNo);
 
+                // Determine effective currency BEFORE any operations
+                string effectiveCurrency = rfq.Currency ?? "RM";
+
+                // DEBUG: Show what currency we received (REMOVE AFTER TESTING)
+                System.Diagnostics.Debug.WriteLine($"[ExcelService] Received RFQ.Currency: '{rfq.Currency ?? "NULL"}'");
+                System.Diagnostics.Debug.WriteLine($"[ExcelService] Effective Currency: '{effectiveCurrency}'");
+
                 // Fill header fields including header_delivery_time placeholder
                 FillHeaderFields(worksheet, rfq, clientName, items);
 
                 if (itemStartCell != null)
                 {
-                    FillItems(worksheet, items, itemStartCell);
+                    FillItems(worksheet, items, itemStartCell, effectiveCurrency);
                 }
 
                 FillSummary(worksheet, items, rfq.Discount);
+
+                // Final currency replacement to catch any remaining instances
+                ReplaceCurrencyInWorksheet(worksheet, effectiveCurrency);
 
                 workbook.SaveAs(outputPath);
             }
@@ -249,7 +258,7 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        private void FillItems(IXLWorksheet worksheet, List<RFQItem> items, IXLCell startCell)
+        private void FillItems(IXLWorksheet worksheet, List<RFQItem> items, IXLCell startCell, string effectiveCurrency)
         {
             int headerRow = startCell.Address.RowNumber;
 
@@ -299,12 +308,45 @@ namespace RFQ_Generator_System.Services
                     int targetRow = startRow + templateRows + r;
                     worksheet.Row(targetRow).Height = worksheet.Row(startRow).Height;
 
-                    // Copy cell styles
+                    // Copy cell styles and replace currency in the process
                     foreach (var cell in worksheet.Row(startRow).Cells())
                     {
                         if (!cell.IsEmpty() || cell.Style.Fill.BackgroundColor.HasValue)
                         {
-                            worksheet.Cell(targetRow, cell.Address.ColumnNumber).Style = cell.Style;
+                            var targetCell = worksheet.Cell(targetRow, cell.Address.ColumnNumber);
+                            targetCell.Style = cell.Style;
+
+                            // If the template cell has a value with "RM", copy it with currency replaced
+                            if (!cell.IsEmpty())
+                            {
+                                string cellValue = cell.GetString();
+                                if (cellValue.Contains("RM") && effectiveCurrency != "RM")
+                                {
+                                    targetCell.Value = cellValue.Replace("RM", effectiveCurrency);
+                                }
+                                else if (!string.IsNullOrWhiteSpace(cellValue))
+                                {
+                                    // Copy the value if it's not a placeholder (placeholders will be filled later)
+                                    bool isPlaceholder = cellValue.Equals(Placeholders.ItemNo, StringComparison.OrdinalIgnoreCase) ||
+                                                        cellValue.Equals(Placeholders.ItemDesc, StringComparison.OrdinalIgnoreCase) ||
+                                                        cellValue.Equals(Placeholders.DeliveryTime, StringComparison.OrdinalIgnoreCase) ||
+                                                        cellValue.Equals(Placeholders.Quantity, StringComparison.OrdinalIgnoreCase) ||
+                                                        cellValue.Equals(Placeholders.UnitPrice, StringComparison.OrdinalIgnoreCase) ||
+                                                        cellValue.Equals(Placeholders.TotalPrice, StringComparison.OrdinalIgnoreCase);
+
+                                    if (!isPlaceholder)
+                                    {
+                                        targetCell.Value = cellValue;
+                                    }
+                                }
+                            }
+
+                            // Also replace currency in number format if needed
+                            string numberFormat = cell.Style.NumberFormat.Format;
+                            if (!string.IsNullOrEmpty(numberFormat) && numberFormat.Contains("RM") && effectiveCurrency != "RM")
+                            {
+                                targetCell.Style.NumberFormat.Format = numberFormat.Replace("RM", effectiveCurrency);
+                            }
                         }
                     }
 
@@ -463,6 +505,38 @@ namespace RFQ_Generator_System.Services
                 {
                     cell.Value = totalPrice;
                     cell.Style.NumberFormat.Format = "#,##0.00";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Replaces all instances of "RM" with the selected currency throughout the worksheet.
+        /// This includes both cell values and number formats.
+        /// </summary>
+        private void ReplaceCurrencyInWorksheet(IXLWorksheet worksheet, string currency)
+        {
+            if (string.IsNullOrEmpty(currency) || currency == "RM")
+                return; // No replacement needed if currency is RM or null
+
+            var usedCells = worksheet.CellsUsed();
+            foreach (var cell in usedCells)
+            {
+                if (cell.IsEmpty())
+                    continue;
+
+                // Replace "RM" in cell text values
+                string cellValue = cell.GetString();
+                if (cellValue.Contains("RM"))
+                {
+                    cell.Value = cellValue.Replace("RM", currency);
+                }
+
+                // Replace "RM" in number formats
+                // Example: "RM #,##0.00" becomes "USD #,##0.00"
+                string numberFormat = cell.Style.NumberFormat.Format;
+                if (!string.IsNullOrEmpty(numberFormat) && numberFormat.Contains("RM"))
+                {
+                    cell.Style.NumberFormat.Format = numberFormat.Replace("RM", currency);
                 }
             }
         }
