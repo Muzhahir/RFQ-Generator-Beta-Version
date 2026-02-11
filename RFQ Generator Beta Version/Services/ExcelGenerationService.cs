@@ -43,22 +43,29 @@ namespace RFQ_Generator_System.Services
         /// <summary>
         /// Generate priced RFQ Excel (default behavior)
         /// </summary>
-        public void GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId)
+        public string GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId)
         {
-            GenerateRFQExcel(templatePath, outputPath, rfq, items, templateId, isPriced: true);
+            return GenerateRFQExcel(templatePath, outputPath, rfq, items, templateId, isPriced: true);
         }
 
         /// <summary>
         /// Generate RFQ Excel with option for priced or unpriced version
+        /// RETURNS the version suffix used (e.g., "PRICED", "UNPRICED", "COMMERCIAL", "TECHNICAL")
         /// </summary>
         /// <param name="isPriced">True for priced version, False for unpriced/technical version</param>
-        public void GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId, bool isPriced)
+        public string GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId, bool isPriced)
         {
             string fullTemplatePath = GetFullTemplatePath(templatePath);
 
             using (var workbook = new XLWorkbook(fullTemplatePath))
             {
                 var worksheet = workbook.Worksheet(1);
+
+                // DETECT TEMPLATE TERMINOLOGY FIRST
+                var (pricedTerm, unpricedTerm) = DetectTemplateTerminology(worksheet);
+
+                // Determine which term to use based on isPriced
+                string versionSuffix = isPriced ? pricedTerm : unpricedTerm;
 
                 var client = clientRepo.GetClientById(rfq.ClientId);
                 string clientName = client?.ClientName ?? "";
@@ -68,7 +75,9 @@ namespace RFQ_Generator_System.Services
                 // Determine effective currency BEFORE any operations
                 string effectiveCurrency = rfq.Currency ?? "RM";
 
-                // DEBUG: Show what currency we received (REMOVE AFTER TESTING)
+                // DEBUG: Show what terminology and currency we're using
+                System.Diagnostics.Debug.WriteLine($"[ExcelService] Template uses: {pricedTerm}/{unpricedTerm}");
+                System.Diagnostics.Debug.WriteLine($"[ExcelService] Version suffix: {versionSuffix}");
                 System.Diagnostics.Debug.WriteLine($"[ExcelService] Received RFQ.Currency: '{rfq.Currency ?? "NULL"}'");
                 System.Diagnostics.Debug.WriteLine($"[ExcelService] Effective Currency: '{effectiveCurrency}'");
                 System.Diagnostics.Debug.WriteLine($"[ExcelService] Is Priced: {isPriced}");
@@ -76,7 +85,7 @@ namespace RFQ_Generator_System.Services
                 // Convert PRICED/COMMERCIAL to UNPRICED/TECHNICAL if generating unpriced version
                 if (!isPriced)
                 {
-                    ConvertToUnpricedVersion(worksheet);
+                    ConvertToUnpricedVersion(worksheet, pricedTerm, unpricedTerm);
                 }
 
                 // Fill header fields including header_delivery_time placeholder
@@ -95,13 +104,48 @@ namespace RFQ_Generator_System.Services
                 ReplaceCurrencyInWorksheet(worksheet, effectiveCurrency);
 
                 workbook.SaveAs(outputPath);
+
+                // RETURN the version suffix that was used
+                return versionSuffix;
             }
+        }
+
+        /// <summary>
+        /// Detects whether the template uses "COMMERCIAL/TECHNICAL" or "PRICED/UNPRICED" terminology
+        /// Returns: ("COMMERCIAL", "TECHNICAL") or ("PRICED", "UNPRICED")
+        /// </summary>
+        private (string pricedTerm, string unpricedTerm) DetectTemplateTerminology(IXLWorksheet worksheet)
+        {
+            var usedCells = worksheet.CellsUsed();
+
+            foreach (var cell in usedCells)
+            {
+                if (cell.IsEmpty())
+                    continue;
+
+                string cellValue = cell.GetString();
+
+                // Check if template uses "COMMERCIAL" terminology
+                if (cellValue.IndexOf("COMMERCIAL", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return ("COMMERCIAL", "TECHNICAL");
+                }
+
+                // Check if template uses "PRICED" terminology
+                if (cellValue.IndexOf("PRICED", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return ("PRICED", "UNPRICED");
+                }
+            }
+
+            // Default to PRICED/UNPRICED if neither found
+            return ("PRICED", "UNPRICED");
         }
 
         /// <summary>
         /// Converts PRICED to UNPRICED and COMMERCIAL to TECHNICAL throughout the worksheet
         /// </summary>
-        private void ConvertToUnpricedVersion(IXLWorksheet worksheet)
+        private void ConvertToUnpricedVersion(IXLWorksheet worksheet, string pricedTerm, string unpricedTerm)
         {
             var usedCells = worksheet.CellsUsed();
             foreach (var cell in usedCells)
@@ -110,29 +154,15 @@ namespace RFQ_Generator_System.Services
                     continue;
 
                 string cellValue = cell.GetString();
-
-                // Check if cell contains PRICED or COMMERCIAL (case-insensitive)
                 bool hasChanged = false;
 
-                if (cellValue.IndexOf("PRICED", StringComparison.OrdinalIgnoreCase) >= 0)
+                // Replace using the detected terminology
+                if (cellValue.IndexOf(pricedTerm, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    // Replace PRICED with UNPRICED (preserve original case pattern)
                     cellValue = System.Text.RegularExpressions.Regex.Replace(
                         cellValue,
-                        "PRICED",
-                        "UNPRICED",
-                        System.Text.RegularExpressions.RegexOptions.IgnoreCase
-                    );
-                    hasChanged = true;
-                }
-
-                if (cellValue.IndexOf("COMMERCIAL", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    // Replace COMMERCIAL with TECHNICAL (preserve original case pattern)
-                    cellValue = System.Text.RegularExpressions.Regex.Replace(
-                        cellValue,
-                        "COMMERCIAL",
-                        "TECHNICAL",
+                        pricedTerm,
+                        unpricedTerm,
                         System.Text.RegularExpressions.RegexOptions.IgnoreCase
                     );
                     hasChanged = true;

@@ -19,26 +19,27 @@ namespace RFQ_Generator_System.Services
         /// <summary>
         /// Generate priced PDF (default behavior)
         /// </summary>
-        public void GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId)
+        public string GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId)
         {
-            GenerateRFQPDF(templatePath, outputPdfPath, rfq, items, templateId, isPriced: true);
+            return GenerateRFQPDF(templatePath, outputPdfPath, rfq, items, templateId, isPriced: true);
         }
 
         /// <summary>
         /// Generate PDF by first creating Excel from template, then converting to PDF
         /// Uses Excel's built-in Print to PDF functionality for best results
+        /// RETURNS the version suffix used (e.g., "PRICED", "UNPRICED", "COMMERCIAL", "TECHNICAL")
         /// </summary>
         /// <param name="isPriced">True for priced version, False for unpriced/technical version</param>
-        public void GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId, bool isPriced)
+        public string GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId, bool isPriced)
         {
             // Step 1: Create a temporary Excel file first
             string tempExcelPath = Path.Combine(Path.GetTempPath(), $"temp_rfq_{Guid.NewGuid()}.xlsx");
 
             try
             {
-                // Generate Excel first using the existing service (with isPriced parameter)
+                // Generate Excel first using the existing service and GET the version suffix
                 var excelService = new ExcelGenerationService();
-                excelService.GenerateRFQExcel(templatePath, tempExcelPath, rfq, items, templateId, isPriced);
+                string versionSuffix = excelService.GenerateRFQExcel(templatePath, tempExcelPath, rfq, items, templateId, isPriced);
 
                 // Step 2: Convert Excel to PDF - Try multiple methods
                 bool success = false;
@@ -58,6 +59,9 @@ namespace RFQ_Generator_System.Services
                 {
                     ConvertExcelToPDFImproved(tempExcelPath, outputPdfPath);
                 }
+
+                // RETURN the version suffix
+                return versionSuffix;
             }
             finally
             {

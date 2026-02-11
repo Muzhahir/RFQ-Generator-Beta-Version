@@ -74,6 +74,15 @@ namespace RFQ_Generator_System.Services
         }
 
         /// <summary>
+        /// Update sequence when user manually edits quote code.
+        /// This extracts the sequence number and sets it, so the next auto-generated code will be +1.
+        /// </summary>
+        public void UpdateSequenceFromManualEdit(int companyId, string quoteCode)
+        {
+            quoteCodeSequenceRepo.UpdateSequenceFromQuoteCode(companyId, quoteCode);
+        }
+
+        /// <summary>
         /// Format the quote code based on company-specific rules.
         /// All sequences now start from 0.
         /// </summary>
@@ -125,10 +134,9 @@ namespace RFQ_Generator_System.Services
 
         /// <summary>
         /// Save RFQ header and items in a single transaction.
-        /// If QuoteCode is manually edited by user, updates the sequence to match.
         /// Returns the new RFQ Id.
         /// </summary>
-        public int SaveRFQ(RFQ rfq, List<RFQItem> items, bool isQuoteCodeManuallyEdited = false)
+        public int SaveRFQ(RFQ rfq, List<RFQItem> items)
         {
             string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;
   Initial Catalog=RFQDB;
@@ -141,12 +149,6 @@ namespace RFQ_Generator_System.Services
                 {
                     try
                     {
-                        // If user manually edited the quote code, update the sequence to match
-                        if (isQuoteCodeManuallyEdited && !string.IsNullOrEmpty(rfq.QuoteCode))
-                        {
-                            quoteCodeSequenceRepo.UpdateSequenceFromQuoteCode(rfq.CompanyId, rfq.QuoteCode);
-                        }
-
                         // 1. Save RFQ header and get the new Id
                         SqlCommand cmdRFQ = new SqlCommand(
                             "INSERT INTO RFQ (CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, DeliveryTerm, Validity, Discount, Currency) " +

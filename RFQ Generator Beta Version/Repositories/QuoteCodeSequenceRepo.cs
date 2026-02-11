@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 
@@ -70,6 +70,7 @@ namespace RFQ_Generator_System.Repositories
         /// <summary>
         /// Peek at what the next sequence will be WITHOUT incrementing.
         /// Used for preview display.
+        /// Returns the NEXT number that WILL BE USED when GetNextSequence is called.
         /// </summary>
         public int PeekNextSequence(int companyId)
         {
@@ -91,13 +92,16 @@ namespace RFQ_Generator_System.Repositories
                     return 0;
                 }
 
+                // Return the current sequence - this is what GetNextSequence will return
+                // (GetNextSequence returns current, then increments to current+1)
                 return Convert.ToInt32(result);
             }
         }
 
         /// <summary>
         /// Update sequence based on manually edited quote code.
-        /// Extracts the number from the quote code and updates the sequence if it's higher.
+        /// Extracts the number from the quote code and sets it as the current sequence.
+        /// After calling this, the next auto-generated code will be extractedNumber + 1.
         /// </summary>
         public void UpdateSequenceFromQuoteCode(int companyId, string quoteCode)
         {
@@ -123,11 +127,10 @@ namespace RFQ_Generator_System.Repositories
 
                 object result = checkCmd.ExecuteScalar();
 
-                int currentSequence;
-
                 if (result == null)
                 {
-                    // No sequence exists, create one with the extracted number
+                    // No sequence exists, create one
+                    // Set it to extractedNumber + 1, so next peek/get will show extractedNumber + 1
                     SqlCommand insertCmd = new SqlCommand(
                         "INSERT INTO QuoteCodeSequence (CompanyId, CurrentSequence, LastUpdated) " +
                         "VALUES (@CompanyId, @CurrentSequence, @LastUpdated)",
@@ -140,22 +143,17 @@ namespace RFQ_Generator_System.Repositories
                 }
                 else
                 {
-                    currentSequence = Convert.ToInt32(result);
-
-                    // Only update if the extracted number is higher than current sequence
-                    // This ensures the next quote code will be higher than the manually edited one
-                    if (extractedNumber > currentSequence)
-                    {
-                        SqlCommand updateCmd = new SqlCommand(
-                            "UPDATE QuoteCodeSequence SET CurrentSequence = @CurrentSequence, LastUpdated = @LastUpdated " +
-                            "WHERE CompanyId = @CompanyId",
-                            conn
-                        );
-                        updateCmd.Parameters.AddWithValue("@CurrentSequence", extractedNumber);
-                        updateCmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
-                        updateCmd.Parameters.AddWithValue("@CompanyId", companyId);
-                        updateCmd.ExecuteNonQuery();
-                    }
+                    // Update sequence to extractedNumber + 1
+                    // So the next GetNextSequence will return extractedNumber + 1, then increment to extractedNumber + 2
+                    SqlCommand updateCmd = new SqlCommand(
+                        "UPDATE QuoteCodeSequence SET CurrentSequence = @CurrentSequence, LastUpdated = @LastUpdated " +
+                        "WHERE CompanyId = @CompanyId",
+                        conn
+                    );
+                    updateCmd.Parameters.AddWithValue("@CurrentSequence", extractedNumber + 1);
+                    updateCmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
+                    updateCmd.Parameters.AddWithValue("@CompanyId", companyId);
+                    updateCmd.ExecuteNonQuery();
                 }
             }
         }
@@ -165,14 +163,14 @@ namespace RFQ_Generator_System.Repositories
         /// Returns -1 if unable to extract.
         /// 
         /// Examples:
-        /// CG-1224-000005 ? 5
-        /// RFP-000000000123 ? 123
-        /// GASB/0042/121224 ? 42
-        /// QUO-ML-0099 ? 99
-        /// OGIT1224-24-007 ? 7
-        /// Q-000456-ABC ? 456
-        /// ABC/0001234/EPOMS ? 1234
-        /// ABC/QUO/SC/000789 ? 789
+        /// CG-1224-000005 → 5
+        /// RFP-000000000123 → 123
+        /// GASB/0042/121224 → 42
+        /// QUO-ML-0099 → 99
+        /// OGIT1224-24-007 → 7
+        /// Q-000456-ABC → 456
+        /// ABC/0001234/EPOMS → 1234
+        /// ABC/QUO/SC/000789 → 789
         /// </summary>
         private int ExtractSequenceNumber(string quoteCode)
         {
