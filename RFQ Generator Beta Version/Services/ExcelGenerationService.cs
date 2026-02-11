@@ -40,7 +40,19 @@ namespace RFQ_Generator_System.Services
             rfqItemRepo = new RFQItemRepo();
         }
 
+        /// <summary>
+        /// Generate priced RFQ Excel (default behavior)
+        /// </summary>
         public void GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId)
+        {
+            GenerateRFQExcel(templatePath, outputPath, rfq, items, templateId, isPriced: true);
+        }
+
+        /// <summary>
+        /// Generate RFQ Excel with option for priced or unpriced version
+        /// </summary>
+        /// <param name="isPriced">True for priced version, False for unpriced/technical version</param>
+        public void GenerateRFQExcel(string templatePath, string outputPath, RFQ rfq, List<RFQItem> items, int templateId, bool isPriced)
         {
             string fullTemplatePath = GetFullTemplatePath(templatePath);
 
@@ -59,21 +71,77 @@ namespace RFQ_Generator_System.Services
                 // DEBUG: Show what currency we received (REMOVE AFTER TESTING)
                 System.Diagnostics.Debug.WriteLine($"[ExcelService] Received RFQ.Currency: '{rfq.Currency ?? "NULL"}'");
                 System.Diagnostics.Debug.WriteLine($"[ExcelService] Effective Currency: '{effectiveCurrency}'");
+                System.Diagnostics.Debug.WriteLine($"[ExcelService] Is Priced: {isPriced}");
+
+                // Convert PRICED/COMMERCIAL to UNPRICED/TECHNICAL if generating unpriced version
+                if (!isPriced)
+                {
+                    ConvertToUnpricedVersion(worksheet);
+                }
 
                 // Fill header fields including header_delivery_time placeholder
                 FillHeaderFields(worksheet, rfq, clientName, items);
 
                 if (itemStartCell != null)
                 {
-                    FillItems(worksheet, items, itemStartCell, effectiveCurrency);
+                    FillItems(worksheet, items, itemStartCell, effectiveCurrency, isPriced);
                 }
 
-                FillSummary(worksheet, items, rfq.Discount);
+                // For unpriced version, discount is always 0
+                decimal effectiveDiscount = isPriced ? rfq.Discount : 0;
+                FillSummary(worksheet, items, effectiveDiscount, isPriced);
 
                 // Final currency replacement to catch any remaining instances
                 ReplaceCurrencyInWorksheet(worksheet, effectiveCurrency);
 
                 workbook.SaveAs(outputPath);
+            }
+        }
+
+        /// <summary>
+        /// Converts PRICED to UNPRICED and COMMERCIAL to TECHNICAL throughout the worksheet
+        /// </summary>
+        private void ConvertToUnpricedVersion(IXLWorksheet worksheet)
+        {
+            var usedCells = worksheet.CellsUsed();
+            foreach (var cell in usedCells)
+            {
+                if (cell.IsEmpty())
+                    continue;
+
+                string cellValue = cell.GetString();
+
+                // Check if cell contains PRICED or COMMERCIAL (case-insensitive)
+                bool hasChanged = false;
+
+                if (cellValue.IndexOf("PRICED", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    // Replace PRICED with UNPRICED (preserve original case pattern)
+                    cellValue = System.Text.RegularExpressions.Regex.Replace(
+                        cellValue,
+                        "PRICED",
+                        "UNPRICED",
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                    );
+                    hasChanged = true;
+                }
+
+                if (cellValue.IndexOf("COMMERCIAL", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    // Replace COMMERCIAL with TECHNICAL (preserve original case pattern)
+                    cellValue = System.Text.RegularExpressions.Regex.Replace(
+                        cellValue,
+                        "COMMERCIAL",
+                        "TECHNICAL",
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                    );
+                    hasChanged = true;
+                }
+
+                if (hasChanged)
+                {
+                    cell.Value = cellValue;
+                }
             }
         }
 
@@ -258,7 +326,7 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        private void FillItems(IXLWorksheet worksheet, List<RFQItem> items, IXLCell startCell, string effectiveCurrency)
+        private void FillItems(IXLWorksheet worksheet, List<RFQItem> items, IXLCell startCell, string effectiveCurrency, bool isPriced)
         {
             int headerRow = startCell.Address.RowNumber;
 
@@ -405,16 +473,41 @@ namespace RFQ_Generator_System.Services
                     worksheet.Cell($"{qtyCol}{currentRow}").Value = item.Quantity + " " + item.UnitName;
                 }
 
+                // Handle pricing based on isPriced flag
                 if (priceCol != null)
                 {
-                    worksheet.Cell($"{priceCol}{currentRow}").Value = item.UnitPrice;
-                    worksheet.Cell($"{priceCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+                    if (isPriced)
+                    {
+                        // Priced version: show actual prices
+                        worksheet.Cell($"{priceCol}{currentRow}").Value = item.UnitPrice;
+                        worksheet.Cell($"{priceCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+                    }
+                    else
+                    {
+                        // Unpriced version: show "Quoted" or "Unquoted"
+                        string priceText = item.UnitPrice > 0 ? "Quoted" : "Unquoted";
+                        worksheet.Cell($"{priceCol}{currentRow}").Value = priceText;
+                        // Clear number formatting for text
+                        worksheet.Cell($"{priceCol}{currentRow}").Style.NumberFormat.Format = "@";
+                    }
                 }
 
                 if (totalCol != null && priceCol != null)
                 {
-                    worksheet.Cell($"{totalCol}{currentRow}").FormulaA1 = $"={priceCol}{currentRow}*{item.Quantity}";
-                    worksheet.Cell($"{totalCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+                    if (isPriced)
+                    {
+                        // Priced version: calculate total
+                        worksheet.Cell($"{totalCol}{currentRow}").FormulaA1 = $"={priceCol}{currentRow}*{item.Quantity}";
+                        worksheet.Cell($"{totalCol}{currentRow}").Style.NumberFormat.Format = "#,##0.00";
+                    }
+                    else
+                    {
+                        // Unpriced version: show "Quoted" or "Unquoted"
+                        string totalText = item.UnitPrice > 0 ? "Quoted" : "Unquoted";
+                        worksheet.Cell($"{totalCol}{currentRow}").Value = totalText;
+                        // Clear number formatting for text
+                        worksheet.Cell($"{totalCol}{currentRow}").Style.NumberFormat.Format = "@";
+                    }
                 }
 
                 // Move to next item
@@ -473,7 +566,7 @@ namespace RFQ_Generator_System.Services
             return null;
         }
 
-        private void FillSummary(IXLWorksheet worksheet, List<RFQItem> items, decimal discount)
+        private void FillSummary(IXLWorksheet worksheet, List<RFQItem> items, decimal discount, bool isPriced)
         {
             decimal subtotal = items.Sum(item => item.UnitPrice * item.Quantity);
 
@@ -493,18 +586,43 @@ namespace RFQ_Generator_System.Services
 
                 if (cellValue.Equals(Placeholders.Subtotal, StringComparison.OrdinalIgnoreCase))
                 {
-                    cell.Value = subtotal;
-                    cell.Style.NumberFormat.Format = "#,##0.00";
+                    if (isPriced)
+                    {
+                        cell.Value = subtotal;
+                        cell.Style.NumberFormat.Format = "#,##0.00";
+                    }
+                    else
+                    {
+                        cell.Value = "Quoted";
+                        cell.Style.NumberFormat.Format = "@";
+                    }
                 }
                 else if (cellValue.Equals(Placeholders.Discount, StringComparison.OrdinalIgnoreCase))
                 {
-                    cell.Value = discount / 100;
-                    cell.Style.NumberFormat.Format = "#,##0.00 %";
+                    if (isPriced)
+                    {
+                        cell.Value = discount / 100;
+                        cell.Style.NumberFormat.Format = "#,##0.00 %";
+                    }
+                    else
+                    {
+                        // For unpriced, discount is always 0
+                        cell.Value = 0;
+                        cell.Style.NumberFormat.Format = "#,##0.00 %";
+                    }
                 }
                 else if (cellValue.Equals(Placeholders.SummaryTotal, StringComparison.OrdinalIgnoreCase))
                 {
-                    cell.Value = totalPrice;
-                    cell.Style.NumberFormat.Format = "#,##0.00";
+                    if (isPriced)
+                    {
+                        cell.Value = totalPrice;
+                        cell.Style.NumberFormat.Format = "#,##0.00";
+                    }
+                    else
+                    {
+                        cell.Value = "Quoted";
+                        cell.Style.NumberFormat.Format = "@";
+                    }
                 }
             }
         }

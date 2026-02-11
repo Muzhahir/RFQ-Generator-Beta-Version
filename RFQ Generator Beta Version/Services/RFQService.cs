@@ -75,7 +75,7 @@ namespace RFQ_Generator_System.Services
 
         /// <summary>
         /// Format the quote code based on company-specific rules.
-        /// Extracted to avoid code duplication.
+        /// All sequences now start from 0.
         /// </summary>
         private string FormatQuoteCode(string companyCode, string clientCode, int sequence)
         {
@@ -86,49 +86,49 @@ namespace RFQ_Generator_System.Services
             switch (companyCode)
             {
                 case "CG":
-                    // Format: CG-MMYY-NNNNNN
+                    // Format: CG-MMYY-NNNNNN (starts from 0)
                     return $"CG-{DateTime.Now:MMyy}-{sequence:D6}";
 
                 case "DE":
-                    // Format: RFP-NNNNNNNNNNNN
+                    // Format: RFP-NNNNNNNNNNNN (starts from 0)
                     return $"RFP-{sequence:D12}";
 
                 case "GA":
-                    // Format: GASB/NNNN/DDMMYY
+                    // Format: GASB/NNNN/DDMMYY (starts from 0)
                     return $"GASB/{sequence:D4}/{DateTime.Now:ddMMyy}";
 
                 case "MA":
-                    // Format: QUO-ML-NNNN
+                    // Format: QUO-ML-NNNN (starts from 0)
                     return $"QUO-ML-{sequence:D4}";
 
                 case "OGIT":
-                    // Format: OGITMMDD-YY-NNN (has year)
+                    // Format: OGITMMDD-YY-NNN (has year, starts from 0)
                     return $"OGIT{monthDay}-{yearShort}-{sequence:D3}";
 
                 case "OP":
-                    // Format: Q-NNNNNN-CLIENTCODE (has client name)
+                    // Format: Q-NNNNNN-CLIENTCODE (starts from 0)
                     return $"Q-{sequence:D6}-{clientCode}";
 
                 case "PO":
-                    // Format: CLIENTCODE/NNNNNNN/EPOMS (has client name)
+                    // Format: CLIENTCODE/NNNNNNN/EPOMS (starts from 0)
                     return $"{clientCode}/{sequence:D7}/EPOMS";
 
                 case "SC":
-                    // Format: CLIENTCODE/QUO/SC/NNNNNN (has client name)
+                    // Format: CLIENTCODE/QUO/SC/NNNNNN (starts from 0)
                     return $"{clientCode}/QUO/SC/{sequence:D6}";
 
                 default:
+                    // Generic format (starts from 0)
                     return $"{companyCode}-{sequence:D6}";
             }
         }
 
         /// <summary>
         /// Save RFQ header and items in a single transaction.
-        /// If QuoteCode is already set (user manually entered), it will be used.
-        /// Otherwise, generates it automatically with sequence increment.
+        /// If QuoteCode is manually edited by user, updates the sequence to match.
         /// Returns the new RFQ Id.
         /// </summary>
-        public int SaveRFQ(RFQ rfq, List<RFQItem> items)
+        public int SaveRFQ(RFQ rfq, List<RFQItem> items, bool isQuoteCodeManuallyEdited = false)
         {
             string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;
   Initial Catalog=RFQDB;
@@ -141,6 +141,12 @@ namespace RFQ_Generator_System.Services
                 {
                     try
                     {
+                        // If user manually edited the quote code, update the sequence to match
+                        if (isQuoteCodeManuallyEdited && !string.IsNullOrEmpty(rfq.QuoteCode))
+                        {
+                            quoteCodeSequenceRepo.UpdateSequenceFromQuoteCode(rfq.CompanyId, rfq.QuoteCode);
+                        }
+
                         // 1. Save RFQ header and get the new Id
                         SqlCommand cmdRFQ = new SqlCommand(
                             "INSERT INTO RFQ (CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, DeliveryTerm, Validity, Discount, Currency) " +
@@ -158,7 +164,7 @@ namespace RFQ_Generator_System.Services
                         cmdRFQ.Parameters.AddWithValue("@DeliveryTerm", string.IsNullOrEmpty(rfq.DeliveryTerm) ? (object)DBNull.Value : rfq.DeliveryTerm);
                         cmdRFQ.Parameters.AddWithValue("@Validity", string.IsNullOrEmpty(rfq.Validity) ? (object)DBNull.Value : rfq.Validity);
                         cmdRFQ.Parameters.AddWithValue("@Discount", rfq.Discount);
-                        cmdRFQ.Parameters.AddWithValue("@Currency", string.IsNullOrEmpty(rfq.Currency) ? "RM" : rfq.Currency); // ADD THIS LINE
+                        cmdRFQ.Parameters.AddWithValue("@Currency", string.IsNullOrEmpty(rfq.Currency) ? "RM" : rfq.Currency);
 
                         int newRFQId = Convert.ToInt32(cmdRFQ.ExecuteScalar());
 
@@ -196,6 +202,7 @@ namespace RFQ_Generator_System.Services
                 }
             }
         }
+
         /// <summary>
         /// Get template based on selected CompanyId
         /// </summary>
@@ -247,13 +254,19 @@ namespace RFQ_Generator_System.Services
         }
 
         /// <summary>
-        /// Reset all quote code sequences
+        /// Reset all quote code sequences to 0
         /// </summary>
         public void ResetAllQuoteCodeSequences()
         {
             quoteCodeSequenceRepo.ResetAllSequences();
         }
 
-
+        /// <summary>
+        /// Reset quote code sequence for a specific company to 0
+        /// </summary>
+        public void ResetQuoteCodeSequence(int companyId)
+        {
+            quoteCodeSequenceRepo.ResetSequence(companyId);
+        }
     }
 }

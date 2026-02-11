@@ -17,19 +17,28 @@ namespace RFQ_Generator_System.Services
     public class PDFGenerationService
     {
         /// <summary>
+        /// Generate priced PDF (default behavior)
+        /// </summary>
+        public void GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId)
+        {
+            GenerateRFQPDF(templatePath, outputPdfPath, rfq, items, templateId, isPriced: true);
+        }
+
+        /// <summary>
         /// Generate PDF by first creating Excel from template, then converting to PDF
         /// Uses Excel's built-in Print to PDF functionality for best results
         /// </summary>
-        public void GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId)
+        /// <param name="isPriced">True for priced version, False for unpriced/technical version</param>
+        public void GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId, bool isPriced)
         {
             // Step 1: Create a temporary Excel file first
             string tempExcelPath = Path.Combine(Path.GetTempPath(), $"temp_rfq_{Guid.NewGuid()}.xlsx");
 
             try
             {
-                // Generate Excel first using the existing service
+                // Generate Excel first using the existing service (with isPriced parameter)
                 var excelService = new ExcelGenerationService();
-                excelService.GenerateRFQExcel(templatePath, tempExcelPath, rfq, items, templateId);
+                excelService.GenerateRFQExcel(templatePath, tempExcelPath, rfq, items, templateId, isPriced);
 
                 // Step 2: Convert Excel to PDF - Try multiple methods
                 bool success = false;
@@ -388,6 +397,16 @@ namespace RFQ_Generator_System.Services
         /// </summary>
         public void GenerateDirectRFQPDF(string outputPdfPath, RFQ rfq, List<RFQItem> items, Company company, Client client)
         {
+            GenerateDirectRFQPDF(outputPdfPath, rfq, items, company, client, isPriced: true);
+        }
+
+        /// <summary>
+        /// Alternative method: Generate PDF directly from RFQ data (without template)
+        /// This provides more control over PDF layout
+        /// </summary>
+        /// <param name="isPriced">True for priced version, False for unpriced/technical version</param>
+        public void GenerateDirectRFQPDF(string outputPdfPath, RFQ rfq, List<RFQItem> items, Company company, Client client, bool isPriced)
+        {
             Document document = new Document(PageSize.A4, 40, 40, 40, 40);
 
             using (FileStream fs = new FileStream(outputPdfPath, FileMode.Create))
@@ -404,7 +423,8 @@ namespace RFQ_Generator_System.Services
                 Font tableCellFont = FontFactory.GetFont(FontFactory.HELVETICA, 9);
 
                 // Title
-                Paragraph title = new Paragraph("REQUEST FOR QUOTATION", titleFont);
+                string titleText = isPriced ? "REQUEST FOR QUOTATION" : "REQUEST FOR QUOTATION (TECHNICAL)";
+                Paragraph title = new Paragraph(titleText, titleFont);
                 title.Alignment = Element.ALIGN_CENTER;
                 title.SpacingAfter = 20;
                 document.Add(title);
@@ -440,8 +460,17 @@ namespace RFQ_Generator_System.Services
                 AddTableHeaderCell(itemsTable, "Description", tableHeaderFont);
                 AddTableHeaderCell(itemsTable, "Quantity", tableHeaderFont);
                 AddTableHeaderCell(itemsTable, "Unit", tableHeaderFont);
-                AddTableHeaderCell(itemsTable, "Unit Price", tableHeaderFont);
-                AddTableHeaderCell(itemsTable, "Total", tableHeaderFont);
+
+                if (isPriced)
+                {
+                    AddTableHeaderCell(itemsTable, "Unit Price", tableHeaderFont);
+                    AddTableHeaderCell(itemsTable, "Total", tableHeaderFont);
+                }
+                else
+                {
+                    AddTableHeaderCell(itemsTable, "Unit Price", tableHeaderFont);
+                    AddTableHeaderCell(itemsTable, "Total", tableHeaderFont);
+                }
 
                 // Table rows
                 decimal subtotal = 0;
@@ -454,26 +483,53 @@ namespace RFQ_Generator_System.Services
                     AddTableCell(itemsTable, item.ItemDesc, tableCellFont);
                     AddTableCell(itemsTable, item.Quantity.ToString(), tableCellFont);
                     AddTableCell(itemsTable, item.UnitName, tableCellFont);
-                    AddTableCell(itemsTable, item.UnitPrice.ToString("N2"), tableCellFont);
-                    AddTableCell(itemsTable, itemTotal.ToString("N2"), tableCellFont);
+
+                    if (isPriced)
+                    {
+                        AddTableCell(itemsTable, item.UnitPrice.ToString("N2"), tableCellFont);
+                        AddTableCell(itemsTable, itemTotal.ToString("N2"), tableCellFont);
+                    }
+                    else
+                    {
+                        string priceText = item.UnitPrice > 0 ? "Quoted" : "Unquoted";
+                        AddTableCell(itemsTable, priceText, tableCellFont);
+                        AddTableCell(itemsTable, priceText, tableCellFont);
+                    }
                 }
 
                 document.Add(itemsTable);
 
-                // Totals
-                PdfPTable totalsTable = new PdfPTable(2);
-                totalsTable.WidthPercentage = 40;
-                totalsTable.HorizontalAlignment = Element.ALIGN_RIGHT;
-                totalsTable.SpacingBefore = 15;
+                // Totals (only for priced version)
+                if (isPriced)
+                {
+                    PdfPTable totalsTable = new PdfPTable(2);
+                    totalsTable.WidthPercentage = 40;
+                    totalsTable.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    totalsTable.SpacingBefore = 15;
 
-                decimal discountAmount = subtotal * (rfq.Discount / 100);
-                decimal grandTotal = subtotal - discountAmount;
+                    decimal discountAmount = subtotal * (rfq.Discount / 100);
+                    decimal grandTotal = subtotal - discountAmount;
 
-                AddTotalRow(totalsTable, "Subtotal:", subtotal.ToString("N2"), labelFont, normalFont);
-                AddTotalRow(totalsTable, $"Discount ({rfq.Discount}%):", discountAmount.ToString("N2"), labelFont, normalFont);
-                AddTotalRow(totalsTable, "Grand Total:", grandTotal.ToString("N2"), labelFont, normalFont);
+                    AddTotalRow(totalsTable, "Subtotal:", subtotal.ToString("N2"), labelFont, normalFont);
+                    AddTotalRow(totalsTable, $"Discount ({rfq.Discount}%):", discountAmount.ToString("N2"), labelFont, normalFont);
+                    AddTotalRow(totalsTable, "Grand Total:", grandTotal.ToString("N2"), labelFont, normalFont);
 
-                document.Add(totalsTable);
+                    document.Add(totalsTable);
+                }
+                else
+                {
+                    // For unpriced version, just show "Quoted" for totals
+                    PdfPTable totalsTable = new PdfPTable(2);
+                    totalsTable.WidthPercentage = 40;
+                    totalsTable.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    totalsTable.SpacingBefore = 15;
+
+                    AddTotalRow(totalsTable, "Subtotal:", "Quoted", labelFont, normalFont);
+                    AddTotalRow(totalsTable, "Discount (0%):", "0.00", labelFont, normalFont);
+                    AddTotalRow(totalsTable, "Grand Total:", "Quoted", labelFont, normalFont);
+
+                    document.Add(totalsTable);
+                }
 
                 // Footer
                 Paragraph footer = new Paragraph($"\nGenerated on {DateTime.Now:dd/MM/yyyy HH:mm:ss}",

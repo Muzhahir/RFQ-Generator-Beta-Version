@@ -57,8 +57,11 @@ namespace RFQ_Generator_System
                 txtQuoteCode.ReadOnly = false;
                 txtQuoteCode.BackColor = Color.LightYellow;
 
-                btnGeneratePDF.Enabled = true;
-                btnGeneratePDFDirect.Enabled = true;
+                // Enable all generate buttons
+                btnGenerateExcelPriced.Enabled = true;
+                btnGenerateExcelUnpriced.Enabled = true;
+                btnGeneratePDFPriced.Enabled = true;
+                btnGeneratePDFUnpriced.Enabled = true;
 
                 cmbCompany.SelectedIndexChanged += HandleCompanyOrClientChange;
                 cmbClient.SelectedIndexChanged += HandleCompanyOrClientChange;
@@ -136,9 +139,22 @@ namespace RFQ_Generator_System
             if (sender == cmbCompany)
             {
                 UpdateTemplateDisplay();
+
+                // Reset manual edit flag when company changes
+                // This allows auto-generation for new RFQ
+                isQuoteCodeManuallyEdited = false;
             }
 
-            if (!isQuoteCodeManuallyEdited)
+            if (sender == cmbClient)
+            {
+                // Reset manual edit flag when client changes
+                // This allows auto-generation for new RFQ
+                isQuoteCodeManuallyEdited = false;
+            }
+
+            // Always regenerate preview when company or client changes
+            // (unless user is currently editing the textbox)
+            if (!txtQuoteCode.Focused)
             {
                 GenerateAndDisplayQuoteCodePreview();
             }
@@ -462,6 +478,7 @@ namespace RFQ_Generator_System
                 Currency = cmbCurrency.SelectedItem?.ToString() ?? "RM"
             };
 
+            // If quote code was NOT manually edited, generate it automatically
             if (!isQuoteCodeManuallyEdited)
             {
                 var selectedCompany = allCompanies.FirstOrDefault(c => c.Id == (int)cmbCompany.SelectedValue);
@@ -471,17 +488,36 @@ namespace RFQ_Generator_System
                 rfq.QuoteCode = rfqService.GenerateQuoteCode(companyCode, clientCode);
             }
 
-            currentRFQId = rfqService.SaveRFQ(rfq, rfqItems);
+            // Save RFQ with flag indicating if quote code was manually edited
+            currentRFQId = rfqService.SaveRFQ(rfq, rfqItems, isQuoteCodeManuallyEdited);
+
+            // Update the textbox with the final quote code
             txtQuoteCode.Text = rfq.QuoteCode;
             txtQuoteCode.BackColor = Color.LightGreen;
+
+            // Reset the manual edit flag after saving
             isQuoteCodeManuallyEdited = false;
 
             return true;
         }
         #endregion
 
-        #region Generate Excel (with Auto-Save)
-        private void btnGenerateExcel_Click(object sender, EventArgs e)
+        #region Generate Excel (PRICED)
+        private void btnGenerateExcelPriced_Click(object sender, EventArgs e)
+        {
+            GenerateExcel(isPriced: true);
+        }
+        #endregion
+
+        #region Generate Excel (UNPRICED)
+        private void btnGenerateExcelUnpriced_Click(object sender, EventArgs e)
+        {
+            GenerateExcel(isPriced: false);
+        }
+        #endregion
+
+        #region Generate Excel (Common Method)
+        private void GenerateExcel(bool isPriced)
         {
             try
             {
@@ -503,13 +539,14 @@ namespace RFQ_Generator_System
                     rfq.Currency = selectedCurrency;
                 }
 
-                string defaultFileName = $"RFQ_{rfq.RFQCode}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                string versionSuffix = isPriced ? "PRICED" : "UNPRICED";
+                string defaultFileName = $"RFQ_{rfq.RFQCode}_{versionSuffix}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
 
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
                     sfd.Filter = "Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*";
                     sfd.FileName = defaultFileName;
-                    sfd.Title = "Save RFQ Excel File";
+                    sfd.Title = $"Save {versionSuffix} RFQ Excel File";
 
                     string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     string rfqFolder = Path.Combine(documentsPath, "RFQ Generator");
@@ -523,10 +560,11 @@ namespace RFQ_Generator_System
                             sfd.FileName,
                             rfq,
                             items,
-                            currentTemplate.Id
+                            currentTemplate.Id,
+                            isPriced
                         );
 
-                        MessageBox.Show($"Success! RFQ saved to database and Excel file generated.\n\nRFQ ID: {currentRFQId}\nQuote Code: {rfq.QuoteCode}\nCurrency: {rfq.Currency}\n\nFile saved to:\n{sfd.FileName}",
+                        MessageBox.Show($"Success! {versionSuffix} RFQ saved to database and Excel file generated.\n\nRFQ ID: {currentRFQId}\nQuote Code: {rfq.QuoteCode}\nCurrency: {rfq.Currency}\nVersion: {versionSuffix}\n\nFile saved to:\n{sfd.FileName}",
                             "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                         if (MessageBox.Show("Do you want to open the generated file?", "Open File",
@@ -534,6 +572,11 @@ namespace RFQ_Generator_System
                         {
                             System.Diagnostics.Process.Start(sfd.FileName);
                         }
+
+                        // FIXED: After successful generation, force update the preview for next RFQ
+                        // Reset manual edit flag and regenerate preview to show incremented sequence
+                        isQuoteCodeManuallyEdited = false;
+                        GenerateAndDisplayQuoteCodePreview();
                     }
                 }
             }
@@ -545,8 +588,22 @@ namespace RFQ_Generator_System
         }
         #endregion
 
-        #region Generate PDF (Direct)
-        private void btnGeneratePDF_Click(object sender, EventArgs e)
+        #region Generate PDF (PRICED)
+        private void btnGeneratePDFPriced_Click(object sender, EventArgs e)
+        {
+            GeneratePDF(isPriced: true);
+        }
+        #endregion
+
+        #region Generate PDF (UNPRICED)
+        private void btnGeneratePDFUnpriced_Click(object sender, EventArgs e)
+        {
+            GeneratePDF(isPriced: false);
+        }
+        #endregion
+
+        #region Generate PDF (Common Method)
+        private void GeneratePDF(bool isPriced)
         {
             try
             {
@@ -558,28 +615,26 @@ namespace RFQ_Generator_System
                     return;
                 }
 
-                var rfq = new RFQ
-                {
-                    CompanyId = (int)cmbCompany.SelectedValue,
-                    ClientId = (int)cmbClient.SelectedValue,
-                    CreatedAt = dtpCreatedAt.Value,
-                    RFQCode = txtRFQCode.Text.Trim(),
-                    QuoteCode = txtQuoteCode.Text.Trim(),
-                    DeliveryPoint = txtDeliveryPoint.Text.Trim(),
-                    DeliveryTerm = rbtnDAP.Checked ? "DAP" :
-                                   rbtnDDP.Checked ? "DDP" : "DAP",
-                    Validity = txtValidity.Text.Trim(),
-                    Discount = numDiscount.Value,
-                    Currency = cmbCurrency.SelectedItem?.ToString() ?? "RM"
-                };
+                // CRITICAL FIX: Save RFQ first to increment sequence (same as Excel generation)
+                if (!SaveRFQ()) return;
 
-                string defaultFileName = $"RFQ_{rfq.RFQCode}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+                // Get the saved RFQ from database with the correct quote code
+                var (rfq, items) = rfqService.GetRFQWithItems(currentRFQId);
+
+                string selectedCurrency = cmbCurrency.SelectedItem?.ToString() ?? "RM";
+                if (string.IsNullOrEmpty(rfq.Currency) || rfq.Currency != selectedCurrency)
+                {
+                    rfq.Currency = selectedCurrency;
+                }
+
+                string versionSuffix = isPriced ? "PRICED" : "UNPRICED";
+                string defaultFileName = $"RFQ_{rfq.RFQCode}_{versionSuffix}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
 
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
                     sfd.Filter = "PDF Files (*.pdf)|*.pdf|All Files (*.*)|*.*";
                     sfd.FileName = defaultFileName;
-                    sfd.Title = "Save RFQ PDF File";
+                    sfd.Title = $"Save {versionSuffix} RFQ PDF File";
 
                     string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     string rfqFolder = Path.Combine(documentsPath, "RFQ Generator");
@@ -592,11 +647,12 @@ namespace RFQ_Generator_System
                             currentTemplate.TemplatePath,
                             sfd.FileName,
                             rfq,
-                            rfqItems,
-                            currentTemplate.Id
+                            items,
+                            currentTemplate.Id,
+                            isPriced
                         );
 
-                        MessageBox.Show($"Success! PDF file generated.\n\nFile saved to:\n{sfd.FileName}",
+                        MessageBox.Show($"Success! {versionSuffix} RFQ saved to database and PDF file generated.\n\nRFQ ID: {currentRFQId}\nQuote Code: {rfq.QuoteCode}\nCurrency: {rfq.Currency}\nVersion: {versionSuffix}\n\nFile saved to:\n{sfd.FileName}",
                             "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                         if (MessageBox.Show("Do you want to open the generated file?", "Open File",
@@ -604,6 +660,11 @@ namespace RFQ_Generator_System
                         {
                             System.Diagnostics.Process.Start(sfd.FileName);
                         }
+
+                        // After successful generation, update the preview for next RFQ
+                        // This ensures the next quote code increments properly
+                        isQuoteCodeManuallyEdited = false;
+                        GenerateAndDisplayQuoteCodePreview();
                     }
                 }
             }
@@ -649,8 +710,10 @@ namespace RFQ_Generator_System
             editingItemIndex = -1;
             isQuoteCodeManuallyEdited = false;
             btnAddItem.Text = "Add Item";
-            btnGeneratePDF.Enabled = true;
-            btnGeneratePDFDirect.Enabled = true;
+            btnGenerateExcelPriced.Enabled = true;
+            btnGenerateExcelUnpriced.Enabled = true;
+            btnGeneratePDFPriced.Enabled = true;
+            btnGeneratePDFUnpriced.Enabled = true;
             rbtnDAP.Checked = true;
             cmbCompany.Focus();
         }

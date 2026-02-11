@@ -1,141 +1,253 @@
 using System;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace RFQ_Generator_System.Repositories
 {
     public class QuoteCodeSequenceRepo
     {
         private readonly string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;
-      Initial Catalog=RFQDB;
-      Integrated Security=True";
+  Initial Catalog=RFQDB;
+  Integrated Security=True";
 
         /// <summary>
-        /// Logic for ONLY viewing what the next sequence will be.
-        /// Does NOT update the database.
-        /// Use this for preview when user selects company/client.
-        /// </summary>
-        public int PeekNextSequence(int companyId)
-        {
-            int currentYear = DateTime.Now.Year;
-
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand(
-                    "SELECT CurrentSequence, LastResetYear FROM QuoteCodeSequence WHERE CompanyId = @CompanyId",
-                    conn);
-                cmd.Parameters.AddWithValue("@CompanyId", companyId);
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        int lastResetYear = Convert.ToInt32(reader["LastResetYear"]);
-                        int currentSequence = Convert.ToInt32(reader["CurrentSequence"]);
-
-                        // If the year has changed, the next sequence WILL be 1
-                        if (lastResetYear != currentYear)
-                        {
-                            return 1;
-                        }
-
-                        // Otherwise, it's just the current + 1
-                        return currentSequence + 1;
-                    }
-                }
-            }
-
-            // If no record exists yet, the first sequence will be 1
-            return 1;
-        }
-
-        /// <summary>
-        /// Get next sequence number and COMMIT it to the database.
-        /// Auto-resets to 1 if year has changed.
-        /// Use this ONLY when actually saving the RFQ.
+        /// Get the next sequence number for a company and INCREMENT it in the database.
+        /// This should ONLY be called when actually saving an RFQ.
         /// </summary>
         public int GetNextSequence(int companyId)
         {
-            int currentYear = DateTime.Now.Year;
-            int nextSequence = 1;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                // Check if sequence exists for this company
+                SqlCommand checkCmd = new SqlCommand(
+                    "SELECT CurrentSequence FROM QuoteCodeSequence WHERE CompanyId = @CompanyId",
+                    conn
+                );
+                checkCmd.Parameters.AddWithValue("@CompanyId", companyId);
+
+                object result = checkCmd.ExecuteScalar();
+
+                int currentSequence;
+
+                if (result == null)
+                {
+                    // No sequence exists, create one starting at 0
+                    SqlCommand insertCmd = new SqlCommand(
+                        "INSERT INTO QuoteCodeSequence (CompanyId, CurrentSequence, LastUpdated) " +
+                        "VALUES (@CompanyId, 0, @LastUpdated)",
+                        conn
+                    );
+                    insertCmd.Parameters.AddWithValue("@CompanyId", companyId);
+                    insertCmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
+                    insertCmd.ExecuteNonQuery();
+
+                    currentSequence = 0;
+                }
+                else
+                {
+                    currentSequence = Convert.ToInt32(result);
+                }
+
+                // Increment sequence for next time
+                int nextSequence = currentSequence + 1;
+
+                SqlCommand updateCmd = new SqlCommand(
+                    "UPDATE QuoteCodeSequence SET CurrentSequence = @CurrentSequence, LastUpdated = @LastUpdated " +
+                    "WHERE CompanyId = @CompanyId",
+                    conn
+                );
+                updateCmd.Parameters.AddWithValue("@CurrentSequence", nextSequence);
+                updateCmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
+                updateCmd.Parameters.AddWithValue("@CompanyId", companyId);
+                updateCmd.ExecuteNonQuery();
+
+                return currentSequence;
+            }
+        }
+
+        /// <summary>
+        /// Peek at what the next sequence will be WITHOUT incrementing.
+        /// Used for preview display.
+        /// </summary>
+        public int PeekNextSequence(int companyId)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT CurrentSequence FROM QuoteCodeSequence WHERE CompanyId = @CompanyId",
+                    conn
+                );
+                cmd.Parameters.AddWithValue("@CompanyId", companyId);
+
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                {
+                    // No sequence exists yet, will start at 0
+                    return 0;
+                }
+
+                return Convert.ToInt32(result);
+            }
+        }
+
+        /// <summary>
+        /// Update sequence based on manually edited quote code.
+        /// Extracts the number from the quote code and updates the sequence if it's higher.
+        /// </summary>
+        public void UpdateSequenceFromQuoteCode(int companyId, string quoteCode)
+        {
+            if (string.IsNullOrEmpty(quoteCode))
+                return;
+
+            // Extract the numeric part from the quote code
+            int extractedNumber = ExtractSequenceNumber(quoteCode);
+
+            if (extractedNumber < 0)
+                return; // Could not extract valid number
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
 
-                SqlCommand cmdCheck = new SqlCommand(
-                    "SELECT CurrentSequence, LastResetYear FROM QuoteCodeSequence WHERE CompanyId = @CompanyId",
-                    conn);
-                cmdCheck.Parameters.AddWithValue("@CompanyId", companyId);
+                // Get current sequence
+                SqlCommand checkCmd = new SqlCommand(
+                    "SELECT CurrentSequence FROM QuoteCodeSequence WHERE CompanyId = @CompanyId",
+                    conn
+                );
+                checkCmd.Parameters.AddWithValue("@CompanyId", companyId);
 
-                using (SqlDataReader reader = cmdCheck.ExecuteReader())
+                object result = checkCmd.ExecuteScalar();
+
+                int currentSequence;
+
+                if (result == null)
                 {
-                    if (reader.Read())
-                    {
-                        int lastResetYear = Convert.ToInt32(reader["LastResetYear"]);
-                        int currentSequence = Convert.ToInt32(reader["CurrentSequence"]);
-                        reader.Close();
+                    // No sequence exists, create one with the extracted number
+                    SqlCommand insertCmd = new SqlCommand(
+                        "INSERT INTO QuoteCodeSequence (CompanyId, CurrentSequence, LastUpdated) " +
+                        "VALUES (@CompanyId, @CurrentSequence, @LastUpdated)",
+                        conn
+                    );
+                    insertCmd.Parameters.AddWithValue("@CompanyId", companyId);
+                    insertCmd.Parameters.AddWithValue("@CurrentSequence", extractedNumber);
+                    insertCmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
+                    insertCmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    currentSequence = Convert.ToInt32(result);
 
-                        if (lastResetYear != currentYear)
-                        {
-                            // COMMIT reset to 1
-                            SqlCommand cmdReset = new SqlCommand(
-                                "UPDATE QuoteCodeSequence SET CurrentSequence = 1, LastResetYear = @Year WHERE CompanyId = @CompanyId",
-                                conn);
-                            cmdReset.Parameters.AddWithValue("@Year", currentYear);
-                            cmdReset.Parameters.AddWithValue("@CompanyId", companyId);
-                            cmdReset.ExecuteNonQuery();
-                            nextSequence = 1;
-                        }
-                        else
-                        {
-                            // COMMIT increment
-                            nextSequence = currentSequence + 1;
-                            SqlCommand cmdUpdate = new SqlCommand(
-                                "UPDATE QuoteCodeSequence SET CurrentSequence = @Sequence WHERE CompanyId = @CompanyId",
-                                conn);
-                            cmdUpdate.Parameters.AddWithValue("@Sequence", nextSequence);
-                            cmdUpdate.Parameters.AddWithValue("@CompanyId", companyId);
-                            cmdUpdate.ExecuteNonQuery();
-                        }
-                    }
-                    else
+                    // Only update if the extracted number is higher than current sequence
+                    // This ensures the next quote code will be higher than the manually edited one
+                    if (extractedNumber > currentSequence)
                     {
-                        reader.Close();
-                        // COMMIT initial insert
-                        SqlCommand cmdInsert = new SqlCommand(
-                            "INSERT INTO QuoteCodeSequence (CompanyId, CurrentSequence, LastResetYear) VALUES (@CompanyId, 1, @Year)",
-                            conn);
-                        cmdInsert.Parameters.AddWithValue("@CompanyId", companyId);
-                        cmdInsert.Parameters.AddWithValue("@Year", currentYear);
-                        cmdInsert.ExecuteNonQuery();
-                        nextSequence = 1;
+                        SqlCommand updateCmd = new SqlCommand(
+                            "UPDATE QuoteCodeSequence SET CurrentSequence = @CurrentSequence, LastUpdated = @LastUpdated " +
+                            "WHERE CompanyId = @CompanyId",
+                            conn
+                        );
+                        updateCmd.Parameters.AddWithValue("@CurrentSequence", extractedNumber);
+                        updateCmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
+                        updateCmd.Parameters.AddWithValue("@CompanyId", companyId);
+                        updateCmd.ExecuteNonQuery();
                     }
                 }
             }
-
-            return nextSequence;
         }
 
+        /// <summary>
+        /// Extract the sequence number from various quote code formats.
+        /// Returns -1 if unable to extract.
+        /// 
+        /// Examples:
+        /// CG-1224-000005 ? 5
+        /// RFP-000000000123 ? 123
+        /// GASB/0042/121224 ? 42
+        /// QUO-ML-0099 ? 99
+        /// OGIT1224-24-007 ? 7
+        /// Q-000456-ABC ? 456
+        /// ABC/0001234/EPOMS ? 1234
+        /// ABC/QUO/SC/000789 ? 789
+        /// </summary>
+        private int ExtractSequenceNumber(string quoteCode)
+        {
+            if (string.IsNullOrEmpty(quoteCode))
+                return -1;
+
+            // Strategy: Find all sequences of digits, and pick the longest one
+            // that's not clearly a date (MMDD, DDMMYY, MMyy, etc.)
+
+            MatchCollection matches = Regex.Matches(quoteCode, @"\d+");
+
+            int longestNonDateNumber = -1;
+            int longestLength = 0;
+
+            foreach (Match match in matches)
+            {
+                string numberStr = match.Value;
+                int length = numberStr.Length;
+                int number = int.Parse(numberStr);
+
+                // Skip obvious date patterns
+                if (length == 4 && numberStr[0] == '0' && numberStr[1] <= '1') // Likely MMDD
+                    continue;
+                if (length == 4 && numberStr[0] <= '1' && numberStr[1] <= '2') // Likely MMyy
+                    continue;
+                if (length == 6) // Likely DDMMYY or MMDDYY
+                    continue;
+                if (length == 2 && number <= 31) // Likely day or month or year
+                    continue;
+
+                // Keep track of the longest number that's not a date
+                if (length > longestLength)
+                {
+                    longestLength = length;
+                    longestNonDateNumber = number;
+                }
+            }
+
+            return longestNonDateNumber;
+        }
+
+        /// <summary>
+        /// Reset sequence for a specific company back to 0
+        /// </summary>
+        public void ResetSequence(int companyId)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand(
+                    "UPDATE QuoteCodeSequence SET CurrentSequence = 0, LastUpdated = @LastUpdated " +
+                    "WHERE CompanyId = @CompanyId",
+                    conn
+                );
+                cmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
+                cmd.Parameters.AddWithValue("@CompanyId", companyId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Reset all sequences back to 0
+        /// </summary>
         public void ResetAllSequences()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("UPDATE QuoteCodeSequence SET CurrentSequence = 0", conn);
-                cmd.ExecuteNonQuery();
-            }
-        }
 
-        public void ResetSequenceForCompany(int companyId)
-        {
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
                 SqlCommand cmd = new SqlCommand(
-                    "UPDATE QuoteCodeSequence SET CurrentSequence = 0 WHERE CompanyId = @CompanyId",
-                    conn);
-                cmd.Parameters.AddWithValue("@CompanyId", companyId);
+                    "UPDATE QuoteCodeSequence SET CurrentSequence = 0, LastUpdated = @LastUpdated",
+                    conn
+                );
+                cmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
                 cmd.ExecuteNonQuery();
             }
         }
