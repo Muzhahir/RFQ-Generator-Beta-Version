@@ -585,7 +585,7 @@ namespace RFQ_Generator_System
                             isPriced
                         );
 
-                        MessageBox.Show($"Success! {versionSuffix} RFQ saved to database and Excel file generated.\n\nRFQ ID: {currentRFQId}\nQuote Code: {rfq.QuoteCode}\nCurrency: {rfq.Currency}\nVersion: {versionSuffix}\n\nFile saved to:\n{sfd.FileName}",
+                        MessageBox.Show($"Success! {versionSuffix} RFQ saved and Excel file generated.\n\nQuote Code: {rfq.QuoteCode}\nFile saved to:\n{sfd.FileName}",
                             "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                         if (MessageBox.Show("Do you want to open the generated file?", "Open File",
