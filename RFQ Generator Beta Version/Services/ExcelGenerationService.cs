@@ -626,6 +626,7 @@ namespace RFQ_Generator_System.Services
                         cell.Value = "Quoted";
                         cell.Style.NumberFormat.Format = "@";
                     }
+
                 }
                 else if (cellValue.Equals(Placeholders.Discount, StringComparison.OrdinalIgnoreCase))
                 {
@@ -654,6 +655,7 @@ namespace RFQ_Generator_System.Services
                         cell.Style.NumberFormat.Format = "@";
                     }
                 }
+
             }
         }
 

@@ -10,6 +10,19 @@ namespace RFQ_Generator_System
     {
         public int Id { get; set; }
         public string CompanyName { get; set; }
-        public string CompanyCode { get; internal set; }
+        public string CompanyCode { get; internal set; 
+       
     }
+    
+
+    public string DispayText
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(CompanyCode))
+                    return CompanyName;
+                return $"{CompanyName} - ({CompanyCode})";
+            }
+        }
+    } 
 }

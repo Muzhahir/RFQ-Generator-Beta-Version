@@ -4,11 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace RFQ_Generator_System.Repositories
 {
-    public class QuoteCodeSequenceRepo
+    public class QuoteCodeSequenceRepo: BaseRepo<QuoteCodeSequence>
     {
-        private readonly string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;
-  Initial Catalog=RFQDB;
-  Integrated Security=True";
+        
 
         /// <summary>
         /// Get the next sequence number for a company and INCREMENT it in the database.

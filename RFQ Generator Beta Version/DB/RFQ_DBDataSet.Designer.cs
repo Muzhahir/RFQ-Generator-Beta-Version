@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace RFQ_Generator_Beta_Version {
+namespace RFQ_Generator_Beta_Version.DB {
     
     
     /// <summary>
@@ -20,9 +20,9 @@ namespace RFQ_Generator_Beta_Version {
     [global::System.ComponentModel.DesignerCategoryAttribute("code")]
     [global::System.ComponentModel.ToolboxItem(true)]
     [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
-    [global::System.Xml.Serialization.XmlRootAttribute("RFQDBDataSet")]
+    [global::System.Xml.Serialization.XmlRootAttribute("RFQ_DBDataSet1")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
-    public partial class RFQDBDataSet : global::System.Data.DataSet {
+    public partial class RFQ_DBDataSet1 : global::System.Data.DataSet {
         
         private ClientDataTable tableClient;
         
@@ -30,27 +30,29 @@ namespace RFQ_Generator_Beta_Version {
         
         private FieldMappingDataTable tableFieldMapping;
         
+        private QuoteCodeSequenceDataTable tableQuoteCodeSequence;
+        
         private RFQDataTable tableRFQ;
         
         private RFQItemDataTable tableRFQItem;
         
         private TemplateDataTable tableTemplate;
         
-        private global::System.Data.DataRelation relationTemplateId_FieldMapping_ToTemplate;
+        private global::System.Data.DataRelation relationCompanyId_QuoteCodeSequence_Company;
         
-        private global::System.Data.DataRelation relationClientId_RFQ_ToClient;
+        private global::System.Data.DataRelation relationClientId_RFQ_Client;
         
-        private global::System.Data.DataRelation relationCompanyId_RFQ_ToCompany;
+        private global::System.Data.DataRelation relationCompanyId_RFQ_Company;
         
         private global::System.Data.DataRelation relationRFQId_RFQItem_RFQ;
         
-        private global::System.Data.DataRelation relationCompanyId_Template_ToCompany;
+        private global::System.Data.DataRelation relationCompanyId_Template_Company;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-        public RFQDBDataSet() {
+        public RFQ_DBDataSet1() {
             this.BeginInit();
             this.InitClass();
             global::System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new global::System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
@@ -61,7 +63,7 @@ namespace RFQ_Generator_Beta_Version {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-        protected RFQDBDataSet(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+        protected RFQ_DBDataSet1(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                 base(info, context, false) {
             if ((this.IsBinarySerialized(info, context) == true)) {
                 this.InitVars(false);
@@ -82,6 +84,9 @@ namespace RFQ_Generator_Beta_Version {
                 }
                 if ((ds.Tables["FieldMapping"] != null)) {
                     base.Tables.Add(new FieldMappingDataTable(ds.Tables["FieldMapping"]));
+                }
+                if ((ds.Tables["QuoteCodeSequence"] != null)) {
+                    base.Tables.Add(new QuoteCodeSequenceDataTable(ds.Tables["QuoteCodeSequence"]));
                 }
                 if ((ds.Tables["RFQ"] != null)) {
                     base.Tables.Add(new RFQDataTable(ds.Tables["RFQ"]));
@@ -137,6 +142,16 @@ namespace RFQ_Generator_Beta_Version {
         public FieldMappingDataTable FieldMapping {
             get {
                 return this.tableFieldMapping;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public QuoteCodeSequenceDataTable QuoteCodeSequence {
+            get {
+                return this.tableQuoteCodeSequence;
             }
         }
         
@@ -212,7 +227,7 @@ namespace RFQ_Generator_Beta_Version {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         public override global::System.Data.DataSet Clone() {
-            RFQDBDataSet cln = ((RFQDBDataSet)(base.Clone()));
+            RFQ_DBDataSet1 cln = ((RFQ_DBDataSet1)(base.Clone()));
             cln.InitVars();
             cln.SchemaSerializationMode = this.SchemaSerializationMode;
             return cln;
@@ -245,6 +260,9 @@ namespace RFQ_Generator_Beta_Version {
                 }
                 if ((ds.Tables["FieldMapping"] != null)) {
                     base.Tables.Add(new FieldMappingDataTable(ds.Tables["FieldMapping"]));
+                }
+                if ((ds.Tables["QuoteCodeSequence"] != null)) {
+                    base.Tables.Add(new QuoteCodeSequenceDataTable(ds.Tables["QuoteCodeSequence"]));
                 }
                 if ((ds.Tables["RFQ"] != null)) {
                     base.Tables.Add(new RFQDataTable(ds.Tables["RFQ"]));
@@ -306,6 +324,12 @@ namespace RFQ_Generator_Beta_Version {
                     this.tableFieldMapping.InitVars();
                 }
             }
+            this.tableQuoteCodeSequence = ((QuoteCodeSequenceDataTable)(base.Tables["QuoteCodeSequence"]));
+            if ((initTable == true)) {
+                if ((this.tableQuoteCodeSequence != null)) {
+                    this.tableQuoteCodeSequence.InitVars();
+                }
+            }
             this.tableRFQ = ((RFQDataTable)(base.Tables["RFQ"]));
             if ((initTable == true)) {
                 if ((this.tableRFQ != null)) {
@@ -324,19 +348,19 @@ namespace RFQ_Generator_Beta_Version {
                     this.tableTemplate.InitVars();
                 }
             }
-            this.relationTemplateId_FieldMapping_ToTemplate = this.Relations["TemplateId_FieldMapping_ToTemplate"];
-            this.relationClientId_RFQ_ToClient = this.Relations["ClientId_RFQ_ToClient"];
-            this.relationCompanyId_RFQ_ToCompany = this.Relations["CompanyId_RFQ_ToCompany"];
+            this.relationCompanyId_QuoteCodeSequence_Company = this.Relations["CompanyId_QuoteCodeSequence_Company"];
+            this.relationClientId_RFQ_Client = this.Relations["ClientId_RFQ_Client"];
+            this.relationCompanyId_RFQ_Company = this.Relations["CompanyId_RFQ_Company"];
             this.relationRFQId_RFQItem_RFQ = this.Relations["RFQId_RFQItem_RFQ"];
-            this.relationCompanyId_Template_ToCompany = this.Relations["CompanyId_Template_ToCompany"];
+            this.relationCompanyId_Template_Company = this.Relations["CompanyId_Template_Company"];
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitClass() {
-            this.DataSetName = "RFQDBDataSet";
+            this.DataSetName = "RFQ_DBDataSet1";
             this.Prefix = "";
-            this.Namespace = "http://tempuri.org/RFQDBDataSet.xsd";
+            this.Namespace = "http://tempuri.org/RFQ_DBDataSet1.xsd";
             this.EnforceConstraints = true;
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
             this.tableClient = new ClientDataTable();
@@ -345,32 +369,34 @@ namespace RFQ_Generator_Beta_Version {
             base.Tables.Add(this.tableCompany);
             this.tableFieldMapping = new FieldMappingDataTable();
             base.Tables.Add(this.tableFieldMapping);
+            this.tableQuoteCodeSequence = new QuoteCodeSequenceDataTable();
+            base.Tables.Add(this.tableQuoteCodeSequence);
             this.tableRFQ = new RFQDataTable();
             base.Tables.Add(this.tableRFQ);
             this.tableRFQItem = new RFQItemDataTable();
             base.Tables.Add(this.tableRFQItem);
             this.tableTemplate = new TemplateDataTable();
             base.Tables.Add(this.tableTemplate);
-            this.relationTemplateId_FieldMapping_ToTemplate = new global::System.Data.DataRelation("TemplateId_FieldMapping_ToTemplate", new global::System.Data.DataColumn[] {
-                        this.tableTemplate.IdColumn}, new global::System.Data.DataColumn[] {
-                        this.tableFieldMapping.TemplateIdColumn}, false);
-            this.Relations.Add(this.relationTemplateId_FieldMapping_ToTemplate);
-            this.relationClientId_RFQ_ToClient = new global::System.Data.DataRelation("ClientId_RFQ_ToClient", new global::System.Data.DataColumn[] {
+            this.relationCompanyId_QuoteCodeSequence_Company = new global::System.Data.DataRelation("CompanyId_QuoteCodeSequence_Company", new global::System.Data.DataColumn[] {
+                        this.tableCompany.IdColumn}, new global::System.Data.DataColumn[] {
+                        this.tableQuoteCodeSequence.CompanyIdColumn}, false);
+            this.Relations.Add(this.relationCompanyId_QuoteCodeSequence_Company);
+            this.relationClientId_RFQ_Client = new global::System.Data.DataRelation("ClientId_RFQ_Client", new global::System.Data.DataColumn[] {
                         this.tableClient.IdColumn}, new global::System.Data.DataColumn[] {
                         this.tableRFQ.ClientIdColumn}, false);
-            this.Relations.Add(this.relationClientId_RFQ_ToClient);
-            this.relationCompanyId_RFQ_ToCompany = new global::System.Data.DataRelation("CompanyId_RFQ_ToCompany", new global::System.Data.DataColumn[] {
+            this.Relations.Add(this.relationClientId_RFQ_Client);
+            this.relationCompanyId_RFQ_Company = new global::System.Data.DataRelation("CompanyId_RFQ_Company", new global::System.Data.DataColumn[] {
                         this.tableCompany.IdColumn}, new global::System.Data.DataColumn[] {
                         this.tableRFQ.CompanyIdColumn}, false);
-            this.Relations.Add(this.relationCompanyId_RFQ_ToCompany);
+            this.Relations.Add(this.relationCompanyId_RFQ_Company);
             this.relationRFQId_RFQItem_RFQ = new global::System.Data.DataRelation("RFQId_RFQItem_RFQ", new global::System.Data.DataColumn[] {
                         this.tableRFQ.IdColumn}, new global::System.Data.DataColumn[] {
                         this.tableRFQItem.RFQIdColumn}, false);
             this.Relations.Add(this.relationRFQId_RFQItem_RFQ);
-            this.relationCompanyId_Template_ToCompany = new global::System.Data.DataRelation("CompanyId_Template_ToCompany", new global::System.Data.DataColumn[] {
+            this.relationCompanyId_Template_Company = new global::System.Data.DataRelation("CompanyId_Template_Company", new global::System.Data.DataColumn[] {
                         this.tableCompany.IdColumn}, new global::System.Data.DataColumn[] {
                         this.tableTemplate.CompanyIdColumn}, false);
-            this.Relations.Add(this.relationCompanyId_Template_ToCompany);
+            this.Relations.Add(this.relationCompanyId_Template_Company);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -388,6 +414,12 @@ namespace RFQ_Generator_Beta_Version {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private bool ShouldSerializeFieldMapping() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        private bool ShouldSerializeQuoteCodeSequence() {
             return false;
         }
         
@@ -420,7 +452,7 @@ namespace RFQ_Generator_Beta_Version {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-            RFQDBDataSet ds = new RFQDBDataSet();
+            RFQ_DBDataSet1 ds = new RFQ_DBDataSet1();
             global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
             global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
             global::System.Xml.Schema.XmlSchemaAny any = new global::System.Xml.Schema.XmlSchemaAny();
@@ -474,6 +506,9 @@ namespace RFQ_Generator_Beta_Version {
         public delegate void FieldMappingRowChangeEventHandler(object sender, FieldMappingRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        public delegate void QuoteCodeSequenceRowChangeEventHandler(object sender, QuoteCodeSequenceRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         public delegate void RFQRowChangeEventHandler(object sender, RFQRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
@@ -492,6 +527,8 @@ namespace RFQ_Generator_Beta_Version {
             private global::System.Data.DataColumn columnId;
             
             private global::System.Data.DataColumn columnClientName;
+            
+            private global::System.Data.DataColumn columnClientCode;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
@@ -544,6 +581,14 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn ClientCodeColumn {
+                get {
+                    return this.columnClientCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -579,11 +624,12 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public ClientRow AddClientRow(int Id, string ClientName) {
+            public ClientRow AddClientRow(string ClientName, string ClientCode) {
                 ClientRow rowClientRow = ((ClientRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        Id,
-                        ClientName};
+                        null,
+                        ClientName,
+                        ClientCode};
                 rowClientRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowClientRow);
                 return rowClientRow;
@@ -615,6 +661,7 @@ namespace RFQ_Generator_Beta_Version {
             internal void InitVars() {
                 this.columnId = base.Columns["Id"];
                 this.columnClientName = base.Columns["ClientName"];
+                this.columnClientCode = base.Columns["ClientCode"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -624,11 +671,18 @@ namespace RFQ_Generator_Beta_Version {
                 base.Columns.Add(this.columnId);
                 this.columnClientName = new global::System.Data.DataColumn("ClientName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnClientName);
+                this.columnClientCode = new global::System.Data.DataColumn("ClientCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnClientCode);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnId}, true));
+                this.columnId.AutoIncrement = true;
+                this.columnId.AutoIncrementSeed = 1;
                 this.columnId.AllowDBNull = false;
                 this.columnId.Unique = true;
-                this.columnClientName.MaxLength = 50;
+                this.columnClientName.AllowDBNull = false;
+                this.columnClientName.MaxLength = 2147483647;
+                this.columnClientCode.AllowDBNull = false;
+                this.columnClientCode.MaxLength = 50;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -696,7 +750,7 @@ namespace RFQ_Generator_Beta_Version {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                RFQDBDataSet ds = new RFQDBDataSet();
+                RFQ_DBDataSet1 ds = new RFQ_DBDataSet1();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -766,6 +820,8 @@ namespace RFQ_Generator_Beta_Version {
             
             private global::System.Data.DataColumn columnCompanyName;
             
+            private global::System.Data.DataColumn columnCompanyCode;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public CompanyDataTable() {
@@ -817,6 +873,14 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn CompanyCodeColumn {
+                get {
+                    return this.columnCompanyCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -852,11 +916,12 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public CompanyRow AddCompanyRow(int Id, string CompanyName) {
+            public CompanyRow AddCompanyRow(string CompanyName, string CompanyCode) {
                 CompanyRow rowCompanyRow = ((CompanyRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        Id,
-                        CompanyName};
+                        null,
+                        CompanyName,
+                        CompanyCode};
                 rowCompanyRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowCompanyRow);
                 return rowCompanyRow;
@@ -888,6 +953,7 @@ namespace RFQ_Generator_Beta_Version {
             internal void InitVars() {
                 this.columnId = base.Columns["Id"];
                 this.columnCompanyName = base.Columns["CompanyName"];
+                this.columnCompanyCode = base.Columns["CompanyCode"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -897,11 +963,18 @@ namespace RFQ_Generator_Beta_Version {
                 base.Columns.Add(this.columnId);
                 this.columnCompanyName = new global::System.Data.DataColumn("CompanyName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnCompanyName);
+                this.columnCompanyCode = new global::System.Data.DataColumn("CompanyCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCompanyCode);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnId}, true));
+                this.columnId.AutoIncrement = true;
+                this.columnId.AutoIncrementSeed = 1;
                 this.columnId.AllowDBNull = false;
                 this.columnId.Unique = true;
+                this.columnCompanyName.AllowDBNull = false;
                 this.columnCompanyName.MaxLength = 50;
+                this.columnCompanyCode.AllowDBNull = false;
+                this.columnCompanyCode.MaxLength = 50;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -969,7 +1042,7 @@ namespace RFQ_Generator_Beta_Version {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                RFQDBDataSet ds = new RFQDBDataSet();
+                RFQ_DBDataSet1 ds = new RFQ_DBDataSet1();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -1037,11 +1110,9 @@ namespace RFQ_Generator_Beta_Version {
             
             private global::System.Data.DataColumn columnId;
             
-            private global::System.Data.DataColumn columnTemplateId;
-            
             private global::System.Data.DataColumn columnFieldKey;
             
-            private global::System.Data.DataColumn columnExcelCell;
+            private global::System.Data.DataColumn columnExcellCell;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
@@ -1086,14 +1157,6 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public global::System.Data.DataColumn TemplateIdColumn {
-                get {
-                    return this.columnTemplateId;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public global::System.Data.DataColumn FieldKeyColumn {
                 get {
                     return this.columnFieldKey;
@@ -1102,9 +1165,9 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public global::System.Data.DataColumn ExcelCellColumn {
+            public global::System.Data.DataColumn ExcellCellColumn {
                 get {
-                    return this.columnExcelCell;
+                    return this.columnExcellCell;
                 }
             }
             
@@ -1145,16 +1208,12 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public FieldMappingRow AddFieldMappingRow(int Id, TemplateRow parentTemplateRowByTemplateId_FieldMapping_ToTemplate, string FieldKey, string ExcelCell) {
+            public FieldMappingRow AddFieldMappingRow(string FieldKey, string ExcellCell) {
                 FieldMappingRow rowFieldMappingRow = ((FieldMappingRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        Id,
                         null,
                         FieldKey,
-                        ExcelCell};
-                if ((parentTemplateRowByTemplateId_FieldMapping_ToTemplate != null)) {
-                    columnValuesArray[1] = parentTemplateRowByTemplateId_FieldMapping_ToTemplate[0];
-                }
+                        ExcellCell};
                 rowFieldMappingRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFieldMappingRow);
                 return rowFieldMappingRow;
@@ -1185,9 +1244,8 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             internal void InitVars() {
                 this.columnId = base.Columns["Id"];
-                this.columnTemplateId = base.Columns["TemplateId"];
                 this.columnFieldKey = base.Columns["FieldKey"];
-                this.columnExcelCell = base.Columns["ExcelCell"];
+                this.columnExcellCell = base.Columns["ExcellCell"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1195,19 +1253,20 @@ namespace RFQ_Generator_Beta_Version {
             private void InitClass() {
                 this.columnId = new global::System.Data.DataColumn("Id", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnId);
-                this.columnTemplateId = new global::System.Data.DataColumn("TemplateId", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTemplateId);
                 this.columnFieldKey = new global::System.Data.DataColumn("FieldKey", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnFieldKey);
-                this.columnExcelCell = new global::System.Data.DataColumn("ExcelCell", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnExcelCell);
+                this.columnExcellCell = new global::System.Data.DataColumn("ExcellCell", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnExcellCell);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnId}, true));
+                this.columnId.AutoIncrement = true;
+                this.columnId.AutoIncrementSeed = 1;
                 this.columnId.AllowDBNull = false;
                 this.columnId.Unique = true;
-                this.columnTemplateId.AllowDBNull = false;
-                this.columnFieldKey.MaxLength = 10;
-                this.columnExcelCell.MaxLength = 10;
+                this.columnFieldKey.AllowDBNull = false;
+                this.columnFieldKey.MaxLength = 50;
+                this.columnExcellCell.AllowDBNull = false;
+                this.columnExcellCell.MaxLength = 50;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1275,7 +1334,7 @@ namespace RFQ_Generator_Beta_Version {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                RFQDBDataSet ds = new RFQDBDataSet();
+                RFQ_DBDataSet1 ds = new RFQ_DBDataSet1();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -1339,21 +1398,339 @@ namespace RFQ_Generator_Beta_Version {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class QuoteCodeSequenceDataTable : global::System.Data.TypedTableBase<QuoteCodeSequenceRow> {
+            
+            private global::System.Data.DataColumn columnId;
+            
+            private global::System.Data.DataColumn columnCompanyId;
+            
+            private global::System.Data.DataColumn columnCurrentSequence;
+            
+            private global::System.Data.DataColumn columnLastResetYear;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public QuoteCodeSequenceDataTable() {
+                this.TableName = "QuoteCodeSequence";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            internal QuoteCodeSequenceDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            protected QuoteCodeSequenceDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn IdColumn {
+                get {
+                    return this.columnId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn CompanyIdColumn {
+                get {
+                    return this.columnCompanyId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn CurrentSequenceColumn {
+                get {
+                    return this.columnCurrentSequence;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn LastResetYearColumn {
+                get {
+                    return this.columnLastResetYear;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public QuoteCodeSequenceRow this[int index] {
+                get {
+                    return ((QuoteCodeSequenceRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public event QuoteCodeSequenceRowChangeEventHandler QuoteCodeSequenceRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public event QuoteCodeSequenceRowChangeEventHandler QuoteCodeSequenceRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public event QuoteCodeSequenceRowChangeEventHandler QuoteCodeSequenceRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public event QuoteCodeSequenceRowChangeEventHandler QuoteCodeSequenceRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void AddQuoteCodeSequenceRow(QuoteCodeSequenceRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public QuoteCodeSequenceRow AddQuoteCodeSequenceRow(CompanyRow parentCompanyRowByCompanyId_QuoteCodeSequence_Company, int CurrentSequence, int LastResetYear) {
+                QuoteCodeSequenceRow rowQuoteCodeSequenceRow = ((QuoteCodeSequenceRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        null,
+                        null,
+                        CurrentSequence,
+                        LastResetYear};
+                if ((parentCompanyRowByCompanyId_QuoteCodeSequence_Company != null)) {
+                    columnValuesArray[1] = parentCompanyRowByCompanyId_QuoteCodeSequence_Company[0];
+                }
+                rowQuoteCodeSequenceRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowQuoteCodeSequenceRow);
+                return rowQuoteCodeSequenceRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public QuoteCodeSequenceRow FindById(int Id) {
+                return ((QuoteCodeSequenceRow)(this.Rows.Find(new object[] {
+                            Id})));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                QuoteCodeSequenceDataTable cln = ((QuoteCodeSequenceDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new QuoteCodeSequenceDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            internal void InitVars() {
+                this.columnId = base.Columns["Id"];
+                this.columnCompanyId = base.Columns["CompanyId"];
+                this.columnCurrentSequence = base.Columns["CurrentSequence"];
+                this.columnLastResetYear = base.Columns["LastResetYear"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            private void InitClass() {
+                this.columnId = new global::System.Data.DataColumn("Id", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnId);
+                this.columnCompanyId = new global::System.Data.DataColumn("CompanyId", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCompanyId);
+                this.columnCurrentSequence = new global::System.Data.DataColumn("CurrentSequence", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCurrentSequence);
+                this.columnLastResetYear = new global::System.Data.DataColumn("LastResetYear", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnLastResetYear);
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
+                                this.columnId}, true));
+                this.columnId.AutoIncrement = true;
+                this.columnId.AutoIncrementSeed = 1;
+                this.columnId.AllowDBNull = false;
+                this.columnId.Unique = true;
+                this.columnCompanyId.AllowDBNull = false;
+                this.columnCurrentSequence.AllowDBNull = false;
+                this.columnLastResetYear.AllowDBNull = false;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public QuoteCodeSequenceRow NewQuoteCodeSequenceRow() {
+                return ((QuoteCodeSequenceRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new QuoteCodeSequenceRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(QuoteCodeSequenceRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.QuoteCodeSequenceRowChanged != null)) {
+                    this.QuoteCodeSequenceRowChanged(this, new QuoteCodeSequenceRowChangeEvent(((QuoteCodeSequenceRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.QuoteCodeSequenceRowChanging != null)) {
+                    this.QuoteCodeSequenceRowChanging(this, new QuoteCodeSequenceRowChangeEvent(((QuoteCodeSequenceRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.QuoteCodeSequenceRowDeleted != null)) {
+                    this.QuoteCodeSequenceRowDeleted(this, new QuoteCodeSequenceRowChangeEvent(((QuoteCodeSequenceRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.QuoteCodeSequenceRowDeleting != null)) {
+                    this.QuoteCodeSequenceRowDeleting(this, new QuoteCodeSequenceRowChangeEvent(((QuoteCodeSequenceRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void RemoveQuoteCodeSequenceRow(QuoteCodeSequenceRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                RFQ_DBDataSet1 ds = new RFQ_DBDataSet1();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "QuoteCodeSequenceDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class RFQDataTable : global::System.Data.TypedTableBase<RFQRow> {
             
             private global::System.Data.DataColumn columnId;
             
+            private global::System.Data.DataColumn columnCompanyId;
+            
             private global::System.Data.DataColumn columnClientId;
             
-            private global::System.Data.DataColumn columnCompanyId;
+            private global::System.Data.DataColumn columnCreatedAt;
             
             private global::System.Data.DataColumn columnRFQCode;
             
             private global::System.Data.DataColumn columnQuoteCode;
             
-            private global::System.Data.DataColumn columnCreatedAt;
-            
             private global::System.Data.DataColumn columnDeliveryPoint;
+            
+            private global::System.Data.DataColumn columnDiscount;
+            
+            private global::System.Data.DataColumn columnDeliveryTerm;
+            
+            private global::System.Data.DataColumn columnValidity;
+            
+            private global::System.Data.DataColumn columnQuoteCodeCounter;
+            
+            private global::System.Data.DataColumn columnCurrency;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
@@ -1398,6 +1775,14 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn CompanyIdColumn {
+                get {
+                    return this.columnCompanyId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public global::System.Data.DataColumn ClientIdColumn {
                 get {
                     return this.columnClientId;
@@ -1406,9 +1791,9 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public global::System.Data.DataColumn CompanyIdColumn {
+            public global::System.Data.DataColumn CreatedAtColumn {
                 get {
-                    return this.columnCompanyId;
+                    return this.columnCreatedAt;
                 }
             }
             
@@ -1430,17 +1815,49 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public global::System.Data.DataColumn CreatedAtColumn {
+            public global::System.Data.DataColumn DeliveryPointColumn {
                 get {
-                    return this.columnCreatedAt;
+                    return this.columnDeliveryPoint;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public global::System.Data.DataColumn DeliveryPointColumn {
+            public global::System.Data.DataColumn DiscountColumn {
                 get {
-                    return this.columnDeliveryPoint;
+                    return this.columnDiscount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn DeliveryTermColumn {
+                get {
+                    return this.columnDeliveryTerm;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn ValidityColumn {
+                get {
+                    return this.columnValidity;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn QuoteCodeCounterColumn {
+                get {
+                    return this.columnQuoteCodeCounter;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn CurrencyColumn {
+                get {
+                    return this.columnCurrency;
                 }
             }
             
@@ -1481,21 +1898,26 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public RFQRow AddRFQRow(int Id, ClientRow parentClientRowByClientId_RFQ_ToClient, CompanyRow parentCompanyRowByCompanyId_RFQ_ToCompany, string RFQCode, string QuoteCode, System.DateTime CreatedAt, string DeliveryPoint) {
+            public RFQRow AddRFQRow(CompanyRow parentCompanyRowByCompanyId_RFQ_Company, ClientRow parentClientRowByClientId_RFQ_Client, System.DateTime CreatedAt, string RFQCode, string QuoteCode, string DeliveryPoint, decimal Discount, string DeliveryTerm, string Validity, int QuoteCodeCounter, string Currency) {
                 RFQRow rowRFQRow = ((RFQRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        Id,
                         null,
                         null,
+                        null,
+                        CreatedAt,
                         RFQCode,
                         QuoteCode,
-                        CreatedAt,
-                        DeliveryPoint};
-                if ((parentClientRowByClientId_RFQ_ToClient != null)) {
-                    columnValuesArray[1] = parentClientRowByClientId_RFQ_ToClient[0];
+                        DeliveryPoint,
+                        Discount,
+                        DeliveryTerm,
+                        Validity,
+                        QuoteCodeCounter,
+                        Currency};
+                if ((parentCompanyRowByCompanyId_RFQ_Company != null)) {
+                    columnValuesArray[1] = parentCompanyRowByCompanyId_RFQ_Company[0];
                 }
-                if ((parentCompanyRowByCompanyId_RFQ_ToCompany != null)) {
-                    columnValuesArray[2] = parentCompanyRowByCompanyId_RFQ_ToCompany[0];
+                if ((parentClientRowByClientId_RFQ_Client != null)) {
+                    columnValuesArray[2] = parentClientRowByClientId_RFQ_Client[0];
                 }
                 rowRFQRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowRFQRow);
@@ -1527,12 +1949,17 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             internal void InitVars() {
                 this.columnId = base.Columns["Id"];
-                this.columnClientId = base.Columns["ClientId"];
                 this.columnCompanyId = base.Columns["CompanyId"];
+                this.columnClientId = base.Columns["ClientId"];
+                this.columnCreatedAt = base.Columns["CreatedAt"];
                 this.columnRFQCode = base.Columns["RFQCode"];
                 this.columnQuoteCode = base.Columns["QuoteCode"];
-                this.columnCreatedAt = base.Columns["CreatedAt"];
                 this.columnDeliveryPoint = base.Columns["DeliveryPoint"];
+                this.columnDiscount = base.Columns["Discount"];
+                this.columnDeliveryTerm = base.Columns["DeliveryTerm"];
+                this.columnValidity = base.Columns["Validity"];
+                this.columnQuoteCodeCounter = base.Columns["QuoteCodeCounter"];
+                this.columnCurrency = base.Columns["Currency"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1540,27 +1967,48 @@ namespace RFQ_Generator_Beta_Version {
             private void InitClass() {
                 this.columnId = new global::System.Data.DataColumn("Id", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnId);
-                this.columnClientId = new global::System.Data.DataColumn("ClientId", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnClientId);
                 this.columnCompanyId = new global::System.Data.DataColumn("CompanyId", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnCompanyId);
+                this.columnClientId = new global::System.Data.DataColumn("ClientId", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnClientId);
+                this.columnCreatedAt = new global::System.Data.DataColumn("CreatedAt", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCreatedAt);
                 this.columnRFQCode = new global::System.Data.DataColumn("RFQCode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnRFQCode);
                 this.columnQuoteCode = new global::System.Data.DataColumn("QuoteCode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnQuoteCode);
-                this.columnCreatedAt = new global::System.Data.DataColumn("CreatedAt", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnCreatedAt);
                 this.columnDeliveryPoint = new global::System.Data.DataColumn("DeliveryPoint", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnDeliveryPoint);
+                this.columnDiscount = new global::System.Data.DataColumn("Discount", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDiscount);
+                this.columnDeliveryTerm = new global::System.Data.DataColumn("DeliveryTerm", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDeliveryTerm);
+                this.columnValidity = new global::System.Data.DataColumn("Validity", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnValidity);
+                this.columnQuoteCodeCounter = new global::System.Data.DataColumn("QuoteCodeCounter", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnQuoteCodeCounter);
+                this.columnCurrency = new global::System.Data.DataColumn("Currency", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCurrency);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnId}, true));
+                this.columnId.AutoIncrement = true;
+                this.columnId.AutoIncrementSeed = 1;
                 this.columnId.AllowDBNull = false;
                 this.columnId.Unique = true;
-                this.columnClientId.AllowDBNull = false;
                 this.columnCompanyId.AllowDBNull = false;
+                this.columnClientId.AllowDBNull = false;
+                this.columnCreatedAt.AllowDBNull = false;
+                this.columnRFQCode.AllowDBNull = false;
                 this.columnRFQCode.MaxLength = 50;
+                this.columnQuoteCode.AllowDBNull = false;
                 this.columnQuoteCode.MaxLength = 50;
                 this.columnDeliveryPoint.MaxLength = 50;
+                this.columnDeliveryTerm.AllowDBNull = false;
+                this.columnDeliveryTerm.MaxLength = 50;
+                this.columnValidity.MaxLength = 50;
+                this.columnQuoteCodeCounter.AllowDBNull = false;
+                this.columnCurrency.AllowDBNull = false;
+                this.columnCurrency.MaxLength = 50;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1628,7 +2076,7 @@ namespace RFQ_Generator_Beta_Version {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                RFQDBDataSet ds = new RFQDBDataSet();
+                RFQ_DBDataSet1 ds = new RFQ_DBDataSet1();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -1704,13 +2152,11 @@ namespace RFQ_Generator_Beta_Version {
             
             private global::System.Data.DataColumn columnQuantity;
             
-            private global::System.Data.DataColumn columnUnitName;
-            
             private global::System.Data.DataColumn columnDeliveryTime;
             
             private global::System.Data.DataColumn columnUnitPrice;
             
-            private global::System.Data.DataColumn columnDeliveryTerm;
+            private global::System.Data.DataColumn columnUnitName;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
@@ -1787,14 +2233,6 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public global::System.Data.DataColumn UnitNameColumn {
-                get {
-                    return this.columnUnitName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public global::System.Data.DataColumn DeliveryTimeColumn {
                 get {
                     return this.columnDeliveryTime;
@@ -1811,9 +2249,9 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public global::System.Data.DataColumn DeliveryTermColumn {
+            public global::System.Data.DataColumn UnitNameColumn {
                 get {
-                    return this.columnDeliveryTerm;
+                    return this.columnUnitName;
                 }
             }
             
@@ -1854,18 +2292,17 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public RFQItemRow AddRFQItemRow(int Id, RFQRow parentRFQRowByRFQId_RFQItem_RFQ, int ItemNo, string ItemDesc, int Quantity, string UnitName, string DeliveryTime, string UnitPrice, string DeliveryTerm) {
+            public RFQItemRow AddRFQItemRow(RFQRow parentRFQRowByRFQId_RFQItem_RFQ, int ItemNo, string ItemDesc, int Quantity, int DeliveryTime, string UnitPrice, string UnitName) {
                 RFQItemRow rowRFQItemRow = ((RFQItemRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        Id,
+                        null,
                         null,
                         ItemNo,
                         ItemDesc,
                         Quantity,
-                        UnitName,
                         DeliveryTime,
                         UnitPrice,
-                        DeliveryTerm};
+                        UnitName};
                 if ((parentRFQRowByRFQId_RFQItem_RFQ != null)) {
                     columnValuesArray[1] = parentRFQRowByRFQId_RFQItem_RFQ[0];
                 }
@@ -1903,10 +2340,9 @@ namespace RFQ_Generator_Beta_Version {
                 this.columnItemNo = base.Columns["ItemNo"];
                 this.columnItemDesc = base.Columns["ItemDesc"];
                 this.columnQuantity = base.Columns["Quantity"];
-                this.columnUnitName = base.Columns["UnitName"];
                 this.columnDeliveryTime = base.Columns["DeliveryTime"];
                 this.columnUnitPrice = base.Columns["UnitPrice"];
-                this.columnDeliveryTerm = base.Columns["DeliveryTerm"];
+                this.columnUnitName = base.Columns["UnitName"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1922,24 +2358,28 @@ namespace RFQ_Generator_Beta_Version {
                 base.Columns.Add(this.columnItemDesc);
                 this.columnQuantity = new global::System.Data.DataColumn("Quantity", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnQuantity);
-                this.columnUnitName = new global::System.Data.DataColumn("UnitName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnUnitName);
-                this.columnDeliveryTime = new global::System.Data.DataColumn("DeliveryTime", typeof(string), null, global::System.Data.MappingType.Element);
+                this.columnDeliveryTime = new global::System.Data.DataColumn("DeliveryTime", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnDeliveryTime);
                 this.columnUnitPrice = new global::System.Data.DataColumn("UnitPrice", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnUnitPrice);
-                this.columnDeliveryTerm = new global::System.Data.DataColumn("DeliveryTerm", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnDeliveryTerm);
+                this.columnUnitName = new global::System.Data.DataColumn("UnitName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnUnitName);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnId}, true));
+                this.columnId.AutoIncrement = true;
+                this.columnId.AutoIncrementSeed = 1;
                 this.columnId.AllowDBNull = false;
                 this.columnId.Unique = true;
                 this.columnRFQId.AllowDBNull = false;
+                this.columnItemNo.AllowDBNull = false;
+                this.columnItemDesc.AllowDBNull = false;
                 this.columnItemDesc.MaxLength = 2147483647;
-                this.columnUnitName.MaxLength = 10;
-                this.columnDeliveryTime.MaxLength = 50;
-                this.columnUnitPrice.MaxLength = 10;
-                this.columnDeliveryTerm.MaxLength = 10;
+                this.columnQuantity.AllowDBNull = false;
+                this.columnDeliveryTime.AllowDBNull = false;
+                this.columnUnitPrice.AllowDBNull = false;
+                this.columnUnitPrice.MaxLength = 50;
+                this.columnUnitName.AllowDBNull = false;
+                this.columnUnitName.MaxLength = 50;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2007,7 +2447,7 @@ namespace RFQ_Generator_Beta_Version {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                RFQDBDataSet ds = new RFQDBDataSet();
+                RFQ_DBDataSet1 ds = new RFQ_DBDataSet1();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -2173,14 +2613,14 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public TemplateRow AddTemplateRow(int Id, CompanyRow parentCompanyRowByCompanyId_Template_ToCompany, string TemplatePath) {
+            public TemplateRow AddTemplateRow(CompanyRow parentCompanyRowByCompanyId_Template_Company, string TemplatePath) {
                 TemplateRow rowTemplateRow = ((TemplateRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        Id,
+                        null,
                         null,
                         TemplatePath};
-                if ((parentCompanyRowByCompanyId_Template_ToCompany != null)) {
-                    columnValuesArray[1] = parentCompanyRowByCompanyId_Template_ToCompany[0];
+                if ((parentCompanyRowByCompanyId_Template_Company != null)) {
+                    columnValuesArray[1] = parentCompanyRowByCompanyId_Template_Company[0];
                 }
                 rowTemplateRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowTemplateRow);
@@ -2227,10 +2667,13 @@ namespace RFQ_Generator_Beta_Version {
                 base.Columns.Add(this.columnTemplatePath);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnId}, true));
+                this.columnId.AutoIncrement = true;
+                this.columnId.AutoIncrementSeed = 1;
                 this.columnId.AllowDBNull = false;
                 this.columnId.Unique = true;
                 this.columnCompanyId.AllowDBNull = false;
-                this.columnTemplatePath.MaxLength = 50;
+                this.columnTemplatePath.AllowDBNull = false;
+                this.columnTemplatePath.MaxLength = 2147483647;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2298,7 +2741,7 @@ namespace RFQ_Generator_Beta_Version {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                RFQDBDataSet ds = new RFQDBDataSet();
+                RFQ_DBDataSet1 ds = new RFQ_DBDataSet1();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -2386,12 +2829,7 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public string ClientName {
                 get {
-                    try {
-                        return ((string)(this[this.tableClient.ClientNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ClientName\' in table \'Client\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableClient.ClientNameColumn]));
                 }
                 set {
                     this[this.tableClient.ClientNameColumn] = value;
@@ -2400,24 +2838,23 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsClientNameNull() {
-                return this.IsNull(this.tableClient.ClientNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetClientNameNull() {
-                this[this.tableClient.ClientNameColumn] = global::System.Convert.DBNull;
+            public string ClientCode {
+                get {
+                    return ((string)(this[this.tableClient.ClientCodeColumn]));
+                }
+                set {
+                    this[this.tableClient.ClientCodeColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public RFQRow[] GetRFQRows() {
-                if ((this.Table.ChildRelations["ClientId_RFQ_ToClient"] == null)) {
+                if ((this.Table.ChildRelations["ClientId_RFQ_Client"] == null)) {
                     return new RFQRow[0];
                 }
                 else {
-                    return ((RFQRow[])(base.GetChildRows(this.Table.ChildRelations["ClientId_RFQ_ToClient"])));
+                    return ((RFQRow[])(base.GetChildRows(this.Table.ChildRelations["ClientId_RFQ_Client"])));
                 }
             }
         }
@@ -2451,12 +2888,7 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public string CompanyName {
                 get {
-                    try {
-                        return ((string)(this[this.tableCompany.CompanyNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'CompanyName\' in table \'Company\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableCompany.CompanyNameColumn]));
                 }
                 set {
                     this[this.tableCompany.CompanyNameColumn] = value;
@@ -2465,35 +2897,45 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsCompanyNameNull() {
-                return this.IsNull(this.tableCompany.CompanyNameColumn);
+            public string CompanyCode {
+                get {
+                    return ((string)(this[this.tableCompany.CompanyCodeColumn]));
+                }
+                set {
+                    this[this.tableCompany.CompanyCodeColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetCompanyNameNull() {
-                this[this.tableCompany.CompanyNameColumn] = global::System.Convert.DBNull;
+            public QuoteCodeSequenceRow[] GetQuoteCodeSequenceRows() {
+                if ((this.Table.ChildRelations["CompanyId_QuoteCodeSequence_Company"] == null)) {
+                    return new QuoteCodeSequenceRow[0];
+                }
+                else {
+                    return ((QuoteCodeSequenceRow[])(base.GetChildRows(this.Table.ChildRelations["CompanyId_QuoteCodeSequence_Company"])));
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public RFQRow[] GetRFQRows() {
-                if ((this.Table.ChildRelations["CompanyId_RFQ_ToCompany"] == null)) {
+                if ((this.Table.ChildRelations["CompanyId_RFQ_Company"] == null)) {
                     return new RFQRow[0];
                 }
                 else {
-                    return ((RFQRow[])(base.GetChildRows(this.Table.ChildRelations["CompanyId_RFQ_ToCompany"])));
+                    return ((RFQRow[])(base.GetChildRows(this.Table.ChildRelations["CompanyId_RFQ_Company"])));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public TemplateRow[] GetTemplateRows() {
-                if ((this.Table.ChildRelations["CompanyId_Template_ToCompany"] == null)) {
+                if ((this.Table.ChildRelations["CompanyId_Template_Company"] == null)) {
                     return new TemplateRow[0];
                 }
                 else {
-                    return ((TemplateRow[])(base.GetChildRows(this.Table.ChildRelations["CompanyId_Template_ToCompany"])));
+                    return ((TemplateRow[])(base.GetChildRows(this.Table.ChildRelations["CompanyId_Template_Company"])));
                 }
             }
         }
@@ -2525,25 +2967,9 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public int TemplateId {
-                get {
-                    return ((int)(this[this.tableFieldMapping.TemplateIdColumn]));
-                }
-                set {
-                    this[this.tableFieldMapping.TemplateIdColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public string FieldKey {
                 get {
-                    try {
-                        return ((string)(this[this.tableFieldMapping.FieldKeyColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'FieldKey\' in table \'FieldMapping\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableFieldMapping.FieldKeyColumn]));
                 }
                 set {
                     this[this.tableFieldMapping.FieldKeyColumn] = value;
@@ -2552,53 +2978,83 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public string ExcelCell {
+            public string ExcellCell {
                 get {
-                    try {
-                        return ((string)(this[this.tableFieldMapping.ExcelCellColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ExcelCell\' in table \'FieldMapping\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableFieldMapping.ExcellCellColumn]));
                 }
                 set {
-                    this[this.tableFieldMapping.ExcelCellColumn] = value;
+                    this[this.tableFieldMapping.ExcellCellColumn] = value;
                 }
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class QuoteCodeSequenceRow : global::System.Data.DataRow {
+            
+            private QuoteCodeSequenceDataTable tableQuoteCodeSequence;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            internal QuoteCodeSequenceRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableQuoteCodeSequence = ((QuoteCodeSequenceDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public TemplateRow TemplateRow {
+            public int Id {
                 get {
-                    return ((TemplateRow)(this.GetParentRow(this.Table.ParentRelations["TemplateId_FieldMapping_ToTemplate"])));
+                    return ((int)(this[this.tableQuoteCodeSequence.IdColumn]));
                 }
                 set {
-                    this.SetParentRow(value, this.Table.ParentRelations["TemplateId_FieldMapping_ToTemplate"]);
+                    this[this.tableQuoteCodeSequence.IdColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsFieldKeyNull() {
-                return this.IsNull(this.tableFieldMapping.FieldKeyColumn);
+            public int CompanyId {
+                get {
+                    return ((int)(this[this.tableQuoteCodeSequence.CompanyIdColumn]));
+                }
+                set {
+                    this[this.tableQuoteCodeSequence.CompanyIdColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetFieldKeyNull() {
-                this[this.tableFieldMapping.FieldKeyColumn] = global::System.Convert.DBNull;
+            public int CurrentSequence {
+                get {
+                    return ((int)(this[this.tableQuoteCodeSequence.CurrentSequenceColumn]));
+                }
+                set {
+                    this[this.tableQuoteCodeSequence.CurrentSequenceColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsExcelCellNull() {
-                return this.IsNull(this.tableFieldMapping.ExcelCellColumn);
+            public int LastResetYear {
+                get {
+                    return ((int)(this[this.tableQuoteCodeSequence.LastResetYearColumn]));
+                }
+                set {
+                    this[this.tableQuoteCodeSequence.LastResetYearColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetExcelCellNull() {
-                this[this.tableFieldMapping.ExcelCellColumn] = global::System.Convert.DBNull;
+            public CompanyRow CompanyRow {
+                get {
+                    return ((CompanyRow)(this.GetParentRow(this.Table.ParentRelations["CompanyId_QuoteCodeSequence_Company"])));
+                }
+                set {
+                    this.SetParentRow(value, this.Table.ParentRelations["CompanyId_QuoteCodeSequence_Company"]);
+                }
             }
         }
         
@@ -2629,17 +3085,6 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public int ClientId {
-                get {
-                    return ((int)(this[this.tableRFQ.ClientIdColumn]));
-                }
-                set {
-                    this[this.tableRFQ.ClientIdColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public int CompanyId {
                 get {
                     return ((int)(this[this.tableRFQ.CompanyIdColumn]));
@@ -2651,14 +3096,31 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public int ClientId {
+                get {
+                    return ((int)(this[this.tableRFQ.ClientIdColumn]));
+                }
+                set {
+                    this[this.tableRFQ.ClientIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public System.DateTime CreatedAt {
+                get {
+                    return ((global::System.DateTime)(this[this.tableRFQ.CreatedAtColumn]));
+                }
+                set {
+                    this[this.tableRFQ.CreatedAtColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public string RFQCode {
                 get {
-                    try {
-                        return ((string)(this[this.tableRFQ.RFQCodeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'RFQCode\' in table \'RFQ\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableRFQ.RFQCodeColumn]));
                 }
                 set {
                     this[this.tableRFQ.RFQCodeColumn] = value;
@@ -2669,31 +3131,10 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public string QuoteCode {
                 get {
-                    try {
-                        return ((string)(this[this.tableRFQ.QuoteCodeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'QuoteCode\' in table \'RFQ\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableRFQ.QuoteCodeColumn]));
                 }
                 set {
                     this[this.tableRFQ.QuoteCodeColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public System.DateTime CreatedAt {
-                get {
-                    try {
-                        return ((global::System.DateTime)(this[this.tableRFQ.CreatedAtColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'CreatedAt\' in table \'RFQ\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRFQ.CreatedAtColumn] = value;
                 }
             }
             
@@ -2715,12 +3156,77 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public ClientRow ClientRow {
+            public decimal Discount {
                 get {
-                    return ((ClientRow)(this.GetParentRow(this.Table.ParentRelations["ClientId_RFQ_ToClient"])));
+                    try {
+                        return ((decimal)(this[this.tableRFQ.DiscountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Discount\' in table \'RFQ\' is DBNull.", e);
+                    }
                 }
                 set {
-                    this.SetParentRow(value, this.Table.ParentRelations["ClientId_RFQ_ToClient"]);
+                    this[this.tableRFQ.DiscountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public string DeliveryTerm {
+                get {
+                    return ((string)(this[this.tableRFQ.DeliveryTermColumn]));
+                }
+                set {
+                    this[this.tableRFQ.DeliveryTermColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public string Validity {
+                get {
+                    try {
+                        return ((string)(this[this.tableRFQ.ValidityColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Validity\' in table \'RFQ\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableRFQ.ValidityColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public int QuoteCodeCounter {
+                get {
+                    return ((int)(this[this.tableRFQ.QuoteCodeCounterColumn]));
+                }
+                set {
+                    this[this.tableRFQ.QuoteCodeCounterColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public string Currency {
+                get {
+                    return ((string)(this[this.tableRFQ.CurrencyColumn]));
+                }
+                set {
+                    this[this.tableRFQ.CurrencyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public ClientRow ClientRow {
+                get {
+                    return ((ClientRow)(this.GetParentRow(this.Table.ParentRelations["ClientId_RFQ_Client"])));
+                }
+                set {
+                    this.SetParentRow(value, this.Table.ParentRelations["ClientId_RFQ_Client"]);
                 }
             }
             
@@ -2728,47 +3234,11 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public CompanyRow CompanyRow {
                 get {
-                    return ((CompanyRow)(this.GetParentRow(this.Table.ParentRelations["CompanyId_RFQ_ToCompany"])));
+                    return ((CompanyRow)(this.GetParentRow(this.Table.ParentRelations["CompanyId_RFQ_Company"])));
                 }
                 set {
-                    this.SetParentRow(value, this.Table.ParentRelations["CompanyId_RFQ_ToCompany"]);
+                    this.SetParentRow(value, this.Table.ParentRelations["CompanyId_RFQ_Company"]);
                 }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsRFQCodeNull() {
-                return this.IsNull(this.tableRFQ.RFQCodeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetRFQCodeNull() {
-                this[this.tableRFQ.RFQCodeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsQuoteCodeNull() {
-                return this.IsNull(this.tableRFQ.QuoteCodeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetQuoteCodeNull() {
-                this[this.tableRFQ.QuoteCodeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsCreatedAtNull() {
-                return this.IsNull(this.tableRFQ.CreatedAtColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetCreatedAtNull() {
-                this[this.tableRFQ.CreatedAtColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2781,6 +3251,30 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public void SetDeliveryPointNull() {
                 this[this.tableRFQ.DeliveryPointColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool IsDiscountNull() {
+                return this.IsNull(this.tableRFQ.DiscountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void SetDiscountNull() {
+                this[this.tableRFQ.DiscountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool IsValidityNull() {
+                return this.IsNull(this.tableRFQ.ValidityColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void SetValidityNull() {
+                this[this.tableRFQ.ValidityColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2835,12 +3329,7 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public int ItemNo {
                 get {
-                    try {
-                        return ((int)(this[this.tableRFQItem.ItemNoColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ItemNo\' in table \'RFQItem\' is DBNull.", e);
-                    }
+                    return ((int)(this[this.tableRFQItem.ItemNoColumn]));
                 }
                 set {
                     this[this.tableRFQItem.ItemNoColumn] = value;
@@ -2851,12 +3340,7 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public string ItemDesc {
                 get {
-                    try {
-                        return ((string)(this[this.tableRFQItem.ItemDescColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ItemDesc\' in table \'RFQItem\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableRFQItem.ItemDescColumn]));
                 }
                 set {
                     this[this.tableRFQItem.ItemDescColumn] = value;
@@ -2867,12 +3351,7 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public int Quantity {
                 get {
-                    try {
-                        return ((int)(this[this.tableRFQItem.QuantityColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Quantity\' in table \'RFQItem\' is DBNull.", e);
-                    }
+                    return ((int)(this[this.tableRFQItem.QuantityColumn]));
                 }
                 set {
                     this[this.tableRFQItem.QuantityColumn] = value;
@@ -2881,30 +3360,9 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public string UnitName {
+            public int DeliveryTime {
                 get {
-                    try {
-                        return ((string)(this[this.tableRFQItem.UnitNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'UnitName\' in table \'RFQItem\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRFQItem.UnitNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public string DeliveryTime {
-                get {
-                    try {
-                        return ((string)(this[this.tableRFQItem.DeliveryTimeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'DeliveryTime\' in table \'RFQItem\' is DBNull.", e);
-                    }
+                    return ((int)(this[this.tableRFQItem.DeliveryTimeColumn]));
                 }
                 set {
                     this[this.tableRFQItem.DeliveryTimeColumn] = value;
@@ -2915,12 +3373,7 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public string UnitPrice {
                 get {
-                    try {
-                        return ((string)(this[this.tableRFQItem.UnitPriceColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'UnitPrice\' in table \'RFQItem\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableRFQItem.UnitPriceColumn]));
                 }
                 set {
                     this[this.tableRFQItem.UnitPriceColumn] = value;
@@ -2929,17 +3382,12 @@ namespace RFQ_Generator_Beta_Version {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public string DeliveryTerm {
+            public string UnitName {
                 get {
-                    try {
-                        return ((string)(this[this.tableRFQItem.DeliveryTermColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'DeliveryTerm\' in table \'RFQItem\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableRFQItem.UnitNameColumn]));
                 }
                 set {
-                    this[this.tableRFQItem.DeliveryTermColumn] = value;
+                    this[this.tableRFQItem.UnitNameColumn] = value;
                 }
             }
             
@@ -2952,90 +3400,6 @@ namespace RFQ_Generator_Beta_Version {
                 set {
                     this.SetParentRow(value, this.Table.ParentRelations["RFQId_RFQItem_RFQ"]);
                 }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsItemNoNull() {
-                return this.IsNull(this.tableRFQItem.ItemNoColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetItemNoNull() {
-                this[this.tableRFQItem.ItemNoColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsItemDescNull() {
-                return this.IsNull(this.tableRFQItem.ItemDescColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetItemDescNull() {
-                this[this.tableRFQItem.ItemDescColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsQuantityNull() {
-                return this.IsNull(this.tableRFQItem.QuantityColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetQuantityNull() {
-                this[this.tableRFQItem.QuantityColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsUnitNameNull() {
-                return this.IsNull(this.tableRFQItem.UnitNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetUnitNameNull() {
-                this[this.tableRFQItem.UnitNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsDeliveryTimeNull() {
-                return this.IsNull(this.tableRFQItem.DeliveryTimeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetDeliveryTimeNull() {
-                this[this.tableRFQItem.DeliveryTimeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsUnitPriceNull() {
-                return this.IsNull(this.tableRFQItem.UnitPriceColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetUnitPriceNull() {
-                this[this.tableRFQItem.UnitPriceColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsDeliveryTermNull() {
-                return this.IsNull(this.tableRFQItem.DeliveryTermColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetDeliveryTermNull() {
-                this[this.tableRFQItem.DeliveryTermColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -3079,12 +3443,7 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public string TemplatePath {
                 get {
-                    try {
-                        return ((string)(this[this.tableTemplate.TemplatePathColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'TemplatePath\' in table \'Template\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableTemplate.TemplatePathColumn]));
                 }
                 set {
                     this[this.tableTemplate.TemplatePathColumn] = value;
@@ -3095,33 +3454,10 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public CompanyRow CompanyRow {
                 get {
-                    return ((CompanyRow)(this.GetParentRow(this.Table.ParentRelations["CompanyId_Template_ToCompany"])));
+                    return ((CompanyRow)(this.GetParentRow(this.Table.ParentRelations["CompanyId_Template_Company"])));
                 }
                 set {
-                    this.SetParentRow(value, this.Table.ParentRelations["CompanyId_Template_ToCompany"]);
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public bool IsTemplatePathNull() {
-                return this.IsNull(this.tableTemplate.TemplatePathColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public void SetTemplatePathNull() {
-                this[this.tableTemplate.TemplatePathColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public FieldMappingRow[] GetFieldMappingRows() {
-                if ((this.Table.ChildRelations["TemplateId_FieldMapping_ToTemplate"] == null)) {
-                    return new FieldMappingRow[0];
-                }
-                else {
-                    return ((FieldMappingRow[])(base.GetChildRows(this.Table.ChildRelations["TemplateId_FieldMapping_ToTemplate"])));
+                    this.SetParentRow(value, this.Table.ParentRelations["CompanyId_Template_Company"]);
                 }
             }
         }
@@ -3214,6 +3550,40 @@ namespace RFQ_Generator_Beta_Version {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public FieldMappingRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        public class QuoteCodeSequenceRowChangeEvent : global::System.EventArgs {
+            
+            private QuoteCodeSequenceRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public QuoteCodeSequenceRowChangeEvent(QuoteCodeSequenceRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public QuoteCodeSequenceRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -3331,7 +3701,7 @@ namespace RFQ_Generator_Beta_Version {
         }
     }
 }
-namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
+namespace RFQ_Generator_Beta_Version.DB.RFQ_DBDataSet1TableAdapters {
     
     
     /// <summary>
@@ -3457,41 +3827,42 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
             tableMapping.DataSetTable = "Client";
             tableMapping.ColumnMappings.Add("Id", "Id");
             tableMapping.ColumnMappings.Add("ClientName", "ClientName");
+            tableMapping.ColumnMappings.Add("ClientCode", "ClientCode");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[Client] WHERE (([Id] = @Original_Id) AND ((@IsNull_ClientName " +
-                "= 1 AND [ClientName] IS NULL) OR ([ClientName] = @Original_ClientName)))";
+            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[Client] WHERE (([Id] = @Original_Id) AND ([ClientCode] = @Orig" +
+                "inal_ClientCode))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_ClientName", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientName", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ClientName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientName", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ClientCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[Client] ([Id], [ClientName]) VALUES (@Id, @ClientName);\r\nSELEC" +
-                "T Id, ClientName FROM Client WHERE (Id = @Id)";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[Client] ([Id], [ClientName], [ClientCode]) VALUES (@Id, @Clien" +
+                "tName, @ClientCode);\r\nSELECT Id, ClientName, ClientCode FROM Client WHERE (Id = " +
+                "@Id)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ClientName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientName", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ClientCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientCode", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = "UPDATE [dbo].[Client] SET [Id] = @Id, [ClientName] = @ClientName WHERE (([Id] = @" +
-                "Original_Id) AND ((@IsNull_ClientName = 1 AND [ClientName] IS NULL) OR ([ClientN" +
-                "ame] = @Original_ClientName)));\r\nSELECT Id, ClientName FROM Client WHERE (Id = @" +
-                "Id)";
+            this._adapter.UpdateCommand.CommandText = "UPDATE [dbo].[Client] SET [Id] = @Id, [ClientName] = @ClientName, [ClientCode] = " +
+                "@ClientCode WHERE (([Id] = @Original_Id) AND ([ClientCode] = @Original_ClientCod" +
+                "e));\r\nSELECT Id, ClientName, ClientCode FROM Client WHERE (Id = @Id)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ClientName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientName", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ClientCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientCode", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_ClientName", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientName", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ClientName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientName", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ClientCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQDBConnectionString;
+            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQ_DBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3500,7 +3871,7 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT Id, ClientName FROM dbo.Client";
+            this._commandCollection[0].CommandText = "SELECT Id, ClientName, ClientCode FROM dbo.Client";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -3508,7 +3879,7 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(RFQDBDataSet.ClientDataTable dataTable) {
+        public virtual int Fill(RFQ_DBDataSet1.ClientDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -3521,9 +3892,9 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual RFQDBDataSet.ClientDataTable GetData() {
+        public virtual RFQ_DBDataSet1.ClientDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            RFQDBDataSet.ClientDataTable dataTable = new RFQDBDataSet.ClientDataTable();
+            RFQ_DBDataSet1.ClientDataTable dataTable = new RFQ_DBDataSet1.ClientDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -3531,14 +3902,14 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet.ClientDataTable dataTable) {
+        public virtual int Update(RFQ_DBDataSet1.ClientDataTable dataTable) {
             return this.Adapter.Update(dataTable);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet dataSet) {
+        public virtual int Update(RFQ_DBDataSet1 dataSet) {
             return this.Adapter.Update(dataSet, "Client");
         }
         
@@ -3561,15 +3932,13 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_Id, string Original_ClientName) {
+        public virtual int Delete(int Original_Id, string Original_ClientCode) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Id));
-            if ((Original_ClientName == null)) {
-                this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[2].Value = global::System.DBNull.Value;
+            if ((Original_ClientCode == null)) {
+                throw new global::System.ArgumentNullException("Original_ClientCode");
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((string)(Original_ClientName));
+                this.Adapter.DeleteCommand.Parameters[1].Value = ((string)(Original_ClientCode));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -3591,13 +3960,19 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(int Id, string ClientName) {
+        public virtual int Insert(int Id, string ClientName, string ClientCode) {
             this.Adapter.InsertCommand.Parameters[0].Value = ((int)(Id));
             if ((ClientName == null)) {
-                this.Adapter.InsertCommand.Parameters[1].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("ClientName");
             }
             else {
                 this.Adapter.InsertCommand.Parameters[1].Value = ((string)(ClientName));
+            }
+            if ((ClientCode == null)) {
+                throw new global::System.ArgumentNullException("ClientCode");
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[2].Value = ((string)(ClientCode));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -3619,22 +3994,26 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(int Id, string ClientName, int Original_Id, string Original_ClientName) {
+        public virtual int Update(int Id, string ClientName, string ClientCode, int Original_Id, string Original_ClientCode) {
             this.Adapter.UpdateCommand.Parameters[0].Value = ((int)(Id));
             if ((ClientName == null)) {
-                this.Adapter.UpdateCommand.Parameters[1].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("ClientName");
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(ClientName));
             }
-            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(Original_Id));
-            if ((Original_ClientName == null)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
+            if ((ClientCode == null)) {
+                throw new global::System.ArgumentNullException("ClientCode");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(Original_ClientName));
+                this.Adapter.UpdateCommand.Parameters[2].Value = ((string)(ClientCode));
+            }
+            this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(Original_Id));
+            if ((Original_ClientCode == null)) {
+                throw new global::System.ArgumentNullException("Original_ClientCode");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(Original_ClientCode));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -3656,8 +4035,8 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string ClientName, int Original_Id, string Original_ClientName) {
-            return this.Update(Original_Id, ClientName, Original_Id, Original_ClientName);
+        public virtual int Update(string ClientName, string ClientCode, int Original_Id, string Original_ClientCode) {
+            return this.Update(Original_Id, ClientName, ClientCode, Original_Id, Original_ClientCode);
         }
     }
     
@@ -3784,41 +4163,43 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
             tableMapping.DataSetTable = "Company";
             tableMapping.ColumnMappings.Add("Id", "Id");
             tableMapping.ColumnMappings.Add("CompanyName", "CompanyName");
+            tableMapping.ColumnMappings.Add("CompanyCode", "CompanyCode");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[Company] WHERE (([Id] = @Original_Id) AND ((@IsNull_CompanyNam" +
-                "e = 1 AND [CompanyName] IS NULL) OR ([CompanyName] = @Original_CompanyName)))";
+            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[Company] WHERE (([Id] = @Original_Id) AND ([CompanyName] = @Or" +
+                "iginal_CompanyName) AND ([CompanyCode] = @Original_CompanyCode))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_CompanyName", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyName", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyName", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[Company] ([Id], [CompanyName]) VALUES (@Id, @CompanyName);\r\nSE" +
-                "LECT Id, CompanyName FROM Company WHERE (Id = @Id)";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[Company] ([Id], [CompanyName], [CompanyCode]) VALUES (@Id, @Co" +
+                "mpanyName, @CompanyCode);\r\nSELECT Id, CompanyName, CompanyCode FROM Company WHER" +
+                "E (Id = @Id)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyName", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyCode", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = "UPDATE [dbo].[Company] SET [Id] = @Id, [CompanyName] = @CompanyName WHERE (([Id] " +
-                "= @Original_Id) AND ((@IsNull_CompanyName = 1 AND [CompanyName] IS NULL) OR ([Co" +
-                "mpanyName] = @Original_CompanyName)));\r\nSELECT Id, CompanyName FROM Company WHER" +
-                "E (Id = @Id)";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[Company] SET [Id] = @Id, [CompanyName] = @CompanyName, [CompanyCode] = @CompanyCode WHERE (([Id] = @Original_Id) AND ([CompanyName] = @Original_CompanyName) AND ([CompanyCode] = @Original_CompanyCode));
+SELECT Id, CompanyName, CompanyCode FROM Company WHERE (Id = @Id)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyName", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyCode", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_CompanyName", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyName", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyName", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQDBConnectionString;
+            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQ_DBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3827,7 +4208,7 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT Id, CompanyName FROM dbo.Company";
+            this._commandCollection[0].CommandText = "SELECT Id, CompanyName, CompanyCode FROM dbo.Company";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -3835,7 +4216,7 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(RFQDBDataSet.CompanyDataTable dataTable) {
+        public virtual int Fill(RFQ_DBDataSet1.CompanyDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -3848,9 +4229,9 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual RFQDBDataSet.CompanyDataTable GetData() {
+        public virtual RFQ_DBDataSet1.CompanyDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            RFQDBDataSet.CompanyDataTable dataTable = new RFQDBDataSet.CompanyDataTable();
+            RFQ_DBDataSet1.CompanyDataTable dataTable = new RFQ_DBDataSet1.CompanyDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -3858,14 +4239,14 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet.CompanyDataTable dataTable) {
+        public virtual int Update(RFQ_DBDataSet1.CompanyDataTable dataTable) {
             return this.Adapter.Update(dataTable);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet dataSet) {
+        public virtual int Update(RFQ_DBDataSet1 dataSet) {
             return this.Adapter.Update(dataSet, "Company");
         }
         
@@ -3888,15 +4269,19 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_Id, string Original_CompanyName) {
+        public virtual int Delete(int Original_Id, string Original_CompanyName, string Original_CompanyCode) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Id));
             if ((Original_CompanyName == null)) {
-                this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[2].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("Original_CompanyName");
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((string)(Original_CompanyName));
+                this.Adapter.DeleteCommand.Parameters[1].Value = ((string)(Original_CompanyName));
+            }
+            if ((Original_CompanyCode == null)) {
+                throw new global::System.ArgumentNullException("Original_CompanyCode");
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[2].Value = ((string)(Original_CompanyCode));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -3918,13 +4303,19 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(int Id, string CompanyName) {
+        public virtual int Insert(int Id, string CompanyName, string CompanyCode) {
             this.Adapter.InsertCommand.Parameters[0].Value = ((int)(Id));
             if ((CompanyName == null)) {
-                this.Adapter.InsertCommand.Parameters[1].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("CompanyName");
             }
             else {
                 this.Adapter.InsertCommand.Parameters[1].Value = ((string)(CompanyName));
+            }
+            if ((CompanyCode == null)) {
+                throw new global::System.ArgumentNullException("CompanyCode");
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[2].Value = ((string)(CompanyCode));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -3946,22 +4337,32 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(int Id, string CompanyName, int Original_Id, string Original_CompanyName) {
+        public virtual int Update(int Id, string CompanyName, string CompanyCode, int Original_Id, string Original_CompanyName, string Original_CompanyCode) {
             this.Adapter.UpdateCommand.Parameters[0].Value = ((int)(Id));
             if ((CompanyName == null)) {
-                this.Adapter.UpdateCommand.Parameters[1].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("CompanyName");
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(CompanyName));
             }
-            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(Original_Id));
-            if ((Original_CompanyName == null)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
+            if ((CompanyCode == null)) {
+                throw new global::System.ArgumentNullException("CompanyCode");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[2].Value = ((string)(CompanyCode));
+            }
+            this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(Original_Id));
+            if ((Original_CompanyName == null)) {
+                throw new global::System.ArgumentNullException("Original_CompanyName");
+            }
+            else {
                 this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(Original_CompanyName));
+            }
+            if ((Original_CompanyCode == null)) {
+                throw new global::System.ArgumentNullException("Original_CompanyCode");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((string)(Original_CompanyCode));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -3983,8 +4384,8 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string CompanyName, int Original_Id, string Original_CompanyName) {
-            return this.Update(Original_Id, CompanyName, Original_Id, Original_CompanyName);
+        public virtual int Update(string CompanyName, string CompanyCode, int Original_Id, string Original_CompanyName, string Original_CompanyCode) {
+            return this.Update(Original_Id, CompanyName, CompanyCode, Original_Id, Original_CompanyName, Original_CompanyCode);
         }
     }
     
@@ -4110,52 +4511,44 @@ namespace RFQ_Generator_Beta_Version.RFQDBDataSetTableAdapters {
             tableMapping.SourceTable = "Table";
             tableMapping.DataSetTable = "FieldMapping";
             tableMapping.ColumnMappings.Add("Id", "Id");
-            tableMapping.ColumnMappings.Add("TemplateId", "TemplateId");
             tableMapping.ColumnMappings.Add("FieldKey", "FieldKey");
-            tableMapping.ColumnMappings.Add("ExcelCell", "ExcelCell");
+            tableMapping.ColumnMappings.Add("ExcellCell", "ExcellCell");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [dbo].[FieldMapping] WHERE (([Id] = @Original_Id) AND ([TemplateId] = @Original_TemplateId) AND ((@IsNull_FieldKey = 1 AND [FieldKey] IS NULL) OR ([FieldKey] = @Original_FieldKey)) AND ((@IsNull_ExcelCell = 1 AND [ExcelCell] IS NULL) OR ([ExcelCell] = @Original_ExcelCell)))";
+            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[FieldMapping] WHERE (([Id] = @Original_Id) AND ([FieldKey] = @" +
+                "Original_FieldKey) AND ([ExcellCell] = @Original_ExcellCell))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_TemplateId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplateId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_FieldKey", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_FieldKey", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_ExcelCell", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcelCell", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ExcelCell", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcelCell", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_FieldKey", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ExcellCell", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcellCell", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[FieldMapping] ([Id], [TemplateId], [FieldKey], [ExcelCell]) VA" +
-                "LUES (@Id, @TemplateId, @FieldKey, @ExcelCell);\r\nSELECT Id, TemplateId, FieldKey" +
-                ", ExcelCell FROM FieldMapping WHERE (Id = @Id)";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[FieldMapping] ([Id], [FieldKey], [ExcellCell]) VALUES (@Id, @F" +
+                "ieldKey, @ExcellCell);\r\nSELECT Id, FieldKey, ExcellCell FROM FieldMapping WHERE " +
+                "(Id = @Id)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@TemplateId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplateId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FieldKey", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ExcelCell", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcelCell", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FieldKey", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ExcellCell", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcellCell", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[FieldMapping] SET [Id] = @Id, [TemplateId] = @TemplateId, [FieldKey] = @FieldKey, [ExcelCell] = @ExcelCell WHERE (([Id] = @Original_Id) AND ([TemplateId] = @Original_TemplateId) AND ((@IsNull_FieldKey = 1 AND [FieldKey] IS NULL) OR ([FieldKey] = @Original_FieldKey)) AND ((@IsNull_ExcelCell = 1 AND [ExcelCell] IS NULL) OR ([ExcelCell] = @Original_ExcelCell)));
-SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[FieldMapping] SET [Id] = @Id, [FieldKey] = @FieldKey, [ExcellCell] = @ExcellCell WHERE (([Id] = @Original_Id) AND ([FieldKey] = @Original_FieldKey) AND ([ExcellCell] = @Original_ExcellCell));
+SELECT Id, FieldKey, ExcellCell FROM FieldMapping WHERE (Id = @Id)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@TemplateId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplateId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FieldKey", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ExcelCell", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcelCell", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@FieldKey", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ExcellCell", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcellCell", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_TemplateId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplateId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_FieldKey", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_FieldKey", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_ExcelCell", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcelCell", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ExcelCell", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcelCell", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_FieldKey", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "FieldKey", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ExcellCell", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ExcellCell", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQDBConnectionString;
+            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQ_DBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4164,7 +4557,7 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT Id, TemplateId, FieldKey, ExcelCell FROM dbo.FieldMapping";
+            this._commandCollection[0].CommandText = "SELECT Id, FieldKey, ExcellCell FROM dbo.FieldMapping";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -4172,7 +4565,7 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(RFQDBDataSet.FieldMappingDataTable dataTable) {
+        public virtual int Fill(RFQ_DBDataSet1.FieldMappingDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -4185,9 +4578,9 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual RFQDBDataSet.FieldMappingDataTable GetData() {
+        public virtual RFQ_DBDataSet1.FieldMappingDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            RFQDBDataSet.FieldMappingDataTable dataTable = new RFQDBDataSet.FieldMappingDataTable();
+            RFQ_DBDataSet1.FieldMappingDataTable dataTable = new RFQ_DBDataSet1.FieldMappingDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -4195,14 +4588,14 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet.FieldMappingDataTable dataTable) {
+        public virtual int Update(RFQ_DBDataSet1.FieldMappingDataTable dataTable) {
             return this.Adapter.Update(dataTable);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet dataSet) {
+        public virtual int Update(RFQ_DBDataSet1 dataSet) {
             return this.Adapter.Update(dataSet, "FieldMapping");
         }
         
@@ -4225,24 +4618,19 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_Id, int Original_TemplateId, string Original_FieldKey, string Original_ExcelCell) {
+        public virtual int Delete(int Original_Id, string Original_FieldKey, string Original_ExcellCell) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Id));
-            this.Adapter.DeleteCommand.Parameters[1].Value = ((int)(Original_TemplateId));
             if ((Original_FieldKey == null)) {
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[3].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("Original_FieldKey");
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[3].Value = ((string)(Original_FieldKey));
+                this.Adapter.DeleteCommand.Parameters[1].Value = ((string)(Original_FieldKey));
             }
-            if ((Original_ExcelCell == null)) {
-                this.Adapter.DeleteCommand.Parameters[4].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[5].Value = global::System.DBNull.Value;
+            if ((Original_ExcellCell == null)) {
+                throw new global::System.ArgumentNullException("Original_ExcellCell");
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[4].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((string)(Original_ExcelCell));
+                this.Adapter.DeleteCommand.Parameters[2].Value = ((string)(Original_ExcellCell));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -4264,20 +4652,19 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(int Id, int TemplateId, string FieldKey, string ExcelCell) {
+        public virtual int Insert(int Id, string FieldKey, string ExcellCell) {
             this.Adapter.InsertCommand.Parameters[0].Value = ((int)(Id));
-            this.Adapter.InsertCommand.Parameters[1].Value = ((int)(TemplateId));
             if ((FieldKey == null)) {
-                this.Adapter.InsertCommand.Parameters[2].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("FieldKey");
             }
             else {
-                this.Adapter.InsertCommand.Parameters[2].Value = ((string)(FieldKey));
+                this.Adapter.InsertCommand.Parameters[1].Value = ((string)(FieldKey));
             }
-            if ((ExcelCell == null)) {
-                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
+            if ((ExcellCell == null)) {
+                throw new global::System.ArgumentNullException("ExcellCell");
             }
             else {
-                this.Adapter.InsertCommand.Parameters[3].Value = ((string)(ExcelCell));
+                this.Adapter.InsertCommand.Parameters[2].Value = ((string)(ExcellCell));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -4299,38 +4686,32 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(int Id, int TemplateId, string FieldKey, string ExcelCell, int Original_Id, int Original_TemplateId, string Original_FieldKey, string Original_ExcelCell) {
+        public virtual int Update(int Id, string FieldKey, string ExcellCell, int Original_Id, string Original_FieldKey, string Original_ExcellCell) {
             this.Adapter.UpdateCommand.Parameters[0].Value = ((int)(Id));
-            this.Adapter.UpdateCommand.Parameters[1].Value = ((int)(TemplateId));
             if ((FieldKey == null)) {
-                this.Adapter.UpdateCommand.Parameters[2].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("FieldKey");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[2].Value = ((string)(FieldKey));
+                this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(FieldKey));
             }
-            if ((ExcelCell == null)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
+            if ((ExcellCell == null)) {
+                throw new global::System.ArgumentNullException("ExcellCell");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(ExcelCell));
+                this.Adapter.UpdateCommand.Parameters[2].Value = ((string)(ExcellCell));
             }
-            this.Adapter.UpdateCommand.Parameters[4].Value = ((int)(Original_Id));
-            this.Adapter.UpdateCommand.Parameters[5].Value = ((int)(Original_TemplateId));
+            this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(Original_Id));
             if ((Original_FieldKey == null)) {
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[7].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("Original_FieldKey");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(Original_FieldKey));
+                this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(Original_FieldKey));
             }
-            if ((Original_ExcelCell == null)) {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[9].Value = global::System.DBNull.Value;
+            if ((Original_ExcellCell == null)) {
+                throw new global::System.ArgumentNullException("Original_ExcellCell");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(Original_ExcelCell));
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((string)(Original_ExcellCell));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -4352,8 +4733,328 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(int TemplateId, string FieldKey, string ExcelCell, int Original_Id, int Original_TemplateId, string Original_FieldKey, string Original_ExcelCell) {
-            return this.Update(Original_Id, TemplateId, FieldKey, ExcelCell, Original_Id, Original_TemplateId, Original_FieldKey, Original_ExcelCell);
+        public virtual int Update(string FieldKey, string ExcellCell, int Original_Id, string Original_FieldKey, string Original_ExcellCell) {
+            return this.Update(Original_Id, FieldKey, ExcellCell, Original_Id, Original_FieldKey, Original_ExcellCell);
+        }
+    }
+    
+    /// <summary>
+    ///Represents the connection and commands used to retrieve and save data.
+    ///</summary>
+    [global::System.ComponentModel.DesignerCategoryAttribute("code")]
+    [global::System.ComponentModel.ToolboxItem(true)]
+    [global::System.ComponentModel.DataObjectAttribute(true)]
+    [global::System.ComponentModel.DesignerAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterDesigner, Microsoft.VSDesigner" +
+        ", Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+    public partial class QuoteCodeSequenceTableAdapter : global::System.ComponentModel.Component {
+        
+        private global::System.Data.SqlClient.SqlDataAdapter _adapter;
+        
+        private global::System.Data.SqlClient.SqlConnection _connection;
+        
+        private global::System.Data.SqlClient.SqlTransaction _transaction;
+        
+        private global::System.Data.SqlClient.SqlCommand[] _commandCollection;
+        
+        private bool _clearBeforeFill;
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        public QuoteCodeSequenceTableAdapter() {
+            this.ClearBeforeFill = true;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        protected internal global::System.Data.SqlClient.SqlDataAdapter Adapter {
+            get {
+                if ((this._adapter == null)) {
+                    this.InitAdapter();
+                }
+                return this._adapter;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        internal global::System.Data.SqlClient.SqlConnection Connection {
+            get {
+                if ((this._connection == null)) {
+                    this.InitConnection();
+                }
+                return this._connection;
+            }
+            set {
+                this._connection = value;
+                if ((this.Adapter.InsertCommand != null)) {
+                    this.Adapter.InsertCommand.Connection = value;
+                }
+                if ((this.Adapter.DeleteCommand != null)) {
+                    this.Adapter.DeleteCommand.Connection = value;
+                }
+                if ((this.Adapter.UpdateCommand != null)) {
+                    this.Adapter.UpdateCommand.Connection = value;
+                }
+                for (int i = 0; (i < this.CommandCollection.Length); i = (i + 1)) {
+                    if ((this.CommandCollection[i] != null)) {
+                        ((global::System.Data.SqlClient.SqlCommand)(this.CommandCollection[i])).Connection = value;
+                    }
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        internal global::System.Data.SqlClient.SqlTransaction Transaction {
+            get {
+                return this._transaction;
+            }
+            set {
+                this._transaction = value;
+                for (int i = 0; (i < this.CommandCollection.Length); i = (i + 1)) {
+                    this.CommandCollection[i].Transaction = this._transaction;
+                }
+                if (((this.Adapter != null) 
+                            && (this.Adapter.DeleteCommand != null))) {
+                    this.Adapter.DeleteCommand.Transaction = this._transaction;
+                }
+                if (((this.Adapter != null) 
+                            && (this.Adapter.InsertCommand != null))) {
+                    this.Adapter.InsertCommand.Transaction = this._transaction;
+                }
+                if (((this.Adapter != null) 
+                            && (this.Adapter.UpdateCommand != null))) {
+                    this.Adapter.UpdateCommand.Transaction = this._transaction;
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        protected global::System.Data.SqlClient.SqlCommand[] CommandCollection {
+            get {
+                if ((this._commandCollection == null)) {
+                    this.InitCommandCollection();
+                }
+                return this._commandCollection;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        public bool ClearBeforeFill {
+            get {
+                return this._clearBeforeFill;
+            }
+            set {
+                this._clearBeforeFill = value;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        private void InitAdapter() {
+            this._adapter = new global::System.Data.SqlClient.SqlDataAdapter();
+            global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
+            tableMapping.SourceTable = "Table";
+            tableMapping.DataSetTable = "QuoteCodeSequence";
+            tableMapping.ColumnMappings.Add("Id", "Id");
+            tableMapping.ColumnMappings.Add("CompanyId", "CompanyId");
+            tableMapping.ColumnMappings.Add("CurrentSequence", "CurrentSequence");
+            tableMapping.ColumnMappings.Add("LastResetYear", "LastResetYear");
+            this._adapter.TableMappings.Add(tableMapping);
+            this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
+            this._adapter.DeleteCommand.Connection = this.Connection;
+            this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[QuoteCodeSequence] WHERE (([Id] = @Original_Id) AND ([CompanyI" +
+                "d] = @Original_CompanyId) AND ([CurrentSequence] = @Original_CurrentSequence) AN" +
+                "D ([LastResetYear] = @Original_LastResetYear))";
+            this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CurrentSequence", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CurrentSequence", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_LastResetYear", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "LastResetYear", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
+            this._adapter.InsertCommand.Connection = this.Connection;
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[QuoteCodeSequence] ([Id], [CompanyId], [CurrentSequence], [Las" +
+                "tResetYear]) VALUES (@Id, @CompanyId, @CurrentSequence, @LastResetYear);\r\nSELECT" +
+                " Id, CompanyId, CurrentSequence, LastResetYear FROM QuoteCodeSequence WHERE (Id " +
+                "= @Id)";
+            this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CurrentSequence", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CurrentSequence", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@LastResetYear", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "LastResetYear", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
+            this._adapter.UpdateCommand.Connection = this.Connection;
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[QuoteCodeSequence] SET [Id] = @Id, [CompanyId] = @CompanyId, [CurrentSequence] = @CurrentSequence, [LastResetYear] = @LastResetYear WHERE (([Id] = @Original_Id) AND ([CompanyId] = @Original_CompanyId) AND ([CurrentSequence] = @Original_CurrentSequence) AND ([LastResetYear] = @Original_LastResetYear));
+SELECT Id, CompanyId, CurrentSequence, LastResetYear FROM QuoteCodeSequence WHERE (Id = @Id)";
+            this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CurrentSequence", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CurrentSequence", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@LastResetYear", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "LastResetYear", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CurrentSequence", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CurrentSequence", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_LastResetYear", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "LastResetYear", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        private void InitConnection() {
+            this._connection = new global::System.Data.SqlClient.SqlConnection();
+            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQ_DBConnectionString;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        private void InitCommandCollection() {
+            this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
+            this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
+            this._commandCollection[0].Connection = this.Connection;
+            this._commandCollection[0].CommandText = "SELECT Id, CompanyId, CurrentSequence, LastResetYear FROM dbo.QuoteCodeSequence";
+            this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
+        public virtual int Fill(RFQ_DBDataSet1.QuoteCodeSequenceDataTable dataTable) {
+            this.Adapter.SelectCommand = this.CommandCollection[0];
+            if ((this.ClearBeforeFill == true)) {
+                dataTable.Clear();
+            }
+            int returnValue = this.Adapter.Fill(dataTable);
+            return returnValue;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
+        public virtual RFQ_DBDataSet1.QuoteCodeSequenceDataTable GetData() {
+            this.Adapter.SelectCommand = this.CommandCollection[0];
+            RFQ_DBDataSet1.QuoteCodeSequenceDataTable dataTable = new RFQ_DBDataSet1.QuoteCodeSequenceDataTable();
+            this.Adapter.Fill(dataTable);
+            return dataTable;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        public virtual int Update(RFQ_DBDataSet1.QuoteCodeSequenceDataTable dataTable) {
+            return this.Adapter.Update(dataTable);
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        public virtual int Update(RFQ_DBDataSet1 dataSet) {
+            return this.Adapter.Update(dataSet, "QuoteCodeSequence");
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        public virtual int Update(global::System.Data.DataRow dataRow) {
+            return this.Adapter.Update(new global::System.Data.DataRow[] {
+                        dataRow});
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        public virtual int Update(global::System.Data.DataRow[] dataRows) {
+            return this.Adapter.Update(dataRows);
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
+        public virtual int Delete(int Original_Id, int Original_CompanyId, int Original_CurrentSequence, int Original_LastResetYear) {
+            this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Id));
+            this.Adapter.DeleteCommand.Parameters[1].Value = ((int)(Original_CompanyId));
+            this.Adapter.DeleteCommand.Parameters[2].Value = ((int)(Original_CurrentSequence));
+            this.Adapter.DeleteCommand.Parameters[3].Value = ((int)(Original_LastResetYear));
+            global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
+            if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
+                        != global::System.Data.ConnectionState.Open)) {
+                this.Adapter.DeleteCommand.Connection.Open();
+            }
+            try {
+                int returnValue = this.Adapter.DeleteCommand.ExecuteNonQuery();
+                return returnValue;
+            }
+            finally {
+                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
+                    this.Adapter.DeleteCommand.Connection.Close();
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
+        public virtual int Insert(int Id, int CompanyId, int CurrentSequence, int LastResetYear) {
+            this.Adapter.InsertCommand.Parameters[0].Value = ((int)(Id));
+            this.Adapter.InsertCommand.Parameters[1].Value = ((int)(CompanyId));
+            this.Adapter.InsertCommand.Parameters[2].Value = ((int)(CurrentSequence));
+            this.Adapter.InsertCommand.Parameters[3].Value = ((int)(LastResetYear));
+            global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
+            if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
+                        != global::System.Data.ConnectionState.Open)) {
+                this.Adapter.InsertCommand.Connection.Open();
+            }
+            try {
+                int returnValue = this.Adapter.InsertCommand.ExecuteNonQuery();
+                return returnValue;
+            }
+            finally {
+                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
+                    this.Adapter.InsertCommand.Connection.Close();
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
+        public virtual int Update(int Id, int CompanyId, int CurrentSequence, int LastResetYear, int Original_Id, int Original_CompanyId, int Original_CurrentSequence, int Original_LastResetYear) {
+            this.Adapter.UpdateCommand.Parameters[0].Value = ((int)(Id));
+            this.Adapter.UpdateCommand.Parameters[1].Value = ((int)(CompanyId));
+            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(CurrentSequence));
+            this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(LastResetYear));
+            this.Adapter.UpdateCommand.Parameters[4].Value = ((int)(Original_Id));
+            this.Adapter.UpdateCommand.Parameters[5].Value = ((int)(Original_CompanyId));
+            this.Adapter.UpdateCommand.Parameters[6].Value = ((int)(Original_CurrentSequence));
+            this.Adapter.UpdateCommand.Parameters[7].Value = ((int)(Original_LastResetYear));
+            global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
+            if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
+                        != global::System.Data.ConnectionState.Open)) {
+                this.Adapter.UpdateCommand.Connection.Open();
+            }
+            try {
+                int returnValue = this.Adapter.UpdateCommand.ExecuteNonQuery();
+                return returnValue;
+            }
+            finally {
+                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
+                    this.Adapter.UpdateCommand.Connection.Close();
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
+        public virtual int Update(int CompanyId, int CurrentSequence, int LastResetYear, int Original_Id, int Original_CompanyId, int Original_CurrentSequence, int Original_LastResetYear) {
+            return this.Update(Original_Id, CompanyId, CurrentSequence, LastResetYear, Original_Id, Original_CompanyId, Original_CurrentSequence, Original_LastResetYear);
         }
     }
     
@@ -4479,70 +5180,93 @@ SELECT Id, TemplateId, FieldKey, ExcelCell FROM FieldMapping WHERE (Id = @Id)";
             tableMapping.SourceTable = "Table";
             tableMapping.DataSetTable = "RFQ";
             tableMapping.ColumnMappings.Add("Id", "Id");
-            tableMapping.ColumnMappings.Add("ClientId", "ClientId");
             tableMapping.ColumnMappings.Add("CompanyId", "CompanyId");
+            tableMapping.ColumnMappings.Add("ClientId", "ClientId");
+            tableMapping.ColumnMappings.Add("CreatedAt", "CreatedAt");
             tableMapping.ColumnMappings.Add("RFQCode", "RFQCode");
             tableMapping.ColumnMappings.Add("QuoteCode", "QuoteCode");
-            tableMapping.ColumnMappings.Add("CreatedAt", "CreatedAt");
             tableMapping.ColumnMappings.Add("DeliveryPoint", "DeliveryPoint");
+            tableMapping.ColumnMappings.Add("Discount", "Discount");
+            tableMapping.ColumnMappings.Add("DeliveryTerm", "DeliveryTerm");
+            tableMapping.ColumnMappings.Add("Validity", "Validity");
+            tableMapping.ColumnMappings.Add("QuoteCodeCounter", "QuoteCodeCounter");
+            tableMapping.ColumnMappings.Add("Currency", "Currency");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [dbo].[RFQ] WHERE (([Id] = @Original_Id) AND ([ClientId] = @Original_ClientId) AND ([CompanyId] = @Original_CompanyId) AND ((@IsNull_RFQCode = 1 AND [RFQCode] IS NULL) OR ([RFQCode] = @Original_RFQCode)) AND ((@IsNull_QuoteCode = 1 AND [QuoteCode] IS NULL) OR ([QuoteCode] = @Original_QuoteCode)) AND ((@IsNull_CreatedAt = 1 AND [CreatedAt] IS NULL) OR ([CreatedAt] = @Original_CreatedAt)) AND ((@IsNull_DeliveryPoint = 1 AND [DeliveryPoint] IS NULL) OR ([DeliveryPoint] = @Original_DeliveryPoint)))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [dbo].[RFQ] WHERE (([Id] = @Original_Id) AND ([CompanyId] = @Original_CompanyId) AND ([ClientId] = @Original_ClientId) AND ([CreatedAt] = @Original_CreatedAt) AND ([RFQCode] = @Original_RFQCode) AND ([QuoteCode] = @Original_QuoteCode) AND ((@IsNull_DeliveryPoint = 1 AND [DeliveryPoint] IS NULL) OR ([DeliveryPoint] = @Original_DeliveryPoint)) AND ((@IsNull_Discount = 1 AND [Discount] IS NULL) OR ([Discount] = @Original_Discount)) AND ([DeliveryTerm] = @Original_DeliveryTerm) AND ((@IsNull_Validity = 1 AND [Validity] IS NULL) OR ([Validity] = @Original_Validity)) AND ([QuoteCodeCounter] = @Original_QuoteCodeCounter) AND ([Currency] = @Original_Currency))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ClientId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_RFQCode", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQCode", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_RFQCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_QuoteCode", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCode", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_QuoteCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_CreatedAt", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CreatedAt", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ClientId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CreatedAt", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CreatedAt", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_RFQCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_QuoteCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_DeliveryPoint", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryPoint", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryPoint", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryPoint", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Discount", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Discount", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Discount", global::System.Data.SqlDbType.Decimal, 0, global::System.Data.ParameterDirection.Input, 18, 0, "Discount", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryTerm", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Validity", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Validity", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Validity", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Validity", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_QuoteCodeCounter", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCodeCounter", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Currency", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Currency", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = @"INSERT INTO [dbo].[RFQ] ([Id], [ClientId], [CompanyId], [RFQCode], [QuoteCode], [CreatedAt], [DeliveryPoint]) VALUES (@Id, @ClientId, @CompanyId, @RFQCode, @QuoteCode, @CreatedAt, @DeliveryPoint);
-SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FROM RFQ WHERE (Id = @Id)";
+            this._adapter.InsertCommand.CommandText = @"INSERT INTO [dbo].[RFQ] ([Id], [CompanyId], [ClientId], [CreatedAt], [RFQCode], [QuoteCode], [DeliveryPoint], [Discount], [DeliveryTerm], [Validity], [QuoteCodeCounter], [Currency]) VALUES (@Id, @CompanyId, @ClientId, @CreatedAt, @RFQCode, @QuoteCode, @DeliveryPoint, @Discount, @DeliveryTerm, @Validity, @QuoteCodeCounter, @Currency);
+SELECT Id, CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, Discount, DeliveryTerm, Validity, QuoteCodeCounter, Currency FROM RFQ WHERE (Id = @Id)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ClientId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ClientId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CreatedAt", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CreatedAt", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@RFQCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQCode", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@QuoteCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCode", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CreatedAt", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CreatedAt", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryPoint", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryPoint", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Discount", global::System.Data.SqlDbType.Decimal, 0, global::System.Data.ParameterDirection.Input, 18, 0, "Discount", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryTerm", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Validity", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Validity", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@QuoteCodeCounter", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCodeCounter", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Currency", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Currency", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[RFQ] SET [Id] = @Id, [ClientId] = @ClientId, [CompanyId] = @CompanyId, [RFQCode] = @RFQCode, [QuoteCode] = @QuoteCode, [CreatedAt] = @CreatedAt, [DeliveryPoint] = @DeliveryPoint WHERE (([Id] = @Original_Id) AND ([ClientId] = @Original_ClientId) AND ([CompanyId] = @Original_CompanyId) AND ((@IsNull_RFQCode = 1 AND [RFQCode] IS NULL) OR ([RFQCode] = @Original_RFQCode)) AND ((@IsNull_QuoteCode = 1 AND [QuoteCode] IS NULL) OR ([QuoteCode] = @Original_QuoteCode)) AND ((@IsNull_CreatedAt = 1 AND [CreatedAt] IS NULL) OR ([CreatedAt] = @Original_CreatedAt)) AND ((@IsNull_DeliveryPoint = 1 AND [DeliveryPoint] IS NULL) OR ([DeliveryPoint] = @Original_DeliveryPoint)));
-SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FROM RFQ WHERE (Id = @Id)";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[RFQ] SET [Id] = @Id, [CompanyId] = @CompanyId, [ClientId] = @ClientId, [CreatedAt] = @CreatedAt, [RFQCode] = @RFQCode, [QuoteCode] = @QuoteCode, [DeliveryPoint] = @DeliveryPoint, [Discount] = @Discount, [DeliveryTerm] = @DeliveryTerm, [Validity] = @Validity, [QuoteCodeCounter] = @QuoteCodeCounter, [Currency] = @Currency WHERE (([Id] = @Original_Id) AND ([CompanyId] = @Original_CompanyId) AND ([ClientId] = @Original_ClientId) AND ([CreatedAt] = @Original_CreatedAt) AND ([RFQCode] = @Original_RFQCode) AND ([QuoteCode] = @Original_QuoteCode) AND ((@IsNull_DeliveryPoint = 1 AND [DeliveryPoint] IS NULL) OR ([DeliveryPoint] = @Original_DeliveryPoint)) AND ((@IsNull_Discount = 1 AND [Discount] IS NULL) OR ([Discount] = @Original_Discount)) AND ([DeliveryTerm] = @Original_DeliveryTerm) AND ((@IsNull_Validity = 1 AND [Validity] IS NULL) OR ([Validity] = @Original_Validity)) AND ([QuoteCodeCounter] = @Original_QuoteCodeCounter) AND ([Currency] = @Original_Currency));
+SELECT Id, CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, Discount, DeliveryTerm, Validity, QuoteCodeCounter, Currency FROM RFQ WHERE (Id = @Id)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ClientId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ClientId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CreatedAt", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CreatedAt", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@RFQCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQCode", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@QuoteCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCode", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CreatedAt", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CreatedAt", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryPoint", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryPoint", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Discount", global::System.Data.SqlDbType.Decimal, 0, global::System.Data.ParameterDirection.Input, 18, 0, "Discount", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryTerm", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Validity", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Validity", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@QuoteCodeCounter", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCodeCounter", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Currency", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Currency", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ClientId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_RFQCode", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQCode", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_RFQCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_QuoteCode", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCode", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_QuoteCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_CreatedAt", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CreatedAt", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ClientId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ClientId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CreatedAt", global::System.Data.SqlDbType.DateTime, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CreatedAt", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_RFQCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_QuoteCode", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCode", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_DeliveryPoint", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryPoint", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryPoint", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryPoint", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Discount", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Discount", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Discount", global::System.Data.SqlDbType.Decimal, 0, global::System.Data.ParameterDirection.Input, 18, 0, "Discount", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryTerm", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Validity", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Validity", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Validity", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Validity", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_QuoteCodeCounter", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "QuoteCodeCounter", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Currency", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Currency", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQDBConnectionString;
+            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQ_DBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4551,8 +5275,8 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FROM" +
-                " dbo.RFQ";
+            this._commandCollection[0].CommandText = "SELECT Id, CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, Dis" +
+                "count, DeliveryTerm, Validity, QuoteCodeCounter, Currency FROM dbo.RFQ";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -4560,7 +5284,7 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(RFQDBDataSet.RFQDataTable dataTable) {
+        public virtual int Fill(RFQ_DBDataSet1.RFQDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -4573,9 +5297,9 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual RFQDBDataSet.RFQDataTable GetData() {
+        public virtual RFQ_DBDataSet1.RFQDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            RFQDBDataSet.RFQDataTable dataTable = new RFQDBDataSet.RFQDataTable();
+            RFQ_DBDataSet1.RFQDataTable dataTable = new RFQ_DBDataSet1.RFQDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -4583,14 +5307,14 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet.RFQDataTable dataTable) {
+        public virtual int Update(RFQ_DBDataSet1.RFQDataTable dataTable) {
             return this.Adapter.Update(dataTable);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet dataSet) {
+        public virtual int Update(RFQ_DBDataSet1 dataSet) {
             return this.Adapter.Update(dataSet, "RFQ");
         }
         
@@ -4613,41 +5337,59 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_Id, int Original_ClientId, int Original_CompanyId, string Original_RFQCode, string Original_QuoteCode, global::System.Nullable<global::System.DateTime> Original_CreatedAt, string Original_DeliveryPoint) {
+        public virtual int Delete(int Original_Id, int Original_CompanyId, int Original_ClientId, System.DateTime Original_CreatedAt, string Original_RFQCode, string Original_QuoteCode, string Original_DeliveryPoint, global::System.Nullable<decimal> Original_Discount, string Original_DeliveryTerm, string Original_Validity, int Original_QuoteCodeCounter, string Original_Currency) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Id));
-            this.Adapter.DeleteCommand.Parameters[1].Value = ((int)(Original_ClientId));
-            this.Adapter.DeleteCommand.Parameters[2].Value = ((int)(Original_CompanyId));
+            this.Adapter.DeleteCommand.Parameters[1].Value = ((int)(Original_CompanyId));
+            this.Adapter.DeleteCommand.Parameters[2].Value = ((int)(Original_ClientId));
+            this.Adapter.DeleteCommand.Parameters[3].Value = ((System.DateTime)(Original_CreatedAt));
             if ((Original_RFQCode == null)) {
-                this.Adapter.DeleteCommand.Parameters[3].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[4].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("Original_RFQCode");
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[3].Value = ((object)(0));
                 this.Adapter.DeleteCommand.Parameters[4].Value = ((string)(Original_RFQCode));
             }
             if ((Original_QuoteCode == null)) {
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[6].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("Original_QuoteCode");
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[6].Value = ((string)(Original_QuoteCode));
-            }
-            if ((Original_CreatedAt.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[7].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[8].Value = ((System.DateTime)(Original_CreatedAt.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[7].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[8].Value = global::System.DBNull.Value;
+                this.Adapter.DeleteCommand.Parameters[5].Value = ((string)(Original_QuoteCode));
             }
             if ((Original_DeliveryPoint == null)) {
-                this.Adapter.DeleteCommand.Parameters[9].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[10].Value = global::System.DBNull.Value;
+                this.Adapter.DeleteCommand.Parameters[6].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[7].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[9].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[10].Value = ((string)(Original_DeliveryPoint));
+                this.Adapter.DeleteCommand.Parameters[6].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[7].Value = ((string)(Original_DeliveryPoint));
+            }
+            if ((Original_Discount.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[8].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[9].Value = ((decimal)(Original_Discount.Value));
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[8].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[9].Value = global::System.DBNull.Value;
+            }
+            if ((Original_DeliveryTerm == null)) {
+                throw new global::System.ArgumentNullException("Original_DeliveryTerm");
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[10].Value = ((string)(Original_DeliveryTerm));
+            }
+            if ((Original_Validity == null)) {
+                this.Adapter.DeleteCommand.Parameters[11].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[12].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[11].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[12].Value = ((string)(Original_Validity));
+            }
+            this.Adapter.DeleteCommand.Parameters[13].Value = ((int)(Original_QuoteCodeCounter));
+            if ((Original_Currency == null)) {
+                throw new global::System.ArgumentNullException("Original_Currency");
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[14].Value = ((string)(Original_Currency));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -4669,33 +5411,53 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(int Id, int ClientId, int CompanyId, string RFQCode, string QuoteCode, global::System.Nullable<global::System.DateTime> CreatedAt, string DeliveryPoint) {
+        public virtual int Insert(int Id, int CompanyId, int ClientId, System.DateTime CreatedAt, string RFQCode, string QuoteCode, string DeliveryPoint, global::System.Nullable<decimal> Discount, string DeliveryTerm, string Validity, int QuoteCodeCounter, string Currency) {
             this.Adapter.InsertCommand.Parameters[0].Value = ((int)(Id));
-            this.Adapter.InsertCommand.Parameters[1].Value = ((int)(ClientId));
-            this.Adapter.InsertCommand.Parameters[2].Value = ((int)(CompanyId));
+            this.Adapter.InsertCommand.Parameters[1].Value = ((int)(CompanyId));
+            this.Adapter.InsertCommand.Parameters[2].Value = ((int)(ClientId));
+            this.Adapter.InsertCommand.Parameters[3].Value = ((System.DateTime)(CreatedAt));
             if ((RFQCode == null)) {
-                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("RFQCode");
             }
             else {
-                this.Adapter.InsertCommand.Parameters[3].Value = ((string)(RFQCode));
+                this.Adapter.InsertCommand.Parameters[4].Value = ((string)(RFQCode));
             }
             if ((QuoteCode == null)) {
-                this.Adapter.InsertCommand.Parameters[4].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("QuoteCode");
             }
             else {
-                this.Adapter.InsertCommand.Parameters[4].Value = ((string)(QuoteCode));
-            }
-            if ((CreatedAt.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[5].Value = ((System.DateTime)(CreatedAt.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[5].Value = global::System.DBNull.Value;
+                this.Adapter.InsertCommand.Parameters[5].Value = ((string)(QuoteCode));
             }
             if ((DeliveryPoint == null)) {
                 this.Adapter.InsertCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
             else {
                 this.Adapter.InsertCommand.Parameters[6].Value = ((string)(DeliveryPoint));
+            }
+            if ((Discount.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[7].Value = ((decimal)(Discount.Value));
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[7].Value = global::System.DBNull.Value;
+            }
+            if ((DeliveryTerm == null)) {
+                throw new global::System.ArgumentNullException("DeliveryTerm");
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[8].Value = ((string)(DeliveryTerm));
+            }
+            if ((Validity == null)) {
+                this.Adapter.InsertCommand.Parameters[9].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[9].Value = ((string)(Validity));
+            }
+            this.Adapter.InsertCommand.Parameters[10].Value = ((int)(QuoteCodeCounter));
+            if ((Currency == null)) {
+                throw new global::System.ArgumentNullException("Currency");
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[11].Value = ((string)(Currency));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -4717,27 +5479,46 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(int Id, int ClientId, int CompanyId, string RFQCode, string QuoteCode, global::System.Nullable<global::System.DateTime> CreatedAt, string DeliveryPoint, int Original_Id, int Original_ClientId, int Original_CompanyId, string Original_RFQCode, string Original_QuoteCode, global::System.Nullable<global::System.DateTime> Original_CreatedAt, string Original_DeliveryPoint) {
+        public virtual int Update(
+                    int Id, 
+                    int CompanyId, 
+                    int ClientId, 
+                    System.DateTime CreatedAt, 
+                    string RFQCode, 
+                    string QuoteCode, 
+                    string DeliveryPoint, 
+                    global::System.Nullable<decimal> Discount, 
+                    string DeliveryTerm, 
+                    string Validity, 
+                    int QuoteCodeCounter, 
+                    string Currency, 
+                    int Original_Id, 
+                    int Original_CompanyId, 
+                    int Original_ClientId, 
+                    System.DateTime Original_CreatedAt, 
+                    string Original_RFQCode, 
+                    string Original_QuoteCode, 
+                    string Original_DeliveryPoint, 
+                    global::System.Nullable<decimal> Original_Discount, 
+                    string Original_DeliveryTerm, 
+                    string Original_Validity, 
+                    int Original_QuoteCodeCounter, 
+                    string Original_Currency) {
             this.Adapter.UpdateCommand.Parameters[0].Value = ((int)(Id));
-            this.Adapter.UpdateCommand.Parameters[1].Value = ((int)(ClientId));
-            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(CompanyId));
+            this.Adapter.UpdateCommand.Parameters[1].Value = ((int)(CompanyId));
+            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(ClientId));
+            this.Adapter.UpdateCommand.Parameters[3].Value = ((System.DateTime)(CreatedAt));
             if ((RFQCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("RFQCode");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(RFQCode));
+                this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(RFQCode));
             }
             if ((QuoteCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("QuoteCode");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(QuoteCode));
-            }
-            if ((CreatedAt.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[5].Value = ((System.DateTime)(CreatedAt.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[5].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((string)(QuoteCode));
             }
             if ((DeliveryPoint == null)) {
                 this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
@@ -4745,40 +5526,83 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
             else {
                 this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(DeliveryPoint));
             }
-            this.Adapter.UpdateCommand.Parameters[7].Value = ((int)(Original_Id));
-            this.Adapter.UpdateCommand.Parameters[8].Value = ((int)(Original_ClientId));
-            this.Adapter.UpdateCommand.Parameters[9].Value = ((int)(Original_CompanyId));
-            if ((Original_RFQCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[11].Value = global::System.DBNull.Value;
+            if ((Discount.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[7].Value = ((decimal)(Discount.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((string)(Original_RFQCode));
+                this.Adapter.UpdateCommand.Parameters[7].Value = global::System.DBNull.Value;
+            }
+            if ((DeliveryTerm == null)) {
+                throw new global::System.ArgumentNullException("DeliveryTerm");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(DeliveryTerm));
+            }
+            if ((Validity == null)) {
+                this.Adapter.UpdateCommand.Parameters[9].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(Validity));
+            }
+            this.Adapter.UpdateCommand.Parameters[10].Value = ((int)(QuoteCodeCounter));
+            if ((Currency == null)) {
+                throw new global::System.ArgumentNullException("Currency");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[11].Value = ((string)(Currency));
+            }
+            this.Adapter.UpdateCommand.Parameters[12].Value = ((int)(Original_Id));
+            this.Adapter.UpdateCommand.Parameters[13].Value = ((int)(Original_CompanyId));
+            this.Adapter.UpdateCommand.Parameters[14].Value = ((int)(Original_ClientId));
+            this.Adapter.UpdateCommand.Parameters[15].Value = ((System.DateTime)(Original_CreatedAt));
+            if ((Original_RFQCode == null)) {
+                throw new global::System.ArgumentNullException("Original_RFQCode");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[16].Value = ((string)(Original_RFQCode));
             }
             if ((Original_QuoteCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[13].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("Original_QuoteCode");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((string)(Original_QuoteCode));
-            }
-            if ((Original_CreatedAt.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((System.DateTime)(Original_CreatedAt.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[15].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[17].Value = ((string)(Original_QuoteCode));
             }
             if ((Original_DeliveryPoint == null)) {
-                this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[17].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[19].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((string)(Original_DeliveryPoint));
+                this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[19].Value = ((string)(Original_DeliveryPoint));
+            }
+            if ((Original_Discount.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[21].Value = ((decimal)(Original_Discount.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[21].Value = global::System.DBNull.Value;
+            }
+            if ((Original_DeliveryTerm == null)) {
+                throw new global::System.ArgumentNullException("Original_DeliveryTerm");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[22].Value = ((string)(Original_DeliveryTerm));
+            }
+            if ((Original_Validity == null)) {
+                this.Adapter.UpdateCommand.Parameters[23].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[24].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[23].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[24].Value = ((string)(Original_Validity));
+            }
+            this.Adapter.UpdateCommand.Parameters[25].Value = ((int)(Original_QuoteCodeCounter));
+            if ((Original_Currency == null)) {
+                throw new global::System.ArgumentNullException("Original_Currency");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[26].Value = ((string)(Original_Currency));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -4800,8 +5624,31 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(int ClientId, int CompanyId, string RFQCode, string QuoteCode, global::System.Nullable<global::System.DateTime> CreatedAt, string DeliveryPoint, int Original_Id, int Original_ClientId, int Original_CompanyId, string Original_RFQCode, string Original_QuoteCode, global::System.Nullable<global::System.DateTime> Original_CreatedAt, string Original_DeliveryPoint) {
-            return this.Update(Original_Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint, Original_Id, Original_ClientId, Original_CompanyId, Original_RFQCode, Original_QuoteCode, Original_CreatedAt, Original_DeliveryPoint);
+        public virtual int Update(
+                    int CompanyId, 
+                    int ClientId, 
+                    System.DateTime CreatedAt, 
+                    string RFQCode, 
+                    string QuoteCode, 
+                    string DeliveryPoint, 
+                    global::System.Nullable<decimal> Discount, 
+                    string DeliveryTerm, 
+                    string Validity, 
+                    int QuoteCodeCounter, 
+                    string Currency, 
+                    int Original_Id, 
+                    int Original_CompanyId, 
+                    int Original_ClientId, 
+                    System.DateTime Original_CreatedAt, 
+                    string Original_RFQCode, 
+                    string Original_QuoteCode, 
+                    string Original_DeliveryPoint, 
+                    global::System.Nullable<decimal> Original_Discount, 
+                    string Original_DeliveryTerm, 
+                    string Original_Validity, 
+                    int Original_QuoteCodeCounter, 
+                    string Original_Currency) {
+            return this.Update(Original_Id, CompanyId, ClientId, CreatedAt, RFQCode, QuoteCode, DeliveryPoint, Discount, DeliveryTerm, Validity, QuoteCodeCounter, Currency, Original_Id, Original_CompanyId, Original_ClientId, Original_CreatedAt, Original_RFQCode, Original_QuoteCode, Original_DeliveryPoint, Original_Discount, Original_DeliveryTerm, Original_Validity, Original_QuoteCodeCounter, Original_Currency);
         }
     }
     
@@ -4931,78 +5778,61 @@ SELECT Id, ClientId, CompanyId, RFQCode, QuoteCode, CreatedAt, DeliveryPoint FRO
             tableMapping.ColumnMappings.Add("ItemNo", "ItemNo");
             tableMapping.ColumnMappings.Add("ItemDesc", "ItemDesc");
             tableMapping.ColumnMappings.Add("Quantity", "Quantity");
-            tableMapping.ColumnMappings.Add("UnitName", "UnitName");
             tableMapping.ColumnMappings.Add("DeliveryTime", "DeliveryTime");
             tableMapping.ColumnMappings.Add("UnitPrice", "UnitPrice");
-            tableMapping.ColumnMappings.Add("DeliveryTerm", "DeliveryTerm");
+            tableMapping.ColumnMappings.Add("UnitName", "UnitName");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [dbo].[RFQItem] WHERE (([Id] = @Original_Id) AND ([RFQId] = @Original_RFQId) AND ((@IsNull_ItemNo = 1 AND [ItemNo] IS NULL) OR ([ItemNo] = @Original_ItemNo)) AND ((@IsNull_Quantity = 1 AND [Quantity] IS NULL) OR ([Quantity] = @Original_Quantity)) AND ((@IsNull_UnitName = 1 AND [UnitName] IS NULL) OR ([UnitName] = @Original_UnitName)) AND ((@IsNull_DeliveryTime = 1 AND [DeliveryTime] IS NULL) OR ([DeliveryTime] = @Original_DeliveryTime)) AND ((@IsNull_UnitPrice = 1 AND [UnitPrice] IS NULL) OR ([UnitPrice] = @Original_UnitPrice)) AND ((@IsNull_DeliveryTerm = 1 AND [DeliveryTerm] IS NULL) OR ([DeliveryTerm] = @Original_DeliveryTerm)))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [dbo].[RFQItem] WHERE (([Id] = @Original_Id) AND ([RFQId] = @Original_RFQId) AND ([ItemNo] = @Original_ItemNo) AND ([Quantity] = @Original_Quantity) AND ([DeliveryTime] = @Original_DeliveryTime) AND ([UnitPrice] = @Original_UnitPrice) AND ([UnitName] = @Original_UnitName))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_RFQId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_ItemNo", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ItemNo", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ItemNo", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ItemNo", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Quantity", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Quantity", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Quantity", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Quantity", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_UnitName", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_UnitName", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_DeliveryTime", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryTime", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_UnitPrice", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_UnitPrice", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_DeliveryTerm", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryTerm", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryTime", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_UnitPrice", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_UnitName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = @"INSERT INTO [dbo].[RFQItem] ([Id], [RFQId], [ItemNo], [ItemDesc], [Quantity], [UnitName], [DeliveryTime], [UnitPrice], [DeliveryTerm]) VALUES (@Id, @RFQId, @ItemNo, @ItemDesc, @Quantity, @UnitName, @DeliveryTime, @UnitPrice, @DeliveryTerm);
-SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice, DeliveryTerm FROM RFQItem WHERE (Id = @Id)";
+            this._adapter.InsertCommand.CommandText = @"INSERT INTO [dbo].[RFQItem] ([Id], [RFQId], [ItemNo], [ItemDesc], [Quantity], [DeliveryTime], [UnitPrice], [UnitName]) VALUES (@Id, @RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @UnitName);
+SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName FROM RFQItem WHERE (Id = @Id)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@RFQId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ItemNo", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ItemNo", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ItemDesc", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ItemDesc", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Quantity", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Quantity", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@UnitName", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryTime", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@UnitPrice", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryTerm", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryTime", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@UnitPrice", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@UnitName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[RFQItem] SET [Id] = @Id, [RFQId] = @RFQId, [ItemNo] = @ItemNo, [ItemDesc] = @ItemDesc, [Quantity] = @Quantity, [UnitName] = @UnitName, [DeliveryTime] = @DeliveryTime, [UnitPrice] = @UnitPrice, [DeliveryTerm] = @DeliveryTerm WHERE (([Id] = @Original_Id) AND ([RFQId] = @Original_RFQId) AND ((@IsNull_ItemNo = 1 AND [ItemNo] IS NULL) OR ([ItemNo] = @Original_ItemNo)) AND ((@IsNull_Quantity = 1 AND [Quantity] IS NULL) OR ([Quantity] = @Original_Quantity)) AND ((@IsNull_UnitName = 1 AND [UnitName] IS NULL) OR ([UnitName] = @Original_UnitName)) AND ((@IsNull_DeliveryTime = 1 AND [DeliveryTime] IS NULL) OR ([DeliveryTime] = @Original_DeliveryTime)) AND ((@IsNull_UnitPrice = 1 AND [UnitPrice] IS NULL) OR ([UnitPrice] = @Original_UnitPrice)) AND ((@IsNull_DeliveryTerm = 1 AND [DeliveryTerm] IS NULL) OR ([DeliveryTerm] = @Original_DeliveryTerm)));
-SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice, DeliveryTerm FROM RFQItem WHERE (Id = @Id)";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[RFQItem] SET [Id] = @Id, [RFQId] = @RFQId, [ItemNo] = @ItemNo, [ItemDesc] = @ItemDesc, [Quantity] = @Quantity, [DeliveryTime] = @DeliveryTime, [UnitPrice] = @UnitPrice, [UnitName] = @UnitName WHERE (([Id] = @Original_Id) AND ([RFQId] = @Original_RFQId) AND ([ItemNo] = @Original_ItemNo) AND ([Quantity] = @Original_Quantity) AND ([DeliveryTime] = @Original_DeliveryTime) AND ([UnitPrice] = @Original_UnitPrice) AND ([UnitName] = @Original_UnitName));
+SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName FROM RFQItem WHERE (Id = @Id)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@RFQId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ItemNo", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ItemNo", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ItemDesc", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ItemDesc", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Quantity", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Quantity", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@UnitName", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryTime", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@UnitPrice", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryTerm", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@DeliveryTime", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@UnitPrice", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@UnitName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_RFQId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "RFQId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_ItemNo", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ItemNo", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_ItemNo", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "ItemNo", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Quantity", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Quantity", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Quantity", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Quantity", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_UnitName", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_UnitName", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_DeliveryTime", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryTime", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_UnitPrice", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_UnitPrice", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_DeliveryTerm", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryTerm", global::System.Data.SqlDbType.NChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTerm", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_DeliveryTime", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "DeliveryTime", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_UnitPrice", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitPrice", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_UnitName", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "UnitName", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQDBConnectionString;
+            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQ_DBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5011,8 +5841,8 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice, " +
-                "DeliveryTerm FROM dbo.RFQItem";
+            this._commandCollection[0].CommandText = "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName F" +
+                "ROM dbo.RFQItem";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -5020,7 +5850,7 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(RFQDBDataSet.RFQItemDataTable dataTable) {
+        public virtual int Fill(RFQ_DBDataSet1.RFQItemDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -5033,9 +5863,9 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual RFQDBDataSet.RFQItemDataTable GetData() {
+        public virtual RFQ_DBDataSet1.RFQItemDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            RFQDBDataSet.RFQItemDataTable dataTable = new RFQDBDataSet.RFQItemDataTable();
+            RFQ_DBDataSet1.RFQItemDataTable dataTable = new RFQ_DBDataSet1.RFQItemDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -5043,14 +5873,14 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet.RFQItemDataTable dataTable) {
+        public virtual int Update(RFQ_DBDataSet1.RFQItemDataTable dataTable) {
             return this.Adapter.Update(dataTable);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet dataSet) {
+        public virtual int Update(RFQ_DBDataSet1 dataSet) {
             return this.Adapter.Update(dataSet, "RFQItem");
         }
         
@@ -5073,56 +5903,23 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_Id, int Original_RFQId, global::System.Nullable<int> Original_ItemNo, global::System.Nullable<int> Original_Quantity, string Original_UnitName, string Original_DeliveryTime, string Original_UnitPrice, string Original_DeliveryTerm) {
+        public virtual int Delete(int Original_Id, int Original_RFQId, int Original_ItemNo, int Original_Quantity, int Original_DeliveryTime, string Original_UnitPrice, string Original_UnitName) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Id));
             this.Adapter.DeleteCommand.Parameters[1].Value = ((int)(Original_RFQId));
-            if ((Original_ItemNo.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[3].Value = ((int)(Original_ItemNo.Value));
+            this.Adapter.DeleteCommand.Parameters[2].Value = ((int)(Original_ItemNo));
+            this.Adapter.DeleteCommand.Parameters[3].Value = ((int)(Original_Quantity));
+            this.Adapter.DeleteCommand.Parameters[4].Value = ((int)(Original_DeliveryTime));
+            if ((Original_UnitPrice == null)) {
+                throw new global::System.ArgumentNullException("Original_UnitPrice");
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[3].Value = global::System.DBNull.Value;
-            }
-            if ((Original_Quantity.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[4].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((int)(Original_Quantity.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[4].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[5].Value = global::System.DBNull.Value;
+                this.Adapter.DeleteCommand.Parameters[5].Value = ((string)(Original_UnitPrice));
             }
             if ((Original_UnitName == null)) {
-                this.Adapter.DeleteCommand.Parameters[6].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[7].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("Original_UnitName");
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[6].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[7].Value = ((string)(Original_UnitName));
-            }
-            if ((Original_DeliveryTime == null)) {
-                this.Adapter.DeleteCommand.Parameters[8].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[9].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[8].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[9].Value = ((string)(Original_DeliveryTime));
-            }
-            if ((Original_UnitPrice == null)) {
-                this.Adapter.DeleteCommand.Parameters[10].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[11].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[10].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[11].Value = ((string)(Original_UnitPrice));
-            }
-            if ((Original_DeliveryTerm == null)) {
-                this.Adapter.DeleteCommand.Parameters[12].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[13].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[12].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[13].Value = ((string)(Original_DeliveryTerm));
+                this.Adapter.DeleteCommand.Parameters[6].Value = ((string)(Original_UnitName));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -5144,50 +5941,29 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(int Id, int RFQId, global::System.Nullable<int> ItemNo, string ItemDesc, global::System.Nullable<int> Quantity, string UnitName, string DeliveryTime, string UnitPrice, string DeliveryTerm) {
+        public virtual int Insert(int Id, int RFQId, int ItemNo, string ItemDesc, int Quantity, int DeliveryTime, string UnitPrice, string UnitName) {
             this.Adapter.InsertCommand.Parameters[0].Value = ((int)(Id));
             this.Adapter.InsertCommand.Parameters[1].Value = ((int)(RFQId));
-            if ((ItemNo.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[2].Value = ((int)(ItemNo.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[2].Value = global::System.DBNull.Value;
-            }
+            this.Adapter.InsertCommand.Parameters[2].Value = ((int)(ItemNo));
             if ((ItemDesc == null)) {
-                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("ItemDesc");
             }
             else {
                 this.Adapter.InsertCommand.Parameters[3].Value = ((string)(ItemDesc));
             }
-            if ((Quantity.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[4].Value = ((int)(Quantity.Value));
+            this.Adapter.InsertCommand.Parameters[4].Value = ((int)(Quantity));
+            this.Adapter.InsertCommand.Parameters[5].Value = ((int)(DeliveryTime));
+            if ((UnitPrice == null)) {
+                throw new global::System.ArgumentNullException("UnitPrice");
             }
             else {
-                this.Adapter.InsertCommand.Parameters[4].Value = global::System.DBNull.Value;
+                this.Adapter.InsertCommand.Parameters[6].Value = ((string)(UnitPrice));
             }
             if ((UnitName == null)) {
-                this.Adapter.InsertCommand.Parameters[5].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("UnitName");
             }
             else {
-                this.Adapter.InsertCommand.Parameters[5].Value = ((string)(UnitName));
-            }
-            if ((DeliveryTime == null)) {
-                this.Adapter.InsertCommand.Parameters[6].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[6].Value = ((string)(DeliveryTime));
-            }
-            if ((UnitPrice == null)) {
-                this.Adapter.InsertCommand.Parameters[7].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[7].Value = ((string)(UnitPrice));
-            }
-            if ((DeliveryTerm == null)) {
-                this.Adapter.InsertCommand.Parameters[8].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[8].Value = ((string)(DeliveryTerm));
+                this.Adapter.InsertCommand.Parameters[7].Value = ((string)(UnitName));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -5209,117 +5985,46 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(
-                    int Id, 
-                    int RFQId, 
-                    global::System.Nullable<int> ItemNo, 
-                    string ItemDesc, 
-                    global::System.Nullable<int> Quantity, 
-                    string UnitName, 
-                    string DeliveryTime, 
-                    string UnitPrice, 
-                    string DeliveryTerm, 
-                    int Original_Id, 
-                    int Original_RFQId, 
-                    global::System.Nullable<int> Original_ItemNo, 
-                    global::System.Nullable<int> Original_Quantity, 
-                    string Original_UnitName, 
-                    string Original_DeliveryTime, 
-                    string Original_UnitPrice, 
-                    string Original_DeliveryTerm) {
+        public virtual int Update(int Id, int RFQId, int ItemNo, string ItemDesc, int Quantity, int DeliveryTime, string UnitPrice, string UnitName, int Original_Id, int Original_RFQId, int Original_ItemNo, int Original_Quantity, int Original_DeliveryTime, string Original_UnitPrice, string Original_UnitName) {
             this.Adapter.UpdateCommand.Parameters[0].Value = ((int)(Id));
             this.Adapter.UpdateCommand.Parameters[1].Value = ((int)(RFQId));
-            if ((ItemNo.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(ItemNo.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[2].Value = global::System.DBNull.Value;
-            }
+            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(ItemNo));
             if ((ItemDesc == null)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("ItemDesc");
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(ItemDesc));
             }
-            if ((Quantity.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[4].Value = ((int)(Quantity.Value));
+            this.Adapter.UpdateCommand.Parameters[4].Value = ((int)(Quantity));
+            this.Adapter.UpdateCommand.Parameters[5].Value = ((int)(DeliveryTime));
+            if ((UnitPrice == null)) {
+                throw new global::System.ArgumentNullException("UnitPrice");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(UnitPrice));
             }
             if ((UnitName == null)) {
-                this.Adapter.UpdateCommand.Parameters[5].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("UnitName");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[5].Value = ((string)(UnitName));
+                this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(UnitName));
             }
-            if ((DeliveryTime == null)) {
-                this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(DeliveryTime));
-            }
-            if ((UnitPrice == null)) {
-                this.Adapter.UpdateCommand.Parameters[7].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(UnitPrice));
-            }
-            if ((DeliveryTerm == null)) {
-                this.Adapter.UpdateCommand.Parameters[8].Value = global::System.DBNull.Value;
+            this.Adapter.UpdateCommand.Parameters[8].Value = ((int)(Original_Id));
+            this.Adapter.UpdateCommand.Parameters[9].Value = ((int)(Original_RFQId));
+            this.Adapter.UpdateCommand.Parameters[10].Value = ((int)(Original_ItemNo));
+            this.Adapter.UpdateCommand.Parameters[11].Value = ((int)(Original_Quantity));
+            this.Adapter.UpdateCommand.Parameters[12].Value = ((int)(Original_DeliveryTime));
+            if ((Original_UnitPrice == null)) {
+                throw new global::System.ArgumentNullException("Original_UnitPrice");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(DeliveryTerm));
-            }
-            this.Adapter.UpdateCommand.Parameters[9].Value = ((int)(Original_Id));
-            this.Adapter.UpdateCommand.Parameters[10].Value = ((int)(Original_RFQId));
-            if ((Original_ItemNo.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((int)(Original_ItemNo.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[12].Value = global::System.DBNull.Value;
-            }
-            if ((Original_Quantity.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[14].Value = ((int)(Original_Quantity.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[14].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((string)(Original_UnitPrice));
             }
             if ((Original_UnitName == null)) {
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[16].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("Original_UnitName");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[16].Value = ((string)(Original_UnitName));
-            }
-            if ((Original_DeliveryTime == null)) {
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[18].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[18].Value = ((string)(Original_DeliveryTime));
-            }
-            if ((Original_UnitPrice == null)) {
-                this.Adapter.UpdateCommand.Parameters[19].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[20].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[19].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[20].Value = ((string)(Original_UnitPrice));
-            }
-            if ((Original_DeliveryTerm == null)) {
-                this.Adapter.UpdateCommand.Parameters[21].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[22].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[21].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[22].Value = ((string)(Original_DeliveryTerm));
+                this.Adapter.UpdateCommand.Parameters[14].Value = ((string)(Original_UnitName));
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -5341,24 +6046,8 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(
-                    int RFQId, 
-                    global::System.Nullable<int> ItemNo, 
-                    string ItemDesc, 
-                    global::System.Nullable<int> Quantity, 
-                    string UnitName, 
-                    string DeliveryTime, 
-                    string UnitPrice, 
-                    string DeliveryTerm, 
-                    int Original_Id, 
-                    int Original_RFQId, 
-                    global::System.Nullable<int> Original_ItemNo, 
-                    global::System.Nullable<int> Original_Quantity, 
-                    string Original_UnitName, 
-                    string Original_DeliveryTime, 
-                    string Original_UnitPrice, 
-                    string Original_DeliveryTerm) {
-            return this.Update(Original_Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice, DeliveryTerm, Original_Id, Original_RFQId, Original_ItemNo, Original_Quantity, Original_UnitName, Original_DeliveryTime, Original_UnitPrice, Original_DeliveryTerm);
+        public virtual int Update(int RFQId, int ItemNo, string ItemDesc, int Quantity, int DeliveryTime, string UnitPrice, string UnitName, int Original_Id, int Original_RFQId, int Original_ItemNo, int Original_Quantity, int Original_DeliveryTime, string Original_UnitPrice, string Original_UnitName) {
+            return this.Update(Original_Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName, Original_Id, Original_RFQId, Original_ItemNo, Original_Quantity, Original_DeliveryTime, Original_UnitPrice, Original_UnitName);
         }
     }
     
@@ -5490,13 +6179,10 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
             this._adapter.DeleteCommand.CommandText = "DELETE FROM [dbo].[Template] WHERE (([Id] = @Original_Id) AND ([CompanyId] = @Ori" +
-                "ginal_CompanyId) AND ((@IsNull_TemplatePath = 1 AND [TemplatePath] IS NULL) OR (" +
-                "[TemplatePath] = @Original_TemplatePath)))";
+                "ginal_CompanyId))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_TemplatePath", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplatePath", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_TemplatePath", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplatePath", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
             this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[Template] ([Id], [CompanyId], [TemplatePath]) VALUES (@Id, @Co" +
@@ -5508,23 +6194,22 @@ SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, UnitName, DeliveryTime, UnitPrice,
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@TemplatePath", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplatePath", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [dbo].[Template] SET [Id] = @Id, [CompanyId] = @CompanyId, [TemplatePath] = @TemplatePath WHERE (([Id] = @Original_Id) AND ([CompanyId] = @Original_CompanyId) AND ((@IsNull_TemplatePath = 1 AND [TemplatePath] IS NULL) OR ([TemplatePath] = @Original_TemplatePath)));
-SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
+            this._adapter.UpdateCommand.CommandText = "UPDATE [dbo].[Template] SET [Id] = @Id, [CompanyId] = @CompanyId, [TemplatePath] " +
+                "= @TemplatePath WHERE (([Id] = @Original_Id) AND ([CompanyId] = @Original_Compan" +
+                "yId));\r\nSELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@TemplatePath", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplatePath", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_CompanyId", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "CompanyId", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_TemplatePath", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplatePath", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_TemplatePath", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "TemplatePath", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQDBConnectionString;
+            this._connection.ConnectionString = global::RFQ_Generator_Beta_Version.Properties.Settings.Default.RFQ_DBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5541,7 +6226,7 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(RFQDBDataSet.TemplateDataTable dataTable) {
+        public virtual int Fill(RFQ_DBDataSet1.TemplateDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -5554,9 +6239,9 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual RFQDBDataSet.TemplateDataTable GetData() {
+        public virtual RFQ_DBDataSet1.TemplateDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            RFQDBDataSet.TemplateDataTable dataTable = new RFQDBDataSet.TemplateDataTable();
+            RFQ_DBDataSet1.TemplateDataTable dataTable = new RFQ_DBDataSet1.TemplateDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -5564,14 +6249,14 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet.TemplateDataTable dataTable) {
+        public virtual int Update(RFQ_DBDataSet1.TemplateDataTable dataTable) {
             return this.Adapter.Update(dataTable);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(RFQDBDataSet dataSet) {
+        public virtual int Update(RFQ_DBDataSet1 dataSet) {
             return this.Adapter.Update(dataSet, "Template");
         }
         
@@ -5594,17 +6279,9 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_Id, int Original_CompanyId, string Original_TemplatePath) {
+        public virtual int Delete(int Original_Id, int Original_CompanyId) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Id));
             this.Adapter.DeleteCommand.Parameters[1].Value = ((int)(Original_CompanyId));
-            if ((Original_TemplatePath == null)) {
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[3].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[3].Value = ((string)(Original_TemplatePath));
-            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5629,7 +6306,7 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
             this.Adapter.InsertCommand.Parameters[0].Value = ((int)(Id));
             this.Adapter.InsertCommand.Parameters[1].Value = ((int)(CompanyId));
             if ((TemplatePath == null)) {
-                this.Adapter.InsertCommand.Parameters[2].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("TemplatePath");
             }
             else {
                 this.Adapter.InsertCommand.Parameters[2].Value = ((string)(TemplatePath));
@@ -5654,25 +6331,17 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(int Id, int CompanyId, string TemplatePath, int Original_Id, int Original_CompanyId, string Original_TemplatePath) {
+        public virtual int Update(int Id, int CompanyId, string TemplatePath, int Original_Id, int Original_CompanyId) {
             this.Adapter.UpdateCommand.Parameters[0].Value = ((int)(Id));
             this.Adapter.UpdateCommand.Parameters[1].Value = ((int)(CompanyId));
             if ((TemplatePath == null)) {
-                this.Adapter.UpdateCommand.Parameters[2].Value = global::System.DBNull.Value;
+                throw new global::System.ArgumentNullException("TemplatePath");
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[2].Value = ((string)(TemplatePath));
             }
             this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(Original_Id));
             this.Adapter.UpdateCommand.Parameters[4].Value = ((int)(Original_CompanyId));
-            if ((Original_TemplatePath == null)) {
-                this.Adapter.UpdateCommand.Parameters[5].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[5].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(Original_TemplatePath));
-            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5693,8 +6362,8 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(int CompanyId, string TemplatePath, int Original_Id, int Original_CompanyId, string Original_TemplatePath) {
-            return this.Update(Original_Id, CompanyId, TemplatePath, Original_Id, Original_CompanyId, Original_TemplatePath);
+        public virtual int Update(int CompanyId, string TemplatePath, int Original_Id, int Original_CompanyId) {
+            return this.Update(Original_Id, CompanyId, TemplatePath, Original_Id, Original_CompanyId);
         }
     }
     
@@ -5715,6 +6384,8 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         private CompanyTableAdapter _companyTableAdapter;
         
         private FieldMappingTableAdapter _fieldMappingTableAdapter;
+        
+        private QuoteCodeSequenceTableAdapter _quoteCodeSequenceTableAdapter;
         
         private RFQTableAdapter _rFQTableAdapter;
         
@@ -5776,6 +6447,20 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
             }
             set {
                 this._fieldMappingTableAdapter = value;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+        [global::System.ComponentModel.EditorAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterManagerPropertyEditor, Microso" +
+            "ft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3" +
+            "a", "System.Drawing.Design.UITypeEditor")]
+        public QuoteCodeSequenceTableAdapter QuoteCodeSequenceTableAdapter {
+            get {
+                return this._quoteCodeSequenceTableAdapter;
+            }
+            set {
+                this._quoteCodeSequenceTableAdapter = value;
             }
         }
         
@@ -5852,6 +6537,10 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                             && (this._fieldMappingTableAdapter.Connection != null))) {
                     return this._fieldMappingTableAdapter.Connection;
                 }
+                if (((this._quoteCodeSequenceTableAdapter != null) 
+                            && (this._quoteCodeSequenceTableAdapter.Connection != null))) {
+                    return this._quoteCodeSequenceTableAdapter.Connection;
+                }
                 if (((this._rFQTableAdapter != null) 
                             && (this._rFQTableAdapter.Connection != null))) {
                     return this._rFQTableAdapter.Connection;
@@ -5886,6 +6575,9 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                 if ((this._fieldMappingTableAdapter != null)) {
                     count = (count + 1);
                 }
+                if ((this._quoteCodeSequenceTableAdapter != null)) {
+                    count = (count + 1);
+                }
                 if ((this._rFQTableAdapter != null)) {
                     count = (count + 1);
                 }
@@ -5904,7 +6596,7 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-        private int UpdateUpdatedRows(RFQDBDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateUpdatedRows(RFQ_DBDataSet1 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             if ((this._clientTableAdapter != null)) {
                 global::System.Data.DataRow[] updatedRows = dataSet.Client.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
@@ -5933,21 +6625,21 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                     allChangedRows.AddRange(updatedRows);
                 }
             }
-            if ((this._templateTableAdapter != null)) {
-                global::System.Data.DataRow[] updatedRows = dataSet.Template.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
-                updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
-                if (((updatedRows != null) 
-                            && (0 < updatedRows.Length))) {
-                    result = (result + this._templateTableAdapter.Update(updatedRows));
-                    allChangedRows.AddRange(updatedRows);
-                }
-            }
             if ((this._fieldMappingTableAdapter != null)) {
                 global::System.Data.DataRow[] updatedRows = dataSet.FieldMapping.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
                 updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
                 if (((updatedRows != null) 
                             && (0 < updatedRows.Length))) {
                     result = (result + this._fieldMappingTableAdapter.Update(updatedRows));
+                    allChangedRows.AddRange(updatedRows);
+                }
+            }
+            if ((this._quoteCodeSequenceTableAdapter != null)) {
+                global::System.Data.DataRow[] updatedRows = dataSet.QuoteCodeSequence.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
+                updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
+                if (((updatedRows != null) 
+                            && (0 < updatedRows.Length))) {
+                    result = (result + this._quoteCodeSequenceTableAdapter.Update(updatedRows));
                     allChangedRows.AddRange(updatedRows);
                 }
             }
@@ -5960,6 +6652,15 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                     allChangedRows.AddRange(updatedRows);
                 }
             }
+            if ((this._templateTableAdapter != null)) {
+                global::System.Data.DataRow[] updatedRows = dataSet.Template.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
+                updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
+                if (((updatedRows != null) 
+                            && (0 < updatedRows.Length))) {
+                    result = (result + this._templateTableAdapter.Update(updatedRows));
+                    allChangedRows.AddRange(updatedRows);
+                }
+            }
             return result;
         }
         
@@ -5968,7 +6669,7 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-        private int UpdateInsertedRows(RFQDBDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateInsertedRows(RFQ_DBDataSet1 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             if ((this._clientTableAdapter != null)) {
                 global::System.Data.DataRow[] addedRows = dataSet.Client.Select(null, null, global::System.Data.DataViewRowState.Added);
@@ -5994,19 +6695,19 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                     allAddedRows.AddRange(addedRows);
                 }
             }
-            if ((this._templateTableAdapter != null)) {
-                global::System.Data.DataRow[] addedRows = dataSet.Template.Select(null, null, global::System.Data.DataViewRowState.Added);
-                if (((addedRows != null) 
-                            && (0 < addedRows.Length))) {
-                    result = (result + this._templateTableAdapter.Update(addedRows));
-                    allAddedRows.AddRange(addedRows);
-                }
-            }
             if ((this._fieldMappingTableAdapter != null)) {
                 global::System.Data.DataRow[] addedRows = dataSet.FieldMapping.Select(null, null, global::System.Data.DataViewRowState.Added);
                 if (((addedRows != null) 
                             && (0 < addedRows.Length))) {
                     result = (result + this._fieldMappingTableAdapter.Update(addedRows));
+                    allAddedRows.AddRange(addedRows);
+                }
+            }
+            if ((this._quoteCodeSequenceTableAdapter != null)) {
+                global::System.Data.DataRow[] addedRows = dataSet.QuoteCodeSequence.Select(null, null, global::System.Data.DataViewRowState.Added);
+                if (((addedRows != null) 
+                            && (0 < addedRows.Length))) {
+                    result = (result + this._quoteCodeSequenceTableAdapter.Update(addedRows));
                     allAddedRows.AddRange(addedRows);
                 }
             }
@@ -6018,6 +6719,14 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                     allAddedRows.AddRange(addedRows);
                 }
             }
+            if ((this._templateTableAdapter != null)) {
+                global::System.Data.DataRow[] addedRows = dataSet.Template.Select(null, null, global::System.Data.DataViewRowState.Added);
+                if (((addedRows != null) 
+                            && (0 < addedRows.Length))) {
+                    result = (result + this._templateTableAdapter.Update(addedRows));
+                    allAddedRows.AddRange(addedRows);
+                }
+            }
             return result;
         }
         
@@ -6026,8 +6735,16 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-        private int UpdateDeletedRows(RFQDBDataSet dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
+        private int UpdateDeletedRows(RFQ_DBDataSet1 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
             int result = 0;
+            if ((this._templateTableAdapter != null)) {
+                global::System.Data.DataRow[] deletedRows = dataSet.Template.Select(null, null, global::System.Data.DataViewRowState.Deleted);
+                if (((deletedRows != null) 
+                            && (0 < deletedRows.Length))) {
+                    result = (result + this._templateTableAdapter.Update(deletedRows));
+                    allChangedRows.AddRange(deletedRows);
+                }
+            }
             if ((this._rFQItemTableAdapter != null)) {
                 global::System.Data.DataRow[] deletedRows = dataSet.RFQItem.Select(null, null, global::System.Data.DataViewRowState.Deleted);
                 if (((deletedRows != null) 
@@ -6036,19 +6753,19 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                     allChangedRows.AddRange(deletedRows);
                 }
             }
+            if ((this._quoteCodeSequenceTableAdapter != null)) {
+                global::System.Data.DataRow[] deletedRows = dataSet.QuoteCodeSequence.Select(null, null, global::System.Data.DataViewRowState.Deleted);
+                if (((deletedRows != null) 
+                            && (0 < deletedRows.Length))) {
+                    result = (result + this._quoteCodeSequenceTableAdapter.Update(deletedRows));
+                    allChangedRows.AddRange(deletedRows);
+                }
+            }
             if ((this._fieldMappingTableAdapter != null)) {
                 global::System.Data.DataRow[] deletedRows = dataSet.FieldMapping.Select(null, null, global::System.Data.DataViewRowState.Deleted);
                 if (((deletedRows != null) 
                             && (0 < deletedRows.Length))) {
                     result = (result + this._fieldMappingTableAdapter.Update(deletedRows));
-                    allChangedRows.AddRange(deletedRows);
-                }
-            }
-            if ((this._templateTableAdapter != null)) {
-                global::System.Data.DataRow[] deletedRows = dataSet.Template.Select(null, null, global::System.Data.DataViewRowState.Deleted);
-                if (((deletedRows != null) 
-                            && (0 < deletedRows.Length))) {
-                    result = (result + this._templateTableAdapter.Update(deletedRows));
                     allChangedRows.AddRange(deletedRows);
                 }
             }
@@ -6108,7 +6825,7 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-        public virtual int UpdateAll(RFQDBDataSet dataSet) {
+        public virtual int UpdateAll(RFQ_DBDataSet1 dataSet) {
             if ((dataSet == null)) {
                 throw new global::System.ArgumentNullException("dataSet");
             }
@@ -6127,6 +6844,11 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
             }
             if (((this._fieldMappingTableAdapter != null) 
                         && (this.MatchTableAdapterConnection(this._fieldMappingTableAdapter.Connection) == false))) {
+                throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
+                        "tring.");
+            }
+            if (((this._quoteCodeSequenceTableAdapter != null) 
+                        && (this.MatchTableAdapterConnection(this._quoteCodeSequenceTableAdapter.Connection) == false))) {
                 throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
                         "tring.");
             }
@@ -6202,6 +6924,15 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                     if (this._fieldMappingTableAdapter.Adapter.AcceptChangesDuringUpdate) {
                         this._fieldMappingTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
                         adaptersWithAcceptChangesDuringUpdate.Add(this._fieldMappingTableAdapter.Adapter);
+                    }
+                }
+                if ((this._quoteCodeSequenceTableAdapter != null)) {
+                    revertConnections.Add(this._quoteCodeSequenceTableAdapter, this._quoteCodeSequenceTableAdapter.Connection);
+                    this._quoteCodeSequenceTableAdapter.Connection = ((global::System.Data.SqlClient.SqlConnection)(workConnection));
+                    this._quoteCodeSequenceTableAdapter.Transaction = ((global::System.Data.SqlClient.SqlTransaction)(workTransaction));
+                    if (this._quoteCodeSequenceTableAdapter.Adapter.AcceptChangesDuringUpdate) {
+                        this._quoteCodeSequenceTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
+                        adaptersWithAcceptChangesDuringUpdate.Add(this._quoteCodeSequenceTableAdapter.Adapter);
                     }
                 }
                 if ((this._rFQTableAdapter != null)) {
@@ -6300,6 +7031,10 @@ SELECT Id, CompanyId, TemplatePath FROM Template WHERE (Id = @Id)";
                 if ((this._fieldMappingTableAdapter != null)) {
                     this._fieldMappingTableAdapter.Connection = ((global::System.Data.SqlClient.SqlConnection)(revertConnections[this._fieldMappingTableAdapter]));
                     this._fieldMappingTableAdapter.Transaction = null;
+                }
+                if ((this._quoteCodeSequenceTableAdapter != null)) {
+                    this._quoteCodeSequenceTableAdapter.Connection = ((global::System.Data.SqlClient.SqlConnection)(revertConnections[this._quoteCodeSequenceTableAdapter]));
+                    this._quoteCodeSequenceTableAdapter.Transaction = null;
                 }
                 if ((this._rFQTableAdapter != null)) {
                     this._rFQTableAdapter.Connection = ((global::System.Data.SqlClient.SqlConnection)(revertConnections[this._rFQTableAdapter]));

@@ -172,22 +172,22 @@
             // txtValidity
             // 
             this.txtValidity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtValidity.Location = new System.Drawing.Point(867, 50);
+            this.txtValidity.Location = new System.Drawing.Point(1097, 50);
             this.txtValidity.Margin = new System.Windows.Forms.Padding(4);
             this.txtValidity.Name = "txtValidity";
-            this.txtValidity.Size = new System.Drawing.Size(507, 27);
+            this.txtValidity.Size = new System.Drawing.Size(277, 27);
             this.txtValidity.TabIndex = 15;
             // 
             // lblValidity
             // 
             this.lblValidity.AutoSize = true;
             this.lblValidity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblValidity.Location = new System.Drawing.Point(867, 26);
+            this.lblValidity.Location = new System.Drawing.Point(1093, 26);
             this.lblValidity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblValidity.Name = "lblValidity";
-            this.lblValidity.Size = new System.Drawing.Size(61, 20);
+            this.lblValidity.Size = new System.Drawing.Size(107, 20);
             this.lblValidity.TabIndex = 14;
-            this.lblValidity.Text = "Validity:";
+            this.lblValidity.Text = "Validity (Days):";
             // 
             // dtpCreatedAt
             // 
@@ -277,7 +277,7 @@
             this.cmbClient.Location = new System.Drawing.Point(453, 49);
             this.cmbClient.Margin = new System.Windows.Forms.Padding(4);
             this.cmbClient.Name = "cmbClient";
-            this.cmbClient.Size = new System.Drawing.Size(372, 28);
+            this.cmbClient.Size = new System.Drawing.Size(604, 28);
             this.cmbClient.TabIndex = 3;
             // 
             // lblClient
@@ -381,11 +381,6 @@
             this.numItemDeliveryTime.Name = "numItemDeliveryTime";
             this.numItemDeliveryTime.Size = new System.Drawing.Size(146, 27);
             this.numItemDeliveryTime.TabIndex = 11;
-            this.numItemDeliveryTime.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
             // 
             // lblItemDeliveryTime
             // 
@@ -716,7 +711,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "RFQ Generator System - CEKAP GAGASAN";
+            this.Text = "RFQ Generator System";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.grpHeader.ResumeLayout(false);
             this.grpHeader.PerformLayout();

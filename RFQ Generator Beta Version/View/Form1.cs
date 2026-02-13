@@ -104,24 +104,28 @@ namespace RFQ_Generator_System
             try
             {
                 allClients = rfqService.GetAllClients();
+                var sortedClients = allClients.OrderBy(c => c.ClientName).ToList();
+
                 var clientsWithPlaceholder = new List<Client>
-                {
-                    new Client { Id = 0, ClientName = "-- Select Client --", ClientCode = "" }
-                };
-                clientsWithPlaceholder.AddRange(allClients);
+        {
+            new Client { Id = 0, ClientName = "-- Select Client --", ClientCode = "" }
+        };
+                clientsWithPlaceholder.AddRange(sortedClients);
+
                 cmbClient.DataSource = clientsWithPlaceholder;
-                cmbClient.DisplayMember = "ClientName";
+                cmbClient.DisplayMember = "DisplayText";   
                 cmbClient.ValueMember = "Id";
-                cmbClient.SelectedIndex = 0;
+                cmbClient.DropDownStyle = ComboBoxStyle.DropDown;
                 cmbClient.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 cmbClient.AutoCompleteSource = AutoCompleteSource.ListItems;
+                cmbClient.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading clients: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
+        }        
         #endregion
 
         #region Quote Code Generation
