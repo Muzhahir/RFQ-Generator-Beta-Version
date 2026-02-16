@@ -83,6 +83,34 @@ namespace RFQ_Generator_System.Services
         }
 
         /// <summary>
+        /// Generate BOTH priced and unpriced PDF files at the same time
+        /// Returns tuple of (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix)
+        /// </summary>
+        public (string pricedPath, string unpricedPath, string pricedSuffix, string unpricedSuffix) GenerateBothVersionsPDF(
+            string templatePath,
+            string baseOutputPath,
+            RFQ rfq,
+            List<RFQItem> items,
+            int templateId)
+        {
+            // Generate paths for both versions
+            string directory = Path.GetDirectoryName(baseOutputPath);
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(baseOutputPath);
+            string extension = Path.GetExtension(baseOutputPath);
+
+            string pricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_PRICED{extension}");
+            string unpricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_UNPRICED{extension}");
+
+            // Generate priced version
+            string pricedSuffix = GenerateRFQPDF(templatePath, pricedPath, rfq, items, templateId, isPriced: true);
+
+            // Generate unpriced version
+            string unpricedSuffix = GenerateRFQPDF(templatePath, unpricedPath, rfq, items, templateId, isPriced: false);
+
+            return (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix);
+        }
+
+        /// <summary>
         /// Convert Excel to PDF using Microsoft Office Interop (BEST QUALITY - preserves exact layout)
         /// Requires Microsoft Excel to be installed on the machine
         /// </summary>

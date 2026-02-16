@@ -15,6 +15,11 @@ namespace RFQ_Generator_System.Services
         private readonly ClientRepo clientRepo;
         private readonly QuoteCodeSequenceRepo quoteCodeSequenceRepo;
 
+        // Cache the current quote code to avoid multiple increments
+        private string cachedQuoteCode = null;
+        private string cachedCompanyCode = null;
+        private string cachedClientCode = null;
+
         public RFQService()
         {
             rfqRepo = new RFQRepo();
@@ -30,6 +35,9 @@ namespace RFQ_Generator_System.Services
         // Quote code generation
         // -----------------------------
 
+        /// <summary>
+        /// Preview the next quote code WITHOUT incrementing
+        /// </summary>
         public string GenerateQuoteCodePreview(string companyCode, string clientCode)
         {
             if (string.IsNullOrWhiteSpace(companyCode))
@@ -43,14 +51,26 @@ namespace RFQ_Generator_System.Services
                 return string.Empty;
 
             int sequence = quoteCodeSequenceRepo.PeekNextSequence(company.Id);
-
             return FormatQuoteCode(companyCode, clientCode, sequence);
         }
 
+        /// <summary>
+        /// Generate quote code and INCREMENT sequence.
+        /// Uses caching to prevent multiple increments for the same company/client.
+        /// Call ClearQuoteCodeCache() when starting a new RFQ or changing client.
+        /// </summary>
         public string GenerateQuoteCode(string companyCode, string clientCode)
         {
             if (string.IsNullOrWhiteSpace(companyCode))
                 return string.Empty;
+
+            // Check if we already generated a code for this company/client combination
+            if (cachedQuoteCode != null &&
+                cachedCompanyCode == companyCode &&
+                cachedClientCode == clientCode)
+            {
+                return cachedQuoteCode; // Return cached code, don't increment again
+            }
 
             var company = companyRepo
                 .GetAllCompanies()
@@ -59,14 +79,46 @@ namespace RFQ_Generator_System.Services
             if (company == null)
                 return string.Empty;
 
+            // Only increment sequence if this is a new company/client combination
             int sequence = quoteCodeSequenceRepo.GetNextSequence(company.Id);
+            string quoteCode = FormatQuoteCode(companyCode, clientCode, sequence);
 
-            return FormatQuoteCode(companyCode, clientCode, sequence);
+            // Cache the generated code
+            cachedQuoteCode = quoteCode;
+            cachedCompanyCode = companyCode;
+            cachedClientCode = clientCode;
+
+            return quoteCode;
+        }
+
+        /// <summary>
+        /// Clear the cached quote code. 
+        /// Call this when:
+        /// - User changes to a different client
+        /// - User starts a new RFQ
+        /// - User clicks "Reset" or "New"
+        /// </summary>
+        public void ClearQuoteCodeCache()
+        {
+            cachedQuoteCode = null;
+            cachedCompanyCode = null;
+            cachedClientCode = null;
+        }
+
+        /// <summary>
+        /// Get the currently cached quote code without generating a new one
+        /// </summary>
+        public string GetCachedQuoteCode()
+        {
+            return cachedQuoteCode;
         }
 
         public void UpdateSequenceFromManualEdit(int companyId, string quoteCode)
         {
             quoteCodeSequenceRepo.UpdateSequenceFromQuoteCode(companyId, quoteCode);
+
+            // Clear cache since user manually edited the code
+            ClearQuoteCodeCache();
         }
 
         // -----------------------------
@@ -79,7 +131,12 @@ namespace RFQ_Generator_System.Services
         /// </summary>
         public int SaveRFQ(RFQ rfq, List<RFQItem> items)
         {
-            return rfqRepo.SaveRFQ(rfq, items);
+            int rfqId = rfqRepo.SaveRFQ(rfq, items);
+
+            // Clear cache after saving
+            ClearQuoteCodeCache();
+
+            return rfqId;
         }
 
         public (RFQ rfq, List<RFQItem> items) GetRFQWithItems(int rfqId)
@@ -125,11 +182,13 @@ namespace RFQ_Generator_System.Services
         public void ResetAllQuoteCodeSequences()
         {
             quoteCodeSequenceRepo.ResetAllSequences();
+            ClearQuoteCodeCache();
         }
 
         public void ResetQuoteCodeSequence(int companyId)
         {
             quoteCodeSequenceRepo.ResetSequence(companyId);
+            ClearQuoteCodeCache();
         }
 
         // -----------------------------
@@ -144,28 +203,20 @@ namespace RFQ_Generator_System.Services
             {
                 case "CG":
                     return $"CG-{DateTime.Now:MMyy}-{sequence:D6}";
-
                 case "DE":
                     return $"RFP-{sequence:D12}";
-
                 case "GA":
                     return $"GASB-{sequence:D4}-{DateTime.Now:ddMMyy}";
-
                 case "MA":
                     return $"QUO-ML-{sequence:D4}";
-
                 case "OGIT":
                     return $"OGIT{DateTime.Now:ddMM}-{yearShort}-{sequence:D3}";
-
                 case "OP":
                     return $"Q-{sequence:D6}-{clientCode}";
-
                 case "PO":
                     return $"{clientCode}-{sequence:D7}-EPOMS";
-
                 case "SC":
                     return $"{clientCode}-QUO-SC-{sequence:D6}";
-
                 default:
                     return $"{companyCode}-{sequence:D6}";
             }

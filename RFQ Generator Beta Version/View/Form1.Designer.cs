@@ -58,10 +58,8 @@
             this.btnEditItem = new System.Windows.Forms.Button();
             this.lblItemCount = new System.Windows.Forms.Label();
             this.grpActions = new System.Windows.Forms.GroupBox();
-            this.btnGeneratePDFUnpriced = new System.Windows.Forms.Button();
-            this.btnGeneratePDFPriced = new System.Windows.Forms.Button();
-            this.btnGenerateExcelUnpriced = new System.Windows.Forms.Button();
-            this.btnGenerateExcelPriced = new System.Windows.Forms.Button();
+            this.btnGenerateBothPDF = new System.Windows.Forms.Button();
+            this.btnGenerateBothExcel = new System.Windows.Forms.Button();
             this.lblTemplatePath = new System.Windows.Forms.Label();
             this.lblTemplateLabel = new System.Windows.Forms.Label();
             this.btnNew = new System.Windows.Forms.Button();
@@ -592,10 +590,8 @@
             // 
             // grpActions
             // 
-            this.grpActions.Controls.Add(this.btnGeneratePDFUnpriced);
-            this.grpActions.Controls.Add(this.btnGeneratePDFPriced);
-            this.grpActions.Controls.Add(this.btnGenerateExcelUnpriced);
-            this.grpActions.Controls.Add(this.btnGenerateExcelPriced);
+            this.grpActions.Controls.Add(this.btnGenerateBothPDF);
+            this.grpActions.Controls.Add(this.btnGenerateBothExcel);
             this.grpActions.Controls.Add(this.lblTemplatePath);
             this.grpActions.Controls.Add(this.lblTemplateLabel);
             this.grpActions.Controls.Add(this.btnNew);
@@ -609,64 +605,40 @@
             this.grpActions.TabStop = false;
             this.grpActions.Text = "Actions";
             // 
-            // btnGeneratePDFUnpriced
+            // btnGenerateBothPDF
             // 
-            this.btnGeneratePDFUnpriced.BackColor = System.Drawing.Color.Turquoise;
-            this.btnGeneratePDFUnpriced.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnGeneratePDFUnpriced.Location = new System.Drawing.Point(821, 31);
-            this.btnGeneratePDFUnpriced.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGeneratePDFUnpriced.Name = "btnGeneratePDFUnpriced";
-            this.btnGeneratePDFUnpriced.Size = new System.Drawing.Size(200, 37);
-            this.btnGeneratePDFUnpriced.TabIndex = 8;
-            this.btnGeneratePDFUnpriced.Text = "PDF Unpriced/Technical";
-            this.btnGeneratePDFUnpriced.UseVisualStyleBackColor = false;
-            this.btnGeneratePDFUnpriced.Click += new System.EventHandler(this.btnGeneratePDFUnpriced_Click);
+            this.btnGenerateBothPDF.BackColor = System.Drawing.Color.MediumPurple;
+            this.btnGenerateBothPDF.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnGenerateBothPDF.ForeColor = System.Drawing.Color.White;
+            this.btnGenerateBothPDF.Location = new System.Drawing.Point(389, 31);
+            this.btnGenerateBothPDF.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGenerateBothPDF.Name = "btnGenerateBothPDF";
+            this.btnGenerateBothPDF.Size = new System.Drawing.Size(200, 37);
+            this.btnGenerateBothPDF.TabIndex = 10;
+            this.btnGenerateBothPDF.Text = "Generate PDF";
+            this.btnGenerateBothPDF.UseVisualStyleBackColor = false;
+            this.btnGenerateBothPDF.Click += new System.EventHandler(this.btnGenerateBothPDF_Click);
             // 
-            // btnGeneratePDFPriced
+            // btnGenerateBothExcel
             // 
-            this.btnGeneratePDFPriced.BackColor = System.Drawing.Color.Turquoise;
-            this.btnGeneratePDFPriced.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnGeneratePDFPriced.Location = new System.Drawing.Point(613, 31);
-            this.btnGeneratePDFPriced.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGeneratePDFPriced.Name = "btnGeneratePDFPriced";
-            this.btnGeneratePDFPriced.Size = new System.Drawing.Size(200, 37);
-            this.btnGeneratePDFPriced.TabIndex = 7;
-            this.btnGeneratePDFPriced.Text = "PDF Priced/Commercial";
-            this.btnGeneratePDFPriced.UseVisualStyleBackColor = false;
-            this.btnGeneratePDFPriced.Click += new System.EventHandler(this.btnGeneratePDFPriced_Click);
-            // 
-            // btnGenerateExcelUnpriced
-            // 
-            this.btnGenerateExcelUnpriced.BackColor = System.Drawing.Color.LightGreen;
-            this.btnGenerateExcelUnpriced.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnGenerateExcelUnpriced.Location = new System.Drawing.Point(405, 31);
-            this.btnGenerateExcelUnpriced.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGenerateExcelUnpriced.Name = "btnGenerateExcelUnpriced";
-            this.btnGenerateExcelUnpriced.Size = new System.Drawing.Size(200, 37);
-            this.btnGenerateExcelUnpriced.TabIndex = 6;
-            this.btnGenerateExcelUnpriced.Text = "Excel Unpriced/Technical";
-            this.btnGenerateExcelUnpriced.UseVisualStyleBackColor = false;
-            this.btnGenerateExcelUnpriced.Click += new System.EventHandler(this.btnGenerateExcelUnpriced_Click);
-            // 
-            // btnGenerateExcelPriced
-            // 
-            this.btnGenerateExcelPriced.BackColor = System.Drawing.Color.LightGreen;
-            this.btnGenerateExcelPriced.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnGenerateExcelPriced.Location = new System.Drawing.Point(181, 31);
-            this.btnGenerateExcelPriced.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGenerateExcelPriced.Name = "btnGenerateExcelPriced";
-            this.btnGenerateExcelPriced.Size = new System.Drawing.Size(216, 37);
-            this.btnGenerateExcelPriced.TabIndex = 5;
-            this.btnGenerateExcelPriced.Text = "Excel Priced/Commercial";
-            this.btnGenerateExcelPriced.UseVisualStyleBackColor = false;
-            this.btnGenerateExcelPriced.Click += new System.EventHandler(this.btnGenerateExcelPriced_Click);
+            this.btnGenerateBothExcel.BackColor = System.Drawing.Color.LightGreen;
+            this.btnGenerateBothExcel.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnGenerateBothExcel.ForeColor = System.Drawing.Color.Black;
+            this.btnGenerateBothExcel.Location = new System.Drawing.Point(181, 31);
+            this.btnGenerateBothExcel.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGenerateBothExcel.Name = "btnGenerateBothExcel";
+            this.btnGenerateBothExcel.Size = new System.Drawing.Size(200, 37);
+            this.btnGenerateBothExcel.TabIndex = 9;
+            this.btnGenerateBothExcel.Text = "Generate Excel";
+            this.btnGenerateBothExcel.UseVisualStyleBackColor = false;
+            this.btnGenerateBothExcel.Click += new System.EventHandler(this.btnGenerateBothExcel_Click);
             // 
             // lblTemplatePath
             // 
             this.lblTemplatePath.AutoSize = true;
             this.lblTemplatePath.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Italic);
             this.lblTemplatePath.ForeColor = System.Drawing.Color.Gray;
-            this.lblTemplatePath.Location = new System.Drawing.Point(133, 113);
+            this.lblTemplatePath.Location = new System.Drawing.Point(133, 118);
             this.lblTemplatePath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblTemplatePath.Name = "lblTemplatePath";
             this.lblTemplatePath.Size = new System.Drawing.Size(142, 19);
@@ -677,7 +649,7 @@
             // 
             this.lblTemplateLabel.AutoSize = true;
             this.lblTemplateLabel.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblTemplateLabel.Location = new System.Drawing.Point(40, 113);
+            this.lblTemplateLabel.Location = new System.Drawing.Point(40, 118);
             this.lblTemplateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblTemplateLabel.Name = "lblTemplateLabel";
             this.lblTemplateLabel.Size = new System.Drawing.Size(67, 19);
@@ -773,10 +745,8 @@
         private System.Windows.Forms.Label lblItemCount;
         private System.Windows.Forms.GroupBox grpActions;
         private System.Windows.Forms.Button btnNew;
-        private System.Windows.Forms.Button btnGenerateExcelPriced;
-        private System.Windows.Forms.Button btnGenerateExcelUnpriced;
-        private System.Windows.Forms.Button btnGeneratePDFPriced;
-        private System.Windows.Forms.Button btnGeneratePDFUnpriced;
+        private System.Windows.Forms.Button btnGenerateBothExcel;
+        private System.Windows.Forms.Button btnGenerateBothPDF;
         private System.Windows.Forms.Label lblTemplatePath;
         private System.Windows.Forms.Label lblTemplateLabel;
     }
