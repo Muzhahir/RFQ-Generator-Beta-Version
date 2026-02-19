@@ -16,7 +16,7 @@ namespace RFQ_Generator_System.Repositories
             {
                 conn.Open();
                 // Select ClientCode as ClientCode
-                SqlCommand cmd = new SqlCommand("SELECT Id, ClientName, ClientCode FROM Client", conn);
+                SqlCommand cmd = new SqlCommand("SELECT Id, ClientName, ClientCode, DeliveryTerm FROM Client", conn);
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -25,7 +25,8 @@ namespace RFQ_Generator_System.Repositories
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         ClientName = reader["ClientName"].ToString(),
-                        ClientCode = reader["ClientCode"].ToString() // Mapping to ClientCode
+                        ClientCode = reader["ClientCode"].ToString(),
+                        DeliveryTerm = reader["DeliveryTerm"].ToString()
                     };
                     clients.Add(client);
                 }
@@ -39,7 +40,7 @@ namespace RFQ_Generator_System.Repositories
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT Id, ClientName, ClientCode FROM Client WHERE Id = @Id", conn);
+                SqlCommand cmd = new SqlCommand("SELECT Id, ClientName, ClientCode, DeliveryTerm FROM Client WHERE Id = @Id", conn);
                 cmd.Parameters.AddWithValue("@Id", id);
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -49,7 +50,8 @@ namespace RFQ_Generator_System.Repositories
                     {
                         Id = Convert.ToInt32(reader["Id"]),
                         ClientName = reader["ClientName"].ToString(),
-                        ClientCode = reader["ClientCode"].ToString()
+                        ClientCode = reader["ClientCode"].ToString(),
+                        DeliveryTerm = reader["DeliveryTerm"].ToString()
                     };
                 }
             }

@@ -1,7 +1,4 @@
 <Solution>
-  <Project Path="RFQ Generator 1.0/RFQ Generator 1.0.vdproj" Type="Installer">
-    <BuildType Project="Release" />
-  </Project>
   <Project Path="RFQ Generator Beta Version/RFQ Generator Beta Version.csproj" Id="c0a90e61-a319-41d8-8dcc-e8fab516dc39">
     <BuildType Project="Release" />
   </Project>

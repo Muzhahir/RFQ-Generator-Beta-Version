@@ -21,6 +21,8 @@
             this.lblDeliveryTerm = new System.Windows.Forms.Label();
             this.rbtnDAP = new System.Windows.Forms.RadioButton();
             this.rbtnDDP = new System.Windows.Forms.RadioButton();
+            this.rbtnDDUDAP = new System.Windows.Forms.RadioButton();
+            this.rbtnPCG = new System.Windows.Forms.RadioButton();
             this.numDiscount = new System.Windows.Forms.NumericUpDown();
             this.lblDiscount = new System.Windows.Forms.Label();
             this.txtValidity = new System.Windows.Forms.TextBox();
@@ -78,6 +80,8 @@
             this.grpHeader.Controls.Add(this.lblDeliveryTerm);
             this.grpHeader.Controls.Add(this.rbtnDAP);
             this.grpHeader.Controls.Add(this.rbtnDDP);
+            this.grpHeader.Controls.Add(this.rbtnDDUDAP);
+            this.grpHeader.Controls.Add(this.rbtnPCG);
             this.grpHeader.Controls.Add(this.numDiscount);
             this.grpHeader.Controls.Add(this.lblDiscount);
             this.grpHeader.Controls.Add(this.txtValidity);
@@ -140,6 +144,30 @@
             this.rbtnDDP.TabIndex = 21;
             this.rbtnDDP.Text = "DDP";
             this.rbtnDDP.UseVisualStyleBackColor = true;
+            // 
+            // rbtnDDUDAP
+            // 
+            this.rbtnDDUDAP.AutoSize = true;
+            this.rbtnDDUDAP.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.rbtnDDUDAP.Location = new System.Drawing.Point(220, 205);
+            this.rbtnDDUDAP.Margin = new System.Windows.Forms.Padding(4);
+            this.rbtnDDUDAP.Name = "rbtnDDUDAP";
+            this.rbtnDDUDAP.Size = new System.Drawing.Size(88, 24);
+            this.rbtnDDUDAP.TabIndex = 22;
+            this.rbtnDDUDAP.Text = "DDU/DAP";
+            this.rbtnDDUDAP.UseVisualStyleBackColor = true;
+            // 
+            // rbtnPCG
+            // 
+            this.rbtnPCG.AutoSize = true;
+            this.rbtnPCG.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.rbtnPCG.Location = new System.Drawing.Point(330, 205);
+            this.rbtnPCG.Margin = new System.Windows.Forms.Padding(4);
+            this.rbtnPCG.Name = "rbtnPCG";
+            this.rbtnPCG.Size = new System.Drawing.Size(55, 24);
+            this.rbtnPCG.TabIndex = 23;
+            this.rbtnPCG.Text = "PCG";
+            this.rbtnPCG.UseVisualStyleBackColor = true;
             // 
             // numDiscount
             // 
@@ -698,7 +726,6 @@
             this.grpActions.ResumeLayout(false);
             this.grpActions.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -719,6 +746,8 @@
         private System.Windows.Forms.Label lblDeliveryTerm;
         private System.Windows.Forms.RadioButton rbtnDAP;
         private System.Windows.Forms.RadioButton rbtnDDP;
+        private System.Windows.Forms.RadioButton rbtnDDUDAP;
+        private System.Windows.Forms.RadioButton rbtnPCG;
         private System.Windows.Forms.TextBox txtValidity;
         private System.Windows.Forms.Label lblValidity;
         private System.Windows.Forms.NumericUpDown numDiscount;

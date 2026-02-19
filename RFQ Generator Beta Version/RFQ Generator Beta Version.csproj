@@ -159,6 +159,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Templates\CG TEMPLATE.xlsx" />
+    <None Include="Templates\DE TEMPLATE.xlsx" />
+    <None Include="Templates\GA TEMPLATE.xlsx" />
+    <None Include="Templates\MA TEMPLATE.xlsx" />
+    <None Include="Templates\OGIT TEMPLATE.xlsx" />
+    <None Include="Templates\OP TEMPLATE.xlsx" />
+    <None Include="Templates\PO TEMPLATE.xlsx" />
+    <None Include="Templates\SC TEMPLATE.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

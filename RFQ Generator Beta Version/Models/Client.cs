@@ -21,5 +21,7 @@ namespace RFQ_Generator_System
                 return $"{ClientName} - ({ClientCode})";
             }
         }
+
+        public string DeliveryTerm { get; internal set; }
     }
 }
