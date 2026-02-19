@@ -14,7 +14,6 @@ namespace RFQ_Generator_System.Repositories
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                // Fixed: Added ALL columns to SELECT (was missing 6 columns)
                 SqlCommand cmd = new SqlCommand(
                     "SELECT Id, RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName FROM RFQItem",
                     conn);
@@ -39,7 +38,7 @@ namespace RFQ_Generator_System.Repositories
             return rfqItems;
         }
 
-        // Get RFQ items by RFQId (important for loading items for a specific RFQ)
+        // Get RFQ items by RFQId
         public List<RFQItem> GetRFQItemsByRFQId(int rfqId)
         {
             var rfqItems = new List<RFQItem>();
@@ -73,14 +72,14 @@ namespace RFQ_Generator_System.Repositories
             return rfqItems;
         }
 
-        // Add a new RFQ item
+        // Add a single RFQ item
         public void AddRFQItem(RFQItem rfqItem)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand(
-                    "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice,  UnitName) " +
+                    "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName) " +
                     "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @UnitName)",
                     conn
                 );
@@ -113,8 +112,8 @@ namespace RFQ_Generator_System.Repositories
                 foreach (var item in rfqItems)
                 {
                     SqlCommand cmd = new SqlCommand(
-                        "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, DeliveryTerm, UnitName) " +
-                        "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @DeliveryTerm, @UnitName)",
+                        "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName) " +
+                        "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @UnitName)",
                         transaction.Connection,
                         transaction
                     );
@@ -129,16 +128,12 @@ namespace RFQ_Generator_System.Repositories
                 }
 
                 if (ownTransaction)
-                {
                     transaction.Commit();
-                }
             }
             catch
             {
                 if (ownTransaction && transaction != null)
-                {
                     transaction.Rollback();
-                }
                 throw;
             }
             finally
@@ -147,6 +142,61 @@ namespace RFQ_Generator_System.Repositories
                 {
                     conn.Close();
                     conn.Dispose();
+                }
+            }
+        }
+
+        // ✅ Delete all items for a given RFQ (used before re-inserting updated items)
+        public void DeleteRFQItemsByRFQId(int rfqId)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(
+                    "DELETE FROM RFQItem WHERE RFQId = @RFQId",
+                    conn
+                );
+                cmd.Parameters.AddWithValue("@RFQId", rfqId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        // ✅ Insert a list of items for a given RFQ (used after DeleteRFQItemsByRFQId on update)
+        public void SaveRFQItems(int rfqId, List<RFQItem> items)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (SqlTransaction transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var item in items)
+                        {
+                            SqlCommand cmd = new SqlCommand(
+                                "INSERT INTO RFQItem (RFQId, ItemNo, ItemDesc, Quantity, DeliveryTime, UnitPrice, UnitName) " +
+                                "VALUES (@RFQId, @ItemNo, @ItemDesc, @Quantity, @DeliveryTime, @UnitPrice, @UnitName)",
+                                conn,
+                                transaction
+                            );
+                            cmd.Parameters.AddWithValue("@RFQId", rfqId);
+                            cmd.Parameters.AddWithValue("@ItemNo", item.ItemNo);
+                            cmd.Parameters.AddWithValue("@ItemDesc", item.ItemDesc);
+                            cmd.Parameters.AddWithValue("@Quantity", item.Quantity);
+                            cmd.Parameters.AddWithValue("@DeliveryTime", item.DeliveryTime);
+                            cmd.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
+                            cmd.Parameters.AddWithValue("@UnitName", item.UnitName);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
                 }
             }
         }

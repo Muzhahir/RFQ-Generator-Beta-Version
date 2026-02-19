@@ -143,6 +143,9 @@ namespace RFQ_Generator_System
                 rfqService.ClearQuoteCodeCache();
                 isQuoteCodeManuallyEdited = false;
                 isRFQSaved = false;
+
+                // ✅ Reset RFQ ID when company changes so a new record is created
+                currentRFQId = 0;
             }
 
             if (sender == cmbClient)
@@ -150,6 +153,9 @@ namespace RFQ_Generator_System
                 rfqService.ClearQuoteCodeCache();
                 isQuoteCodeManuallyEdited = false;
                 isRFQSaved = false;
+
+                // ✅ Reset RFQ ID when client changes so a new record is created
+                currentRFQId = 0;
 
                 // ✅ Auto-set delivery term based on selected client
                 if (cmbClient.SelectedValue is int clientId && clientId > 0)
@@ -172,7 +178,7 @@ namespace RFQ_Generator_System
                                 rbtnPCG.Checked = true;
                                 break;
                             default:
-                                rbtnDAP.Checked = true; // fallback
+                                rbtnDAP.Checked = true;
                                 break;
                         }
                     }
@@ -488,11 +494,6 @@ namespace RFQ_Generator_System
         {
             if (!ValidateRFQHeader() || !ValidateRFQItems()) return false;
 
-            if (isRFQSaved && currentRFQId > 0)
-            {
-                return true;
-            }
-
             // ✅ Read whichever delivery term radio is checked
             string selectedDeliveryTerm = "DAP";
             if (rbtnDAP.Checked) selectedDeliveryTerm = "DAP";
@@ -516,18 +517,28 @@ namespace RFQ_Generator_System
 
             if (!isQuoteCodeManuallyEdited)
             {
-                var selectedCompany = allCompanies.FirstOrDefault(c => c.Id == (int)cmbCompany.SelectedValue);
-                var selectedClient = allClients.FirstOrDefault(c => c.Id == (int)cmbClient.SelectedValue);
-                string companyCode = selectedCompany?.CompanyCode ?? "";
-                string clientCode = selectedClient?.ClientCode ?? "";
-                rfq.QuoteCode = rfqService.GenerateQuoteCode(companyCode, clientCode);
+                // ✅ Only generate a NEW quote code if this is a brand-new RFQ (never saved before)
+                if (currentRFQId == 0)
+                {
+                    var selectedCompany = allCompanies.FirstOrDefault(c => c.Id == (int)cmbCompany.SelectedValue);
+                    var selectedClient = allClients.FirstOrDefault(c => c.Id == (int)cmbClient.SelectedValue);
+                    string companyCode = selectedCompany?.CompanyCode ?? "";
+                    string clientCode = selectedClient?.ClientCode ?? "";
+                    rfq.QuoteCode = rfqService.GenerateQuoteCode(companyCode, clientCode);
+                }
+                else
+                {
+                    // ✅ Reuse existing quote code — do NOT increment sequence again
+                    rfq.QuoteCode = txtQuoteCode.Text.Trim();
+                }
             }
             else
             {
                 rfqService.UpdateSequenceFromManualEdit(rfq.CompanyId, rfq.QuoteCode);
             }
 
-            currentRFQId = rfqService.SaveRFQ(rfq, rfqItems);
+            // ✅ Always save/update — pass currentRFQId so service knows insert vs update
+            currentRFQId = rfqService.SaveRFQ(rfq, rfqItems, currentRFQId);
 
             txtQuoteCode.Text = rfq.QuoteCode;
             txtQuoteCode.BackColor = Color.LightGreen;

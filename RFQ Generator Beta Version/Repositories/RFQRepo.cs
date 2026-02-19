@@ -90,6 +90,76 @@ namespace RFQ_Generator_System.Repositories
         }
 
         // -----------------------------
+        // UPDATE OPERATION
+        // -----------------------------
+
+        /// <summary>
+        /// Updates an existing RFQ header record by Id.
+        /// Items are handled separately via RFQItemRepo.
+        /// </summary>
+        public void UpdateRFQ(RFQ rfq)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (SqlTransaction transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        SqlCommand cmd = new SqlCommand(
+                            @"UPDATE RFQ SET
+                                CompanyId     = @CompanyId,
+                                ClientId      = @ClientId,
+                                CreatedAt     = @CreatedAt,
+                                RFQCode       = @RFQCode,
+                                QuoteCode     = @QuoteCode,
+                                DeliveryPoint = @DeliveryPoint,
+                                DeliveryTerm  = @DeliveryTerm,
+                                Validity      = @Validity,
+                                Discount      = @Discount,
+                                Currency      = @Currency
+                              WHERE Id = @Id",
+                            conn,
+                            transaction
+                        );
+
+                        cmd.Parameters.AddWithValue("@Id", rfq.Id);
+                        cmd.Parameters.AddWithValue("@CompanyId", rfq.CompanyId);
+                        cmd.Parameters.AddWithValue("@ClientId", rfq.ClientId);
+                        cmd.Parameters.AddWithValue("@CreatedAt", rfq.CreatedAt);
+                        cmd.Parameters.AddWithValue("@RFQCode", rfq.RFQCode);
+                        cmd.Parameters.AddWithValue("@QuoteCode", rfq.QuoteCode);
+                        cmd.Parameters.AddWithValue("@DeliveryPoint",
+                            string.IsNullOrWhiteSpace(rfq.DeliveryPoint)
+                                ? (object)DBNull.Value
+                                : rfq.DeliveryPoint);
+                        cmd.Parameters.AddWithValue("@DeliveryTerm",
+                            string.IsNullOrWhiteSpace(rfq.DeliveryTerm)
+                                ? (object)DBNull.Value
+                                : rfq.DeliveryTerm);
+                        cmd.Parameters.AddWithValue("@Validity",
+                            string.IsNullOrWhiteSpace(rfq.Validity)
+                                ? (object)DBNull.Value
+                                : rfq.Validity);
+                        cmd.Parameters.AddWithValue("@Discount", rfq.Discount);
+                        cmd.Parameters.AddWithValue("@Currency",
+                            string.IsNullOrWhiteSpace(rfq.Currency) ? "RM" : rfq.Currency);
+
+                        cmd.ExecuteNonQuery();
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        // -----------------------------
         // READ OPERATIONS
         // -----------------------------
 
@@ -173,7 +243,5 @@ namespace RFQ_Generator_System.Repositories
 
             return rfqs;
         }
-
-
     }
 }

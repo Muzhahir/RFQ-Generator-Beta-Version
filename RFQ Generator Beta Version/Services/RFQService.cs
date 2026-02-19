@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using RFQ_Generator_System.Repositories;
@@ -126,12 +126,31 @@ namespace RFQ_Generator_System.Services
         // -----------------------------
 
         /// <summary>
-        /// Save RFQ header and items in a single transaction.
-        /// Returns the new RFQ Id.
+        /// Save or update RFQ header and items.
+        /// - If existingId == 0: INSERT a new RFQ record. Returns new RFQ Id.
+        /// - If existingId  > 0: UPDATE the existing RFQ record. Returns the same existingId.
         /// </summary>
-        public int SaveRFQ(RFQ rfq, List<RFQItem> items)
+        public int SaveRFQ(RFQ rfq, List<RFQItem> items, int existingId = 0)
         {
-            int rfqId = rfqRepo.SaveRFQ(rfq, items);
+            int rfqId;
+
+            if (existingId > 0)
+            {
+                // ✅ UPDATE existing RFQ — preserve the same quote code, don't increment
+                rfq.Id = existingId;
+                rfqRepo.UpdateRFQ(rfq);
+
+                // ✅ Replace items: delete old ones and re-insert updated list
+                rfqItemRepo.DeleteRFQItemsByRFQId(existingId);
+                rfqItemRepo.SaveRFQItems(existingId, items);
+
+                rfqId = existingId;
+            }
+            else
+            {
+                // ✅ INSERT new RFQ
+                rfqId = rfqRepo.SaveRFQ(rfq, items);
+            }
 
             // Clear cache after saving
             ClearQuoteCodeCache();
