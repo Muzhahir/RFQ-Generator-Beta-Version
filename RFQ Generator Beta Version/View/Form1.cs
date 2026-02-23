@@ -590,6 +590,125 @@ namespace RFQ_Generator_System
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        // ✅ Modern Windows Explorer-style folder browser dialog via COM shell (works on .NET Framework)
+        private string ShowModernFolderDialog(string description, string initialPath)
+        {
+            try
+            {
+                // Use IFileOpenDialog COM interface for modern Explorer-style dialog
+                var dialog = (IFileOpenDialog)new FileOpenDialogRCW();
+
+                // Set options: pick folders only + force filesystem + no readonly
+                uint options;
+                dialog.GetOptions(out options);
+                options |= FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM | FOS_NOREADONLYRETURN;
+                dialog.SetOptions(options);
+
+                // Set title
+                dialog.SetTitle(description);
+
+                // Set initial folder if valid
+                if (!string.IsNullOrEmpty(initialPath) && Directory.Exists(initialPath))
+                {
+                    IShellItem item;
+                    var shellItemGuid = typeof(IShellItem).GUID;
+                    SHCreateItemFromParsingName(initialPath, IntPtr.Zero, ref shellItemGuid, out item); if (item != null)
+                        dialog.SetFolder(item);
+                }
+
+                // Show dialog
+                int hr = dialog.Show(this.Handle);
+                if (hr != 0) // S_OK = 0, HRESULT_FROM_WIN32(ERROR_CANCELLED) = 0x800704C7
+                    return null;
+
+                IShellItem resultItem;
+                dialog.GetResult(out resultItem);
+
+                string path;
+                resultItem.GetDisplayName(SIGDN_FILESYSPATH, out path);
+                return path;
+            }
+            catch
+            {
+                // Fallback to classic dialog if COM fails for any reason
+                using (var fallback = new FolderBrowserDialog())
+                {
+                    fallback.Description = description;
+                    fallback.SelectedPath = initialPath;
+                    fallback.ShowNewFolderButton = true;
+
+                    if (fallback.ShowDialog() == DialogResult.OK)
+                        return fallback.SelectedPath;
+
+                    return null;
+                }
+            }
+        }
+
+        #region COM Interop for Modern Folder Dialog
+        private const uint FOS_PICKFOLDERS = 0x00000020;
+        private const uint FOS_FORCEFILESYSTEM = 0x00000040;
+        private const uint FOS_NOREADONLYRETURN = 0x00000800;
+        private const uint SIGDN_FILESYSPATH = 0x80058000;
+
+        [System.Runtime.InteropServices.ComImport]
+        [System.Runtime.InteropServices.Guid("DC1C5A9C-E88A-4DDE-A5A1-60F82A20AEF7")]
+        [System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)]
+        private class FileOpenDialogRCW { }
+
+        [System.Runtime.InteropServices.ComImport]
+        [System.Runtime.InteropServices.Guid("D57C7288-D4AD-4768-BE02-9D969532D960")]
+        [System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)]
+        private interface IFileOpenDialog
+        {
+            [System.Runtime.InteropServices.PreserveSig] int Show(IntPtr hwnd);
+            void SetFileTypes(uint cFileTypes, IntPtr rgFilterSpec);
+            void SetFileTypeIndex(uint iFileType);
+            void GetFileTypeIndex(out uint piFileType);
+            void Advise(IntPtr pfde, out uint pdwCookie);
+            void Unadvise(uint dwCookie);
+            void SetOptions(uint fos);
+            void GetOptions(out uint pfos);
+            void SetDefaultFolder(IShellItem psi);
+            void SetFolder(IShellItem psi);
+            void GetFolder(out IShellItem ppsi);
+            void GetCurrentSelection(out IShellItem ppsi);
+            void SetFileName([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)] string pszName);
+            void GetFileName([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)] out string pszName);
+            void SetTitle([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)] string pszTitle);
+            void SetOkButtonLabel([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)] string pszText);
+            void SetFileNameLabel([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)] string pszLabel);
+            void GetResult(out IShellItem ppsi);
+            void AddPlace(IShellItem psi, int fdap);
+            void SetDefaultExtension([System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)] string pszDefaultExtension);
+            void Close(int hr);
+            void SetClientGuid(ref Guid guid);
+            void ClearClientData();
+            void SetFilter(IntPtr pFilter);
+            void GetResults(out IntPtr ppenum);
+            void GetSelectedItems(out IntPtr ppenum);
+        }
+
+        [System.Runtime.InteropServices.ComImport]
+        [System.Runtime.InteropServices.Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE")]
+        [System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)]
+        private interface IShellItem
+        {
+            void BindToHandler(IntPtr pbc, ref Guid bhid, ref Guid riid, out IntPtr ppv);
+            void GetParent(out IShellItem ppsi);
+            void GetDisplayName(uint sigdnName, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)] out string ppszName);
+            void GetAttributes(uint sfgaoMask, out uint psfgaoAttribs);
+            void Compare(IShellItem psi, uint hint, out int piOrder);
+        }
+
+        [System.Runtime.InteropServices.DllImport("shell32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+        private static extern int SHCreateItemFromParsingName(
+            string pszPath,
+            IntPtr pbc,
+            [System.Runtime.InteropServices.In] ref Guid riid,
+            out IShellItem ppv);
+        #endregion
         #endregion
 
         #region Generate Excel (PRICED)
@@ -698,30 +817,30 @@ namespace RFQ_Generator_System
                     rfq.Currency = selectedCurrency;
                 }
 
-                using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+                // ✅ Use modern Windows Explorer-style folder dialog
+                string selectedFolder = ShowModernFolderDialog(
+                    "Select folder to save BOTH Excel files",
+                    GetOutputFolder()
+                );
+
+                if (selectedFolder != null)
                 {
-                    fbd.Description = "Select folder to save BOTH Excel files";
-                    fbd.SelectedPath = GetOutputFolder();
+                    string baseOutputPath = Path.Combine(selectedFolder, $"{rfq.QuoteCode}.xlsx");
 
-                    if (fbd.ShowDialog() == DialogResult.OK)
-                    {
-                        string baseOutputPath = Path.Combine(fbd.SelectedPath, $"{rfq.QuoteCode}.xlsx");
+                    var (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix) =
+                        excelService.GenerateBothVersionsExcel(
+                            currentTemplate.TemplatePath,
+                            baseOutputPath,
+                            rfq,
+                            items,
+                            currentTemplate.Id
+                        );
 
-                        var (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix) =
-                            excelService.GenerateBothVersionsExcel(
-                                currentTemplate.TemplatePath,
-                                baseOutputPath,
-                                rfq,
-                                items,
-                                currentTemplate.Id
-                            );
+                    MessageBox.Show(
+                        $"Success! Both Excel files generated.\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix} file:\n{pricedPath}\n\n{unpricedSuffix} file:\n{unpricedPath}",
+                        "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                        MessageBox.Show(
-                            $"Success! Both Excel files generated.\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix} file:\n{pricedPath}\n\n{unpricedSuffix} file:\n{unpricedPath}",
-                            "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        OpenOutputFolder(fbd.SelectedPath);
-                    }
+                    OpenOutputFolder(selectedFolder);
                 }
             }
             catch (Exception ex)
@@ -838,30 +957,30 @@ namespace RFQ_Generator_System
                     rfq.Currency = selectedCurrency;
                 }
 
-                using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+                // ✅ Use modern Windows Explorer-style folder dialog
+                string selectedFolder = ShowModernFolderDialog(
+                    "Select folder to save BOTH PDF files",
+                    GetOutputFolder()
+                );
+
+                if (selectedFolder != null)
                 {
-                    fbd.Description = "Select folder to save BOTH PDF files";
-                    fbd.SelectedPath = GetOutputFolder();
+                    string baseOutputPath = Path.Combine(selectedFolder, $"{rfq.QuoteCode}.pdf");
 
-                    if (fbd.ShowDialog() == DialogResult.OK)
-                    {
-                        string baseOutputPath = Path.Combine(fbd.SelectedPath, $"{rfq.QuoteCode}.pdf");
+                    var (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix) =
+                        pdfService.GenerateBothVersionsPDF(
+                            currentTemplate.TemplatePath,
+                            baseOutputPath,
+                            rfq,
+                            items,
+                            currentTemplate.Id
+                        );
 
-                        var (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix) =
-                            pdfService.GenerateBothVersionsPDF(
-                                currentTemplate.TemplatePath,
-                                baseOutputPath,
-                                rfq,
-                                items,
-                                currentTemplate.Id
-                            );
+                    MessageBox.Show(
+                        $"Success! Both PDF files generated.\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix} file:\n{pricedPath}\n\n{unpricedSuffix} file:\n{unpricedPath}",
+                        "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                        MessageBox.Show(
-                            $"Success! Both PDF files generated.\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix} file:\n{pricedPath}\n\n{unpricedSuffix} file:\n{unpricedPath}",
-                            "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        OpenOutputFolder(fbd.SelectedPath);
-                    }
+                    OpenOutputFolder(selectedFolder);
                 }
             }
             catch (Exception ex)

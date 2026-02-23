@@ -113,9 +113,9 @@
             // 
             this.tlpHeader.ColumnCount = 5;
             this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.9843F));
-            this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.48537F));
-            this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.55603F));
-            this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.20057F));
+            this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.9122F));
+            this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.62884F));
+            this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18.41542F));
             this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.98787F));
             this.tlpHeader.Controls.Add(this.pnlCompany, 0, 0);
             this.tlpHeader.Controls.Add(this.pnlClient, 1, 0);
@@ -144,7 +144,7 @@
             this.pnlCompany.Location = new System.Drawing.Point(3, 3);
             this.pnlCompany.Name = "pnlCompany";
             this.pnlCompany.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.pnlCompany.Size = new System.Drawing.Size(301, 57);
+            this.pnlCompany.Size = new System.Drawing.Size(302, 57);
             this.pnlCompany.TabIndex = 0;
             // 
             // cmbCompany
@@ -154,7 +154,7 @@
             this.cmbCompany.FormattingEnabled = true;
             this.cmbCompany.Location = new System.Drawing.Point(6, 25);
             this.cmbCompany.Name = "cmbCompany";
-            this.cmbCompany.Size = new System.Drawing.Size(289, 28);
+            this.cmbCompany.Size = new System.Drawing.Size(290, 28);
             this.cmbCompany.TabIndex = 1;
             this.cmbCompany.SelectedIndexChanged += new System.EventHandler(this.cmbCompany_SelectedIndexChanged);
             // 
@@ -175,10 +175,10 @@
             this.pnlClient.Controls.Add(this.cmbClient);
             this.pnlClient.Controls.Add(this.lblClient);
             this.pnlClient.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlClient.Location = new System.Drawing.Point(310, 3);
+            this.pnlClient.Location = new System.Drawing.Point(311, 3);
             this.pnlClient.Name = "pnlClient";
             this.pnlClient.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.pnlClient.Size = new System.Drawing.Size(280, 57);
+            this.pnlClient.Size = new System.Drawing.Size(315, 57);
             this.pnlClient.TabIndex = 1;
             // 
             // cmbClient
@@ -188,7 +188,7 @@
             this.cmbClient.FormattingEnabled = true;
             this.cmbClient.Location = new System.Drawing.Point(6, 25);
             this.cmbClient.Name = "cmbClient";
-            this.cmbClient.Size = new System.Drawing.Size(268, 28);
+            this.cmbClient.Size = new System.Drawing.Size(303, 28);
             this.cmbClient.TabIndex = 3;
             // 
             // lblClient
@@ -208,10 +208,10 @@
             this.pnlRFQCode.Controls.Add(this.txtRFQCode);
             this.pnlRFQCode.Controls.Add(this.lblRFQCode);
             this.pnlRFQCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlRFQCode.Location = new System.Drawing.Point(596, 3);
+            this.pnlRFQCode.Location = new System.Drawing.Point(632, 3);
             this.pnlRFQCode.Name = "pnlRFQCode";
             this.pnlRFQCode.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.pnlRFQCode.Size = new System.Drawing.Size(295, 57);
+            this.pnlRFQCode.Size = new System.Drawing.Size(269, 57);
             this.pnlRFQCode.TabIndex = 2;
             // 
             // txtRFQCode
@@ -220,7 +220,7 @@
             this.txtRFQCode.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtRFQCode.Location = new System.Drawing.Point(6, 26);
             this.txtRFQCode.Name = "txtRFQCode";
-            this.txtRFQCode.Size = new System.Drawing.Size(283, 27);
+            this.txtRFQCode.Size = new System.Drawing.Size(257, 27);
             this.txtRFQCode.TabIndex = 5;
             // 
             // lblRFQCode
@@ -240,10 +240,10 @@
             this.pnlQuoteCode.Controls.Add(this.txtQuoteCode);
             this.pnlQuoteCode.Controls.Add(this.lblQuoteCode);
             this.pnlQuoteCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlQuoteCode.Location = new System.Drawing.Point(897, 3);
+            this.pnlQuoteCode.Location = new System.Drawing.Point(907, 3);
             this.pnlQuoteCode.Name = "pnlQuoteCode";
             this.pnlQuoteCode.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.pnlQuoteCode.Size = new System.Drawing.Size(262, 57);
+            this.pnlQuoteCode.Size = new System.Drawing.Size(252, 57);
             this.pnlQuoteCode.TabIndex = 3;
             // 
             // txtQuoteCode
@@ -252,7 +252,7 @@
             this.txtQuoteCode.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtQuoteCode.Location = new System.Drawing.Point(6, 26);
             this.txtQuoteCode.Name = "txtQuoteCode";
-            this.txtQuoteCode.Size = new System.Drawing.Size(250, 27);
+            this.txtQuoteCode.Size = new System.Drawing.Size(240, 27);
             this.txtQuoteCode.TabIndex = 7;
             // 
             // lblQuoteCode
@@ -310,7 +310,7 @@
             this.pnlDeliveryTerm.Location = new System.Drawing.Point(3, 66);
             this.pnlDeliveryTerm.Name = "pnlDeliveryTerm";
             this.pnlDeliveryTerm.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.pnlDeliveryTerm.Size = new System.Drawing.Size(301, 58);
+            this.pnlDeliveryTerm.Size = new System.Drawing.Size(302, 58);
             this.pnlDeliveryTerm.TabIndex = 5;
             // 
             // rbtnPCG
@@ -376,10 +376,10 @@
             this.pnlDeliveryPoint.Controls.Add(this.txtDeliveryPoint);
             this.pnlDeliveryPoint.Controls.Add(this.lblDeliveryPoint);
             this.pnlDeliveryPoint.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlDeliveryPoint.Location = new System.Drawing.Point(310, 66);
+            this.pnlDeliveryPoint.Location = new System.Drawing.Point(311, 66);
             this.pnlDeliveryPoint.Name = "pnlDeliveryPoint";
             this.pnlDeliveryPoint.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.pnlDeliveryPoint.Size = new System.Drawing.Size(280, 58);
+            this.pnlDeliveryPoint.Size = new System.Drawing.Size(315, 58);
             this.pnlDeliveryPoint.TabIndex = 6;
             // 
             // txtDeliveryPoint
@@ -388,7 +388,7 @@
             this.txtDeliveryPoint.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtDeliveryPoint.Location = new System.Drawing.Point(6, 27);
             this.txtDeliveryPoint.Name = "txtDeliveryPoint";
-            this.txtDeliveryPoint.Size = new System.Drawing.Size(268, 27);
+            this.txtDeliveryPoint.Size = new System.Drawing.Size(303, 27);
             this.txtDeliveryPoint.TabIndex = 9;
             // 
             // lblDeliveryPoint
@@ -408,10 +408,10 @@
             this.pnlCreatedAt.Controls.Add(this.dtpCreatedAt);
             this.pnlCreatedAt.Controls.Add(this.lblCreatedAt);
             this.pnlCreatedAt.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlCreatedAt.Location = new System.Drawing.Point(596, 66);
+            this.pnlCreatedAt.Location = new System.Drawing.Point(632, 66);
             this.pnlCreatedAt.Name = "pnlCreatedAt";
             this.pnlCreatedAt.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.pnlCreatedAt.Size = new System.Drawing.Size(295, 58);
+            this.pnlCreatedAt.Size = new System.Drawing.Size(269, 58);
             this.pnlCreatedAt.TabIndex = 7;
             // 
             // dtpCreatedAt
@@ -421,7 +421,7 @@
             this.dtpCreatedAt.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dtpCreatedAt.Location = new System.Drawing.Point(6, 27);
             this.dtpCreatedAt.Name = "dtpCreatedAt";
-            this.dtpCreatedAt.Size = new System.Drawing.Size(283, 27);
+            this.dtpCreatedAt.Size = new System.Drawing.Size(257, 27);
             this.dtpCreatedAt.TabIndex = 11;
             // 
             // lblCreatedAt
@@ -442,10 +442,10 @@
             this.pnlDiscount.Controls.Add(this.numDiscount);
             this.pnlDiscount.Controls.Add(this.lblDiscount);
             this.pnlDiscount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlDiscount.Location = new System.Drawing.Point(897, 66);
+            this.pnlDiscount.Location = new System.Drawing.Point(907, 66);
             this.pnlDiscount.Name = "pnlDiscount";
             this.pnlDiscount.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.pnlDiscount.Size = new System.Drawing.Size(501, 58);
+            this.pnlDiscount.Size = new System.Drawing.Size(491, 58);
             this.pnlDiscount.TabIndex = 8;
             // 
             // numDiscount
@@ -460,7 +460,7 @@
             0,
             0});
             this.numDiscount.Name = "numDiscount";
-            this.numDiscount.Size = new System.Drawing.Size(489, 27);
+            this.numDiscount.Size = new System.Drawing.Size(479, 27);
             this.numDiscount.TabIndex = 17;
             this.numDiscount.ValueChanged += new System.EventHandler(this.numDiscount_ValueChanged);
             // 
