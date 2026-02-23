@@ -223,7 +223,7 @@ namespace RFQ_Generator_System.Services
                 case "CG":
                     return $"CG-{DateTime.Now:MMyy}-{sequence:D6}";
                 case "DE":
-                    return $"RFP-{sequence:D12}";
+                    return $"DEJSB-{sequence:D6}-{DateTime.Now:ddMMyy}";
                 case "GA":
                     return $"GASB-{sequence:D4}-{DateTime.Now:ddMMyy}";
                 case "MA":

@@ -18,7 +18,7 @@ namespace RFQ_Generator_System
             {
                 if (string.IsNullOrEmpty(ClientCode))
                     return ClientName;
-                return $"{ClientName} - ({ClientCode})";
+                return $"{ClientCode} - {ClientName}";
             }
         }
 

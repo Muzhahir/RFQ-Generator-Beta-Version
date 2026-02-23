@@ -915,5 +915,15 @@ namespace RFQ_Generator_System
             cmbCompany.Focus();
         }
         #endregion
+
+        private void lblItemDeliveryTime_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numDiscount_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
