@@ -41,7 +41,10 @@ namespace RFQ_Generator_System.Services
                 var excelService = new ExcelGenerationService();
                 string versionSuffix = excelService.GenerateRFQExcel(templatePath, tempExcelPath, rfq, items, templateId, isPriced);
 
-                // Step 2: Convert Excel to PDF - Try multiple methods
+                // Step 2: Apply page break borders to the Excel file (same as Excel generation)
+                ApplyPageBreakBordersToExcel(tempExcelPath, templatePath);
+
+                // Step 3: Convert Excel to PDF - Try multiple methods
                 bool success = false;
 
                 // Method 1: Try using Microsoft.Office.Interop.Excel (best quality, preserves all formatting)
@@ -108,6 +111,136 @@ namespace RFQ_Generator_System.Services
             string unpricedSuffix = GenerateRFQPDF(templatePath, unpricedPath, rfq, items, templateId, isPriced: false);
 
             return (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix);
+        }
+
+        /// <summary>
+        /// Apply page break borders to Excel file
+        /// Works for multiple templates with configurable first page break row, row increment, and column range
+        /// </summary>
+        private void ApplyPageBreakBordersToExcel(string excelPath, string templatePath)
+        {
+            try
+            {
+                string templateFileName = Path.GetFileName(templatePath);
+
+                // Template configuration: Dictionary of template name -> (firstPageBreakRow, rowIncrement, startColumn, endColumn)
+                var templateConfig = new Dictionary<string, (int firstRow, int increment, string startCol, string endCol)>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "CG TEMPLATE.xlsx", (68, 43, "A", "H") },
+                    { "DE TEMPLATE.xlsx", (61, 43, "A", "T") },
+                    { "GA TEMPLATE.xlsx", (65, 41, "A", "H") },
+                    { "OP TEMPLATE.xlsx", (70, 46, "A", "H") },
+                    { "PO TEMPLATE.xlsx", (70, 66, "A", "J") },
+                    { "SC TEMPLATE.xlsx", (66, 50, "A", "F") },
+                };
+
+                // Check if this template is configured
+                if (!templateConfig.ContainsKey(templateFileName))
+                {
+                    return; // Skip for templates not in configuration
+                }
+
+                // Get template configuration
+                var (firstPageBreakRow, rowIncrement, startColumn, endColumn) = templateConfig[templateFileName];
+
+                // Check if worksheet has more than one page
+                if (!HasMultiplePages(excelPath))
+                {
+                    return; // Only apply borders if there are page breaks
+                }
+
+                // Open and modify the Excel file
+                using (var workbook = new XLWorkbook(excelPath))
+                {
+                    var worksheet = workbook.Worksheet(1);
+
+                    // Get the used range to know where data ends
+                    var usedRange = worksheet.RangeUsed();
+                    if (usedRange == null)
+                        return;
+
+                    int lastRow = usedRange.LastRow().RowNumber();
+
+                    // Calculate page break rows based on configuration
+                    int pageBreakRow = firstPageBreakRow;
+
+                    while (pageBreakRow <= lastRow)
+                    {
+                        // Apply thick border to this row with configured column range
+                        ApplyBorderToExcelRange(worksheet, pageBreakRow, startColumn, endColumn);
+                        System.Diagnostics.Debug.WriteLine($"Applied border to row {pageBreakRow} ({templateFileName})");
+
+                        // Next page break
+                        pageBreakRow += rowIncrement;
+                    }
+
+                    // Save the modified workbook
+                    workbook.SaveAs(excelPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error applying page break borders to Excel: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Apply border to a range of cells in Excel
+        /// </summary>
+        private void ApplyBorderToExcelRange(IXLWorksheet worksheet, int rowNumber, string startColumn, string endColumn)
+        {
+            try
+            {
+                var range = worksheet.Range($"{startColumn}{rowNumber}:{endColumn}{rowNumber}");
+                foreach (var cell in range.Cells())
+                {
+                    cell.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
+                    cell.Style.Border.BottomBorderColor = XLColor.Black;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error applying border to Excel range: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Check if the worksheet will have multiple pages when printed
+        /// </summary>
+        private bool HasMultiplePages(string excelPath)
+        {
+            try
+            {
+                using (var workbook = new XLWorkbook(excelPath))
+                {
+                    var worksheet = workbook.Worksheet(1);
+                    var usedRange = worksheet.RangeUsed();
+                    if (usedRange == null)
+                        return false;
+
+                    int lastRow = usedRange.LastRow().RowNumber();
+
+                    var pageSetup = worksheet.PageSetup;
+                    double topMargin = pageSetup.Margins.Top;
+                    double bottomMargin = pageSetup.Margins.Bottom;
+
+                    double pageHeight = 842;
+                    double availableHeight = pageHeight - topMargin - bottomMargin;
+
+                    double totalHeight = 0;
+                    for (int row = 1; row <= lastRow; row++)
+                    {
+                        var rowHeight = worksheet.Row(row).Height;
+                        totalHeight += (rowHeight > 0) ? rowHeight : 15;
+                    }
+
+                    return totalHeight > availableHeight;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>

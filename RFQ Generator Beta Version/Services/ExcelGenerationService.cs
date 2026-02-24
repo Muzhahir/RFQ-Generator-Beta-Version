@@ -103,6 +103,9 @@ namespace RFQ_Generator_System.Services
                 // Final currency replacement to catch any remaining instances
                 ReplaceCurrencyInWorksheet(worksheet, effectiveCurrency);
 
+                // Apply bottom borders to item rows at page breaks (except for OGIT and MA templates)
+                ApplyBottomBordersAtPageBreaks(worksheet, fullTemplatePath);
+
                 workbook.SaveAs(outputPath);
 
                 // RETURN the version suffix that was used
@@ -716,6 +719,135 @@ namespace RFQ_Generator_System.Services
                 {
                     cell.Style.NumberFormat.Format = numberFormat.Replace("RM", currency);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Apply bottom borders to page breaks
+        /// Works for multiple templates with configurable first page break row, row increment, and column range
+        /// </summary>
+        private void ApplyBottomBordersAtPageBreaks(IXLWorksheet worksheet, string templatePath)
+        {
+            try
+            {
+                string templateFileName = Path.GetFileName(templatePath);
+
+                // Template configuration: Dictionary of template name -> (firstPageBreakRow, rowIncrement, startColumn, endColumn)
+                var templateConfig = new Dictionary<string, (int firstRow, int increment, string startCol, string endCol)>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "CG TEMPLATE.xlsx", (68, 43, "A", "H") },
+                    { "DE TEMPLATE.xlsx", (61, 43, "A", "T") },
+                    { "GA TEMPLATE.xlsx", (65, 41, "A", "H") },
+                    { "OP TEMPLATE.xlsx", (70, 46, "A", "H") },
+                    { "PO TEMPLATE.xlsx", (70, 66, "A", "J") },
+                    { "SC TEMPLATE.xlsx", (66, 50, "A", "F") },
+                };
+
+                // Check if this template is configured
+                if (!templateConfig.ContainsKey(templateFileName))
+                {
+                    return; // Skip for templates not in configuration
+                }
+
+                // Get template configuration
+                var (firstPageBreakRow, rowIncrement, startColumn, endColumn) = templateConfig[templateFileName];
+
+                // Check if worksheet has more than one page
+                if (!HasMultiplePages(worksheet))
+                {
+                    return; // Only apply borders if there are page breaks
+                }
+
+                // Get the used range to know where data ends
+                var usedRange = worksheet.RangeUsed();
+                if (usedRange == null)
+                    return;
+
+                int lastRow = usedRange.LastRow().RowNumber();
+
+                // Calculate page break rows based on configuration
+                int pageBreakRow = firstPageBreakRow;
+
+                while (pageBreakRow <= lastRow)
+                {
+                    // Apply thick border to this row with configured column range
+                    // (even if row is empty - page break rows should always have border)
+                    ApplyThickBorderToRange(worksheet, pageBreakRow, startColumn, endColumn);
+                    System.Diagnostics.Debug.WriteLine($"Applied border to row {pageBreakRow} ({templateFileName})");
+
+                    // Next page break
+                    pageBreakRow += rowIncrement;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error applying bottom borders at page breaks: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Check if the worksheet will have multiple pages when printed
+        /// </summary>
+        private bool HasMultiplePages(IXLWorksheet worksheet)
+        {
+            try
+            {
+                // Get the used range
+                var usedRange = worksheet.RangeUsed();
+                if (usedRange == null)
+                    return false;
+
+                int lastRow = usedRange.LastRow().RowNumber();
+
+                // Get page setup
+                var pageSetup = worksheet.PageSetup;
+                double topMargin = pageSetup.Margins.Top;
+                double bottomMargin = pageSetup.Margins.Bottom;
+
+                double pageHeight = 842; // A4 height in points
+                double availableHeight = pageHeight - topMargin - bottomMargin;
+
+                // Calculate total height
+                double totalHeight = 0;
+                for (int row = 1; row <= lastRow; row++)
+                {
+                    var rowHeight = worksheet.Row(row).Height;
+                    if (rowHeight > 0)
+                    {
+                        totalHeight += rowHeight;
+                    }
+                    else
+                    {
+                        totalHeight += 15; // Default row height
+                    }
+                }
+
+                // If total height exceeds available height, there are multiple pages
+                return totalHeight > availableHeight;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Apply thick bottom border to a range of cells in a specific row
+        /// </summary>
+        private void ApplyThickBorderToRange(IXLWorksheet worksheet, int rowNumber, string startColumn, string endColumn)
+        {
+            try
+            {
+                var range = worksheet.Range($"{startColumn}{rowNumber}:{endColumn}{rowNumber}");
+                foreach (var cell in range.Cells())
+                {
+                    cell.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
+                    cell.Style.Border.BottomBorderColor = XLColor.Black;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error applying border to range: {ex.Message}");
             }
         }
     }
