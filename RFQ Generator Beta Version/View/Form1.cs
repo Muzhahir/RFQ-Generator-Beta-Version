@@ -18,6 +18,7 @@ namespace RFQ_Generator_System
         private RFQService rfqService;
         private ExcelGenerationService excelService;
         private PDFGenerationService pdfService;
+        private RFQImportService importService;
         private Template currentTemplate;
         private int currentRFQId = 0;
         private List<RFQItem> rfqItems;
@@ -26,6 +27,10 @@ namespace RFQ_Generator_System
         private List<Client> allClients;
         private bool isQuoteCodeManuallyEdited = false;
         private bool isRFQSaved = false;
+
+        // ✅ Stores the folder of the last imported pricesheet.
+        // When set, Excel/PDF save dialogs will default to this folder instead of the network folder.
+        private string importedFileFolder = null;
 
         // ✅ Network save folder - change this if the path ever changes
         private const string RFQOutputFolder = @"\\DLINK-01731D\Volume_1\Public_J\8. Operation Dept\RFQ";
@@ -36,6 +41,7 @@ namespace RFQ_Generator_System
             rfqService = new RFQService();
             excelService = new ExcelGenerationService();
             pdfService = new PDFGenerationService();
+            importService = new RFQImportService();
             rfqItems = new List<RFQItem>();
         }
 
@@ -63,11 +69,16 @@ namespace RFQ_Generator_System
                 cmbCompany.SelectedIndexChanged += HandleCompanyOrClientChange;
                 cmbClient.SelectedIndexChanged += HandleCompanyOrClientChange;
                 txtQuoteCode.TextChanged += txtQuoteCode_TextChanged;
+
+                // ✅ Enable drag and drop
+                this.AllowDrop = true;
+                this.DragEnter += Form1_DragEnter;
+                this.DragDrop += Form1_DragDrop;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading form: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The app failed to start properly. Please restart and try again.",
+                    "Startup Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -91,8 +102,8 @@ namespace RFQ_Generator_System
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading companies: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not load the company list. Please check your database connection and restart.",
+                    "Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -119,8 +130,8 @@ namespace RFQ_Generator_System
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading clients: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not load the client list. Please check your database connection and restart.",
+                    "Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion
@@ -165,30 +176,18 @@ namespace RFQ_Generator_System
                     {
                         switch (selectedClient.DeliveryTerm.Trim().ToUpper())
                         {
-                            case "DAP":
-                                rbtnDAP.Checked = true;
-                                break;
-                            case "DDP":
-                                rbtnDDP.Checked = true;
-                                break;
-                            case "DDU/DAP":
-                                rbtnDDUDAP.Checked = true;
-                                break;
-                            case "PCG":
-                                rbtnPCG.Checked = true;
-                                break;
-                            default:
-                                rbtnDAP.Checked = true;
-                                break;
+                            case "DAP": rbtnDAP.Checked = true; break;
+                            case "DDP": rbtnDDP.Checked = true; break;
+                            case "DDU/DAP": rbtnDDUDAP.Checked = true; break;
+                            case "PCG": rbtnPCG.Checked = true; break;
+                            default: rbtnDAP.Checked = true; break;
                         }
                     }
                 }
             }
 
             if (!txtQuoteCode.Focused)
-            {
                 GenerateAndDisplayQuoteCodePreview();
-            }
         }
 
         private void UpdateTemplateDisplay()
@@ -219,8 +218,8 @@ namespace RFQ_Generator_System
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading template: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not load the template for this company. Please try selecting the company again.",
+                    "Template Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -255,9 +254,10 @@ namespace RFQ_Generator_System
 
                     if (string.IsNullOrEmpty(companyCode))
                     {
-                        txtQuoteCode.Text = "[Company code not set in database]";
+                        txtQuoteCode.Text = "[Company code missing]";
                         txtQuoteCode.BackColor = Color.LightCoral;
-                        MessageBox.Show($"Company '{selectedCompany.CompanyName}' does not have a CompanyCode set in the database.\n\nPlease run the UpdateCompanyClientCodes.sql script.",
+                        MessageBox.Show(
+                            $"'{selectedCompany.CompanyName}' is missing a company code in the database.\n\nPlease contact your administrator to set it up.",
                             "Missing Company Code", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
@@ -265,7 +265,7 @@ namespace RFQ_Generator_System
                     string quoteCode = rfqService.GenerateQuoteCodePreview(companyCode, clientCode);
                     if (string.IsNullOrEmpty(quoteCode))
                     {
-                        txtQuoteCode.Text = "[Error generating code]";
+                        txtQuoteCode.Text = "[Could not generate code]";
                         txtQuoteCode.BackColor = Color.LightCoral;
                     }
                     else
@@ -279,8 +279,8 @@ namespace RFQ_Generator_System
             {
                 txtQuoteCode.Text = "[Error]";
                 txtQuoteCode.BackColor = Color.LightCoral;
-                MessageBox.Show($"Error generating quote code preview:\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not generate the quote code. Please reselect the company and client and try again.",
+                    "Quote Code Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion
@@ -318,9 +318,7 @@ namespace RFQ_Generator_System
                 }
 
                 for (int i = 0; i < rfqItems.Count; i++)
-                {
                     rfqItems[i].ItemNo = i + 1;
-                }
 
                 UpdateItemsList();
                 ClearItemForm();
@@ -328,8 +326,8 @@ namespace RFQ_Generator_System
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error adding item: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not add the item. Please check the details and try again.",
+                    "Add Item Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -344,8 +342,8 @@ namespace RFQ_Generator_System
         {
             if (lstItems.SelectedIndex < 0)
             {
-                MessageBox.Show("Please select an item to edit.", "Information",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please select an item from the list to edit.",
+                    "No Item Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -364,21 +362,19 @@ namespace RFQ_Generator_System
         {
             if (lstItems.SelectedIndex < 0)
             {
-                MessageBox.Show("Please select an item to remove.", "Information",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please select an item from the list to remove.",
+                    "No Item Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            var result = MessageBox.Show("Are you sure you want to remove this item?",
-                "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result = MessageBox.Show("Remove this item? This cannot be undone.",
+                "Remove Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
                 rfqItems.RemoveAt(lstItems.SelectedIndex);
                 for (int i = 0; i < rfqItems.Count; i++)
-                {
                     rfqItems[i].ItemNo = i + 1;
-                }
                 UpdateItemsList();
                 ClearItemForm();
             }
@@ -420,22 +416,22 @@ namespace RFQ_Generator_System
         {
             if (string.IsNullOrWhiteSpace(txtItemDescription.Text))
             {
-                MessageBox.Show("Please enter item description.", "Validation Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter a description for this item.",
+                    "Description Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtItemDescription.Focus();
                 return false;
             }
             if (numItemQuantity.Value <= 0)
             {
-                MessageBox.Show("Quantity must be greater than zero.", "Validation Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Quantity must be at least 1.",
+                    "Invalid Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 numItemQuantity.Focus();
                 return false;
             }
             if (string.IsNullOrWhiteSpace(txtItemUnit.Text))
             {
-                MessageBox.Show("Please enter unit name.", "Validation Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter the unit (e.g. PCS, SET, KG).",
+                    "Unit Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtItemUnit.Focus();
                 return false;
             }
@@ -448,29 +444,29 @@ namespace RFQ_Generator_System
         {
             if (cmbCompany.SelectedValue == null || (int)cmbCompany.SelectedValue == 0)
             {
-                MessageBox.Show("Please select a company.", "Validation Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a company before continuing.",
+                    "Company Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cmbCompany.Focus();
                 return false;
             }
             if (cmbClient.SelectedValue == null || (int)cmbClient.SelectedValue == 0)
             {
-                MessageBox.Show("Please select a client.", "Validation Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a client before continuing.",
+                    "Client Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cmbClient.Focus();
                 return false;
             }
             if (string.IsNullOrWhiteSpace(txtRFQCode.Text))
             {
-                MessageBox.Show("Please enter RFQ Code.", "Validation Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter the RFQ Code.",
+                    "RFQ Code Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtRFQCode.Focus();
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(txtQuoteCode.Text) || txtQuoteCode.Text.Contains("[Error"))
+            if (string.IsNullOrWhiteSpace(txtQuoteCode.Text) || txtQuoteCode.Text.Contains("[Error") || txtQuoteCode.Text.Contains("[Could not"))
             {
-                MessageBox.Show("Quote Code was not generated. Please reselect company and client, or enter manually.", "Validation Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("The Quote Code could not be generated. Please reselect the company and client, or enter it manually.",
+                    "Quote Code Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtQuoteCode.Focus();
                 return false;
             }
@@ -481,8 +477,8 @@ namespace RFQ_Generator_System
         {
             if (rfqItems.Count == 0)
             {
-                MessageBox.Show("Please add at least one item.", "Validation Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please add at least one item before generating.",
+                    "No Items", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
             return true;
@@ -494,7 +490,6 @@ namespace RFQ_Generator_System
         {
             if (!ValidateRFQHeader() || !ValidateRFQItems()) return false;
 
-            // ✅ Read whichever delivery term radio is checked
             string selectedDeliveryTerm = "DAP";
             if (rbtnDAP.Checked) selectedDeliveryTerm = "DAP";
             else if (rbtnDDP.Checked) selectedDeliveryTerm = "DDP";
@@ -517,18 +512,16 @@ namespace RFQ_Generator_System
 
             if (!isQuoteCodeManuallyEdited)
             {
-                // ✅ Only generate a NEW quote code if this is a brand-new RFQ (never saved before)
                 if (currentRFQId == 0)
                 {
                     var selectedCompany = allCompanies.FirstOrDefault(c => c.Id == (int)cmbCompany.SelectedValue);
                     var selectedClient = allClients.FirstOrDefault(c => c.Id == (int)cmbClient.SelectedValue);
-                    string companyCode = selectedCompany?.CompanyCode ?? "";
-                    string clientCode = selectedClient?.ClientCode ?? "";
-                    rfq.QuoteCode = rfqService.GenerateQuoteCode(companyCode, clientCode);
+                    rfq.QuoteCode = rfqService.GenerateQuoteCode(
+                        selectedCompany?.CompanyCode ?? "",
+                        selectedClient?.ClientCode ?? "");
                 }
                 else
                 {
-                    // ✅ Reuse existing quote code — do NOT increment sequence again
                     rfq.QuoteCode = txtQuoteCode.Text.Trim();
                 }
             }
@@ -537,12 +530,10 @@ namespace RFQ_Generator_System
                 rfqService.UpdateSequenceFromManualEdit(rfq.CompanyId, rfq.QuoteCode);
             }
 
-            // ✅ Always save/update — pass currentRFQId so service knows insert vs update
             currentRFQId = rfqService.SaveRFQ(rfq, rfqItems, currentRFQId);
 
             txtQuoteCode.Text = rfq.QuoteCode;
             txtQuoteCode.BackColor = Color.LightGreen;
-
             isRFQSaved = true;
             isQuoteCodeManuallyEdited = false;
 
@@ -551,14 +542,23 @@ namespace RFQ_Generator_System
         #endregion
 
         #region Helper - Get Output Folder
+
+        /// <summary>
+        /// Returns the folder to use as the default save location.
+        /// If the user imported a pricesheet, that file's folder is returned first.
+        /// Otherwise falls back to the network RFQ folder.
+        /// </summary>
         private string GetOutputFolder()
         {
+            // ✅ If the user imported a pricesheet, default to that file's folder
+            if (!string.IsNullOrEmpty(importedFileFolder) && Directory.Exists(importedFileFolder))
+                return importedFileFolder;
+
+            // Otherwise use the network RFQ folder
             try
             {
                 if (!Directory.Exists(RFQOutputFolder))
-                {
                     Directory.CreateDirectory(RFQOutputFolder);
-                }
                 return RFQOutputFolder;
             }
             catch
@@ -571,56 +571,38 @@ namespace RFQ_Generator_System
                     Directory.CreateDirectory(fallback);
 
                 MessageBox.Show(
-                    $"Could not access network folder:\n{RFQOutputFolder}\n\nFiles will be saved locally to:\n{fallback}",
+                    $"The network folder is not accessible right now.\n\nFiles will be saved to your Documents folder instead:\n{fallback}",
                     "Network Unavailable", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 return fallback;
             }
         }
 
-        private void OpenOutputFolder(string folderPath)
-        {
-            try
-            {
-                System.Diagnostics.Process.Start("explorer.exe", folderPath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Could not open folder:\n{ex.Message}", "Warning",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
 
         // ✅ Modern Windows Explorer-style folder browser dialog via COM shell (works on .NET Framework)
         private string ShowModernFolderDialog(string description, string initialPath)
         {
             try
             {
-                // Use IFileOpenDialog COM interface for modern Explorer-style dialog
                 var dialog = (IFileOpenDialog)new FileOpenDialogRCW();
 
-                // Set options: pick folders only + force filesystem + no readonly
                 uint options;
                 dialog.GetOptions(out options);
                 options |= FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM | FOS_NOREADONLYRETURN;
                 dialog.SetOptions(options);
-
-                // Set title
                 dialog.SetTitle(description);
 
-                // Set initial folder if valid
                 if (!string.IsNullOrEmpty(initialPath) && Directory.Exists(initialPath))
                 {
                     IShellItem item;
                     var shellItemGuid = typeof(IShellItem).GUID;
-                    SHCreateItemFromParsingName(initialPath, IntPtr.Zero, ref shellItemGuid, out item); if (item != null)
+                    SHCreateItemFromParsingName(initialPath, IntPtr.Zero, ref shellItemGuid, out item);
+                    if (item != null)
                         dialog.SetFolder(item);
                 }
 
-                // Show dialog
                 int hr = dialog.Show(this.Handle);
-                if (hr != 0) // S_OK = 0, HRESULT_FROM_WIN32(ERROR_CANCELLED) = 0x800704C7
-                    return null;
+                if (hr != 0) return null;
 
                 IShellItem resultItem;
                 dialog.GetResult(out resultItem);
@@ -631,7 +613,6 @@ namespace RFQ_Generator_System
             }
             catch
             {
-                // Fallback to classic dialog if COM fails for any reason
                 using (var fallback = new FolderBrowserDialog())
                 {
                     fallback.Description = description;
@@ -733,8 +714,8 @@ namespace RFQ_Generator_System
                 if (!ValidateRFQHeader() || !ValidateRFQItems()) return;
                 if (currentTemplate == null)
                 {
-                    MessageBox.Show("No template available for the selected company.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("No template found for this company. Please select a valid company.",
+                        "Template Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -744,18 +725,12 @@ namespace RFQ_Generator_System
 
                 string selectedCurrency = cmbCurrency.SelectedItem?.ToString() ?? "RM";
                 if (string.IsNullOrEmpty(rfq.Currency) || rfq.Currency != selectedCurrency)
-                {
                     rfq.Currency = selectedCurrency;
-                }
 
                 string versionSuffix = excelService.GenerateRFQExcel(
                     currentTemplate.TemplatePath,
                     Path.Combine(Path.GetTempPath(), $"temp_{Guid.NewGuid()}.xlsx"),
-                    rfq,
-                    items,
-                    currentTemplate.Id,
-                    isPriced
-                );
+                    rfq, items, currentTemplate.Id, isPriced);
 
                 string outputFolder = GetOutputFolder();
                 string defaultFileName = $"{rfq.QuoteCode}-{versionSuffix}.xlsx";
@@ -772,24 +747,18 @@ namespace RFQ_Generator_System
                         excelService.GenerateRFQExcel(
                             currentTemplate.TemplatePath,
                             sfd.FileName,
-                            rfq,
-                            items,
-                            currentTemplate.Id,
-                            isPriced
-                        );
+                            rfq, items, currentTemplate.Id, isPriced);
 
                         MessageBox.Show(
-                            $"Success! {versionSuffix} RFQ Excel generated.\n\nQuote Code: {rfq.QuoteCode}\nFile saved to:\n{sfd.FileName}",
-                            "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        OpenOutputFolder(Path.GetDirectoryName(sfd.FileName));
+                            $"Excel file saved successfully!\n\nQuote Code: {rfq.QuoteCode}\nSaved to: {sfd.FileName}",
+                            "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error generating Excel file:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not generate the Excel file. Please make sure the previous generated file with the same quote code is closed before generating and try again.",
+                    "Excel Generation Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion
@@ -802,8 +771,8 @@ namespace RFQ_Generator_System
                 if (!ValidateRFQHeader() || !ValidateRFQItems()) return;
                 if (currentTemplate == null)
                 {
-                    MessageBox.Show("No template available for the selected company.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("No template found for this company. Please select a valid company.",
+                        "Template Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -813,15 +782,11 @@ namespace RFQ_Generator_System
 
                 string selectedCurrency = cmbCurrency.SelectedItem?.ToString() ?? "RM";
                 if (string.IsNullOrEmpty(rfq.Currency) || rfq.Currency != selectedCurrency)
-                {
                     rfq.Currency = selectedCurrency;
-                }
 
-                // ✅ Use modern Windows Explorer-style folder dialog
                 string selectedFolder = ShowModernFolderDialog(
-                    "Select folder to save BOTH Excel files",
-                    GetOutputFolder()
-                );
+                    "Select folder to save both Excel files",
+                    GetOutputFolder());
 
                 if (selectedFolder != null)
                 {
@@ -830,23 +795,17 @@ namespace RFQ_Generator_System
                     var (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix) =
                         excelService.GenerateBothVersionsExcel(
                             currentTemplate.TemplatePath,
-                            baseOutputPath,
-                            rfq,
-                            items,
-                            currentTemplate.Id
-                        );
+                            baseOutputPath, rfq, items, currentTemplate.Id);
 
                     MessageBox.Show(
-                        $"Success! Both Excel files generated.\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix} file:\n{pricedPath}\n\n{unpricedSuffix} file:\n{unpricedPath}",
-                        "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    OpenOutputFolder(selectedFolder);
+                        $"Both Excel files saved successfully!\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix}: {pricedPath}\n{unpricedSuffix}: {unpricedPath}",
+                        "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error generating Excel files:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not generate the Excel files. Please make sure the template file is closed before generating and try again.",
+                    "Excel Generation Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion
@@ -873,8 +832,8 @@ namespace RFQ_Generator_System
                 if (!ValidateRFQHeader() || !ValidateRFQItems()) return;
                 if (currentTemplate == null)
                 {
-                    MessageBox.Show("No template available for the selected company.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("No template found for this company. Please select a valid company.",
+                        "Template Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -884,18 +843,12 @@ namespace RFQ_Generator_System
 
                 string selectedCurrency = cmbCurrency.SelectedItem?.ToString() ?? "RM";
                 if (string.IsNullOrEmpty(rfq.Currency) || rfq.Currency != selectedCurrency)
-                {
                     rfq.Currency = selectedCurrency;
-                }
 
                 string versionSuffix = pdfService.GenerateRFQPDF(
                     currentTemplate.TemplatePath,
                     Path.Combine(Path.GetTempPath(), $"temp_{Guid.NewGuid()}.pdf"),
-                    rfq,
-                    items,
-                    currentTemplate.Id,
-                    isPriced
-                );
+                    rfq, items, currentTemplate.Id, isPriced);
 
                 string outputFolder = GetOutputFolder();
                 string defaultFileName = $"{rfq.QuoteCode}-{versionSuffix}.pdf";
@@ -912,24 +865,18 @@ namespace RFQ_Generator_System
                         pdfService.GenerateRFQPDF(
                             currentTemplate.TemplatePath,
                             sfd.FileName,
-                            rfq,
-                            items,
-                            currentTemplate.Id,
-                            isPriced
-                        );
+                            rfq, items, currentTemplate.Id, isPriced);
 
                         MessageBox.Show(
-                            $"Success! {versionSuffix} RFQ PDF generated.\n\nQuote Code: {rfq.QuoteCode}\nCurrency: {rfq.Currency}\nVersion: {versionSuffix}\n\nFile saved to:\n{sfd.FileName}",
-                            "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        OpenOutputFolder(Path.GetDirectoryName(sfd.FileName));
+                            $"PDF file saved successfully!\n\nQuote Code: {rfq.QuoteCode}\nSaved to: {sfd.FileName}",
+                            "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error generating PDF file:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not generate the PDF file. Please make sure the template is accessible and try again.",
+                    "PDF Generation Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion
@@ -942,8 +889,8 @@ namespace RFQ_Generator_System
                 if (!ValidateRFQHeader() || !ValidateRFQItems()) return;
                 if (currentTemplate == null)
                 {
-                    MessageBox.Show("No template available for the selected company.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("No template found for this company. Please select a valid company.",
+                        "Template Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -953,15 +900,11 @@ namespace RFQ_Generator_System
 
                 string selectedCurrency = cmbCurrency.SelectedItem?.ToString() ?? "RM";
                 if (string.IsNullOrEmpty(rfq.Currency) || rfq.Currency != selectedCurrency)
-                {
                     rfq.Currency = selectedCurrency;
-                }
 
-                // ✅ Use modern Windows Explorer-style folder dialog
                 string selectedFolder = ShowModernFolderDialog(
-                    "Select folder to save BOTH PDF files",
-                    GetOutputFolder()
-                );
+                    "Select folder to save both PDF files",
+                    GetOutputFolder());
 
                 if (selectedFolder != null)
                 {
@@ -970,23 +913,17 @@ namespace RFQ_Generator_System
                     var (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix) =
                         pdfService.GenerateBothVersionsPDF(
                             currentTemplate.TemplatePath,
-                            baseOutputPath,
-                            rfq,
-                            items,
-                            currentTemplate.Id
-                        );
+                            baseOutputPath, rfq, items, currentTemplate.Id);
 
                     MessageBox.Show(
-                        $"Success! Both PDF files generated.\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix} file:\n{pricedPath}\n\n{unpricedSuffix} file:\n{unpricedPath}",
-                        "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    OpenOutputFolder(selectedFolder);
+                        $"Both PDF files saved successfully!\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix}: {pricedPath}\n{unpricedSuffix}: {unpricedPath}",
+                        "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error generating PDF files:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not generate the PDF files. Please make sure the template is accessible and try again.",
+                    "PDF Generation Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion
@@ -995,15 +932,11 @@ namespace RFQ_Generator_System
         private void btnNew_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show(
-                "Are you sure you want to create a new RFQ? Any unsaved changes will be lost.",
-                "Confirm New RFQ",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+                "Start a new RFQ? Any unsaved changes will be lost.",
+                "New RFQ", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
-            {
                 ClearForm();
-            }
         }
 
         private void ClearForm()
@@ -1026,23 +959,117 @@ namespace RFQ_Generator_System
             isQuoteCodeManuallyEdited = false;
             isRFQSaved = false;
             btnAddItem.Text = "Add Item";
+            importedFileFolder = null;
 
             rbtnDAP.Checked = true;
-
             rfqService.ClearQuoteCodeCache();
-
             cmbCompany.Focus();
         }
         #endregion
 
-        private void lblItemDeliveryTime_Click(object sender, EventArgs e)
-        {
+        #region Drag and Drop Implementation
 
+        private void Form1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files.Length == 1 && importService.IsValidExcelFile(files[0]))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                    return;
+                }
+            }
+            e.Effect = DragDropEffects.None;
         }
 
-        private void numDiscount_ValueChanged(object sender, EventArgs e)
+        private void Form1_DragDrop(object sender, DragEventArgs e)
         {
+            try
+            {
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
+                    if (files.Length != 1)
+                    {
+                        MessageBox.Show("Please drop only one Excel file at a time.",
+                            "Too Many Files", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    string filePath = files[0];
+
+                    if (!importService.IsValidExcelFile(filePath))
+                    {
+                        MessageBox.Show("Please drop a valid Excel file (.xlsx or .xls).",
+                            "Invalid File", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    this.BeginInvoke(new Action(() => ImportRFQFromFile(filePath)));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not read the dropped file. Please try again.",
+                    "Drop Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
+        private void ImportRFQFromFile(string filePath)
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+                Application.DoEvents();
+
+                var importedData = importService.ImportFromExcel(filePath);
+
+                string capturedFolder = Path.GetDirectoryName(filePath);
+                rfqItems.Clear();
+                UpdateItemsList();
+                ClearItemForm();
+                editingItemIndex = -1;
+                btnAddItem.Text = "Add Item";
+                importedFileFolder = capturedFolder;
+                if (!string.IsNullOrEmpty(importedData.DeliveryPoint))
+                    txtDeliveryPoint.Text = importedData.DeliveryPoint;
+
+                if (!string.IsNullOrEmpty(importedData.Validity))
+                    txtValidity.Text = importedData.Validity;
+
+                if (importedData.Items.Count > 0)
+                {
+                    foreach (var importedItem in importedData.Items)
+                    {
+                        txtItemDescription.Text = importedItem.ItemDesc;
+                        numItemQuantity.Value = importedItem.Quantity;
+                        txtItemUnit.Text = importedItem.Unit;
+                        numItemUnitPrice.Value = (decimal)importedItem.UnitPrice;
+                        numItemDeliveryTime.Value = importedItem.DeliveryTime;
+                        btnAddItem_Click(null, null);
+                    }
+                    lstItems.Focus();
+                }
+
+                this.Cursor = Cursors.Default;
+
+                MessageBox.Show(
+                    $"{importedData.Items.Count} item(s) imported successfully.",
+                    "Import Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show("Could not import the file. Please make sure it is a valid pricesheet and try again.",
+                    "Import Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        #endregion
+
+        private void lblItemDeliveryTime_Click(object sender, EventArgs e) { }
+        private void numDiscount_ValueChanged(object sender, EventArgs e) { }
     }
 }

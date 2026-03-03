@@ -233,7 +233,7 @@ namespace RFQ_Generator_System.Services
                 case "OP":
                     return $"Q-{sequence:D6}-{clientCode}";
                 case "PO":
-                    return $"{clientCode}-{sequence:D7}-EPOMS";
+                    return $"PENAGA-{sequence:D7}-{clientCode}";
                 case "SC":
                     return $"{clientCode}-QUO-SC-{sequence:D6}";
                 default:

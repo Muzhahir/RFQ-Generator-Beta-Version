@@ -49,6 +49,8 @@
             this.pnlDiscount = new System.Windows.Forms.Panel();
             this.numDiscount = new System.Windows.Forms.NumericUpDown();
             this.lblDiscount = new System.Windows.Forms.Label();
+            this.grpDragDrop = new System.Windows.Forms.GroupBox();
+            this.lblDragDropHint = new System.Windows.Forms.Label();
             this.grpCurrentItem = new System.Windows.Forms.GroupBox();
             this.txtItemDescription = new System.Windows.Forms.TextBox();
             this.lblItemDescription = new System.Windows.Forms.Label();
@@ -87,6 +89,7 @@
             this.pnlCreatedAt.SuspendLayout();
             this.pnlDiscount.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDiscount)).BeginInit();
+            this.grpDragDrop.SuspendLayout();
             this.grpCurrentItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numItemQuantity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numItemUnitPrice)).BeginInit();
@@ -476,6 +479,32 @@
             this.lblDiscount.TabIndex = 18;
             this.lblDiscount.Text = "Discount (%):";
             // 
+            // grpDragDrop
+            // 
+            this.grpDragDrop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpDragDrop.Controls.Add(this.lblDragDropHint);
+            this.grpDragDrop.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.grpDragDrop.Location = new System.Drawing.Point(16, 170);
+            this.grpDragDrop.Name = "grpDragDrop";
+            this.grpDragDrop.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.grpDragDrop.Size = new System.Drawing.Size(1413, 50);
+            this.grpDragDrop.TabIndex = 4;
+            this.grpDragDrop.TabStop = false;
+            this.grpDragDrop.Text = "Quick Import";
+            // 
+            // lblDragDropHint
+            // 
+            this.lblDragDropHint.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblDragDropHint.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblDragDropHint.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblDragDropHint.Location = new System.Drawing.Point(6, 24);
+            this.lblDragDropHint.Name = "lblDragDropHint";
+            this.lblDragDropHint.Size = new System.Drawing.Size(1401, 22);
+            this.lblDragDropHint.TabIndex = 0;
+            this.lblDragDropHint.Text = "💡 Tip: Drag your Excel pricesheet here to auto fill in Item Details";
+            this.lblDragDropHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // grpCurrentItem
             // 
             this.grpCurrentItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -495,10 +524,10 @@
             this.grpCurrentItem.Controls.Add(this.btnAddItem);
             this.grpCurrentItem.Controls.Add(this.btnClearItem);
             this.grpCurrentItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grpCurrentItem.Location = new System.Drawing.Point(16, 178);
+            this.grpCurrentItem.Location = new System.Drawing.Point(16, 228);
             this.grpCurrentItem.Name = "grpCurrentItem";
             this.grpCurrentItem.Padding = new System.Windows.Forms.Padding(4);
-            this.grpCurrentItem.Size = new System.Drawing.Size(754, 380);
+            this.grpCurrentItem.Size = new System.Drawing.Size(754, 330);
             this.grpCurrentItem.TabIndex = 1;
             this.grpCurrentItem.TabStop = false;
             this.grpCurrentItem.Text = "Item Details";
@@ -514,7 +543,7 @@
             this.txtItemDescription.Multiline = true;
             this.txtItemDescription.Name = "txtItemDescription";
             this.txtItemDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtItemDescription.Size = new System.Drawing.Size(722, 200);
+            this.txtItemDescription.Size = new System.Drawing.Size(722, 150);
             this.txtItemDescription.TabIndex = 3;
             // 
             // lblItemDescription
@@ -531,7 +560,7 @@
             // 
             this.numItemQuantity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.numItemQuantity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemQuantity.Location = new System.Drawing.Point(14, 282);
+            this.numItemQuantity.Location = new System.Drawing.Point(14, 232);
             this.numItemQuantity.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -556,7 +585,7 @@
             this.lblItemQuantity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblItemQuantity.AutoSize = true;
             this.lblItemQuantity.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemQuantity.Location = new System.Drawing.Point(14, 258);
+            this.lblItemQuantity.Location = new System.Drawing.Point(14, 208);
             this.lblItemQuantity.Name = "lblItemQuantity";
             this.lblItemQuantity.Size = new System.Drawing.Size(68, 20);
             this.lblItemQuantity.TabIndex = 4;
@@ -566,7 +595,7 @@
             // 
             this.txtItemUnit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtItemUnit.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtItemUnit.Location = new System.Drawing.Point(160, 282);
+            this.txtItemUnit.Location = new System.Drawing.Point(160, 232);
             this.txtItemUnit.Name = "txtItemUnit";
             this.txtItemUnit.Size = new System.Drawing.Size(74, 27);
             this.txtItemUnit.TabIndex = 7;
@@ -577,7 +606,7 @@
             this.lblItemUnit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblItemUnit.AutoSize = true;
             this.lblItemUnit.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemUnit.Location = new System.Drawing.Point(160, 258);
+            this.lblItemUnit.Location = new System.Drawing.Point(160, 208);
             this.lblItemUnit.Name = "lblItemUnit";
             this.lblItemUnit.Size = new System.Drawing.Size(39, 20);
             this.lblItemUnit.TabIndex = 6;
@@ -588,7 +617,7 @@
             this.numItemUnitPrice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.numItemUnitPrice.DecimalPlaces = 2;
             this.numItemUnitPrice.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemUnitPrice.Location = new System.Drawing.Point(250, 282);
+            this.numItemUnitPrice.Location = new System.Drawing.Point(250, 232);
             this.numItemUnitPrice.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -603,7 +632,7 @@
             this.lblItemUnitPrice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblItemUnitPrice.AutoSize = true;
             this.lblItemUnitPrice.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemUnitPrice.Location = new System.Drawing.Point(250, 258);
+            this.lblItemUnitPrice.Location = new System.Drawing.Point(250, 208);
             this.lblItemUnitPrice.Name = "lblItemUnitPrice";
             this.lblItemUnitPrice.Size = new System.Drawing.Size(75, 20);
             this.lblItemUnitPrice.TabIndex = 8;
@@ -622,7 +651,7 @@
             "€",
             "£",
             "¥"});
-            this.cmbCurrency.Location = new System.Drawing.Point(440, 282);
+            this.cmbCurrency.Location = new System.Drawing.Point(440, 232);
             this.cmbCurrency.Name = "cmbCurrency";
             this.cmbCurrency.Size = new System.Drawing.Size(90, 28);
             this.cmbCurrency.TabIndex = 19;
@@ -632,7 +661,7 @@
             this.lblCurrency.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblCurrency.AutoSize = true;
             this.lblCurrency.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblCurrency.Location = new System.Drawing.Point(440, 258);
+            this.lblCurrency.Location = new System.Drawing.Point(440, 208);
             this.lblCurrency.Name = "lblCurrency";
             this.lblCurrency.Size = new System.Drawing.Size(69, 20);
             this.lblCurrency.TabIndex = 18;
@@ -642,7 +671,7 @@
             // 
             this.numItemDeliveryTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.numItemDeliveryTime.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.numItemDeliveryTime.Location = new System.Drawing.Point(546, 282);
+            this.numItemDeliveryTime.Location = new System.Drawing.Point(546, 232);
             this.numItemDeliveryTime.Maximum = new decimal(new int[] {
             365,
             0,
@@ -657,7 +686,7 @@
             this.lblItemDeliveryTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblItemDeliveryTime.AutoSize = true;
             this.lblItemDeliveryTime.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblItemDeliveryTime.Location = new System.Drawing.Point(546, 258);
+            this.lblItemDeliveryTime.Location = new System.Drawing.Point(546, 208);
             this.lblItemDeliveryTime.Name = "lblItemDeliveryTime";
             this.lblItemDeliveryTime.Size = new System.Drawing.Size(159, 20);
             this.lblItemDeliveryTime.TabIndex = 10;
@@ -668,7 +697,7 @@
             this.btnAddItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAddItem.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.btnAddItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnAddItem.Location = new System.Drawing.Point(14, 328);
+            this.btnAddItem.Location = new System.Drawing.Point(14, 278);
             this.btnAddItem.Name = "btnAddItem";
             this.btnAddItem.Size = new System.Drawing.Size(160, 37);
             this.btnAddItem.TabIndex = 0;
@@ -681,7 +710,7 @@
             this.btnClearItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnClearItem.BackColor = System.Drawing.Color.DarkSalmon;
             this.btnClearItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnClearItem.Location = new System.Drawing.Point(186, 328);
+            this.btnClearItem.Location = new System.Drawing.Point(186, 278);
             this.btnClearItem.Name = "btnClearItem";
             this.btnClearItem.Size = new System.Drawing.Size(160, 37);
             this.btnClearItem.TabIndex = 1;
@@ -699,10 +728,10 @@
             this.grpItemsList.Controls.Add(this.btnRemoveItem);
             this.grpItemsList.Controls.Add(this.lblItemCount);
             this.grpItemsList.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.grpItemsList.Location = new System.Drawing.Point(785, 178);
+            this.grpItemsList.Location = new System.Drawing.Point(785, 228);
             this.grpItemsList.Name = "grpItemsList";
             this.grpItemsList.Padding = new System.Windows.Forms.Padding(4);
-            this.grpItemsList.Size = new System.Drawing.Size(645, 380);
+            this.grpItemsList.Size = new System.Drawing.Size(645, 330);
             this.grpItemsList.TabIndex = 2;
             this.grpItemsList.TabStop = false;
             this.grpItemsList.Text = "Items List";
@@ -717,7 +746,7 @@
             this.lstItems.ItemHeight = 17;
             this.lstItems.Location = new System.Drawing.Point(14, 26);
             this.lstItems.Name = "lstItems";
-            this.lstItems.Size = new System.Drawing.Size(613, 259);
+            this.lstItems.Size = new System.Drawing.Size(613, 208);
             this.lstItems.TabIndex = 0;
             this.lstItems.SelectedIndexChanged += new System.EventHandler(this.lstItems_SelectedIndexChanged);
             // 
@@ -726,7 +755,7 @@
             this.btnEditItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEditItem.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.btnEditItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnEditItem.Location = new System.Drawing.Point(14, 330);
+            this.btnEditItem.Location = new System.Drawing.Point(14, 280);
             this.btnEditItem.Name = "btnEditItem";
             this.btnEditItem.Size = new System.Drawing.Size(133, 37);
             this.btnEditItem.TabIndex = 1;
@@ -739,7 +768,7 @@
             this.btnRemoveItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnRemoveItem.BackColor = System.Drawing.Color.DarkSalmon;
             this.btnRemoveItem.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnRemoveItem.Location = new System.Drawing.Point(157, 330);
+            this.btnRemoveItem.Location = new System.Drawing.Point(157, 280);
             this.btnRemoveItem.Name = "btnRemoveItem";
             this.btnRemoveItem.Size = new System.Drawing.Size(133, 37);
             this.btnRemoveItem.TabIndex = 2;
@@ -753,7 +782,7 @@
             this.lblItemCount.AutoSize = true;
             this.lblItemCount.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lblItemCount.ForeColor = System.Drawing.Color.Gray;
-            this.lblItemCount.Location = new System.Drawing.Point(310, 338);
+            this.lblItemCount.Location = new System.Drawing.Point(310, 288);
             this.lblItemCount.Name = "lblItemCount";
             this.lblItemCount.Size = new System.Drawing.Size(91, 19);
             this.lblItemCount.TabIndex = 3;
@@ -844,6 +873,7 @@
             this.Controls.Add(this.grpActions);
             this.Controls.Add(this.grpItemsList);
             this.Controls.Add(this.grpCurrentItem);
+            this.Controls.Add(this.grpDragDrop);
             this.Controls.Add(this.grpHeader);
             this.MinimumSize = new System.Drawing.Size(960, 700);
             this.Name = "Form1";
@@ -871,6 +901,7 @@
             this.pnlDiscount.ResumeLayout(false);
             this.pnlDiscount.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDiscount)).EndInit();
+            this.grpDragDrop.ResumeLayout(false);
             this.grpCurrentItem.ResumeLayout(false);
             this.grpCurrentItem.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numItemQuantity)).EndInit();
@@ -918,8 +949,8 @@
         private System.Windows.Forms.Label lblValidity;
         private System.Windows.Forms.NumericUpDown numDiscount;
         private System.Windows.Forms.Label lblDiscount;
-        private System.Windows.Forms.ComboBox cmbCurrency;
-        private System.Windows.Forms.Label lblCurrency;
+        private System.Windows.Forms.GroupBox grpDragDrop;
+        private System.Windows.Forms.Label lblDragDropHint;
         private System.Windows.Forms.GroupBox grpCurrentItem;
         private System.Windows.Forms.TextBox txtItemDescription;
         private System.Windows.Forms.Label lblItemDescription;
@@ -944,5 +975,7 @@
         private System.Windows.Forms.Button btnGenerateBothPDF;
         private System.Windows.Forms.Label lblTemplatePath;
         private System.Windows.Forms.Label lblTemplateLabel;
+        private System.Windows.Forms.ComboBox cmbCurrency;
+        private System.Windows.Forms.Label lblCurrency;
     }
 }
