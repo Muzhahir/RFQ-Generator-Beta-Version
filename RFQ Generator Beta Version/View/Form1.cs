@@ -28,11 +28,8 @@ namespace RFQ_Generator_System
         private bool isQuoteCodeManuallyEdited = false;
         private bool isRFQSaved = false;
 
-        // ✅ Stores the folder of the last imported pricesheet.
-        // When set, Excel/PDF save dialogs will default to this folder instead of the network folder.
         private string importedFileFolder = null;
 
-        // ✅ Network save folder - change this if the path ever changes
         private const string RFQOutputFolder = @"\\DLINK-01731D\Volume_1\Public_J\8. Operation Dept\RFQ";
 
         public Form1()
@@ -550,11 +547,9 @@ namespace RFQ_Generator_System
         /// </summary>
         private string GetOutputFolder()
         {
-            // ✅ If the user imported a pricesheet, default to that file's folder
             if (!string.IsNullOrEmpty(importedFileFolder) && Directory.Exists(importedFileFolder))
                 return importedFileFolder;
 
-            // Otherwise use the network RFQ folder
             try
             {
                 if (!Directory.Exists(RFQOutputFolder))
@@ -579,7 +574,6 @@ namespace RFQ_Generator_System
         }
 
 
-        // ✅ Modern Windows Explorer-style folder browser dialog via COM shell (works on .NET Framework)
         private string ShowModernFolderDialog(string description, string initialPath)
         {
             try
@@ -1033,6 +1027,10 @@ namespace RFQ_Generator_System
                 editingItemIndex = -1;
                 btnAddItem.Text = "Add Item";
                 importedFileFolder = capturedFolder;
+
+                if (!string.IsNullOrEmpty(importedData.RFQCode))
+                    txtRFQCode.Text = importedData.RFQCode;
+
                 if (!string.IsNullOrEmpty(importedData.DeliveryPoint))
                     txtDeliveryPoint.Text = importedData.DeliveryPoint;
 

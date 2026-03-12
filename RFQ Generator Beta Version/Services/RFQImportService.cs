@@ -1,10 +1,9 @@
-
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -12,12 +11,10 @@ namespace RFQ_Generator_System.Services
 {
     public class RFQImportService
     {
-        // --------------------------------------------------------
-        // Data models
-        // --------------------------------------------------------
-
+       
         public class ImportedRFQData
         {
+            public string RFQCode { get; set; }        
             public string DeliveryPoint { get; set; }
             public string Validity { get; set; }
             public List<ImportedItem> Items { get; set; } = new List<ImportedItem>();
@@ -30,41 +27,48 @@ namespace RFQ_Generator_System.Services
             public string Unit { get; set; }
             public int Quantity { get; set; }
             public decimal UnitPrice { get; set; }
-            public int DeliveryTime { get; set; } // converted from calendar days to weeks
+            public int DeliveryTime { get; set; } 
         }
 
-        // --------------------------------------------------------
-        // Column indices (0-based) — verified against actual file
-        //
-        //  D (3)  = Intent to Bid              "Yes" / "No"
-        //  E (4)  = Item name (short)          -> fallback desc if col L is empty
-        //  G (6)  = Unit                       -> Unit  ("PC : PC; Piece" -> "PC")
-        //  H (7)  = Volume                     -> Quantity
-        //  K (10) = Incoterms Location         -> DeliveryPoint (primary)
-        //  L (11) = Supplier Item Number       -> ItemDesc (FULL specification text)
-        //  Q (16) = Supplier Inco Location     -> DeliveryPoint (fallback)
-        //  R (17) = Lead Calendar Days         -> DeliveryTime (/ 7 = weeks)
-        //  T (19) = Supplier Unit Price        -> UnitPrice
-        //
-        // Row 9  (Excel row, 1-based) = column headers
-        // Row 10 (Excel row, 1-based) = first data row
-        // --------------------------------------------------------
 
-        private const int COL_INTENT = 3;   // D
-        private const int COL_ITEM_NAME = 4;   // E  short name (fallback)
-        private const int COL_UNIT = 6;   // G
-        private const int COL_QTY = 7;   // H
-        private const int COL_INCO_LOC = 10;  // K
-        private const int COL_FULL_DESC = 11;  // L  full spec text (primary desc)
-        private const int COL_SUP_INC_LOC = 16;  // Q
-        private const int COL_LEAD_DAYS = 17;  // R
-        private const int COL_UNIT_PRICE = 19;  // T
+        private const int COL_RFQ_CODE = 2;   
+        private const int HEADER_ROW = 9;   
+        private const int DATA_START_ROW = 10;  
 
-        private const int DATA_START_ROW = 10;   // Excel row number (1-based) where items begin
+        private class ColumnMap
+        {
+            public int Intent = -1;
+            public int ItemName = -1;
+            public int Unit = -1;
+            public int Qty = -1;
+            public int IncoLoc = -1;
+            public int FullDesc = -1;
+            public int SupIncLoc = -1;
+            public int LeadDays = -1;
+            public int UnitPrice = -1;
+        }
 
-        // --------------------------------------------------------
-        // Public API
-        // --------------------------------------------------------
+        private static ColumnMap BuildColumnMap(Dictionary<int, string> headerRow)
+        {
+            var m = new ColumnMap();
+            foreach (var kvp in headerRow)
+            {
+                string h = kvp.Value.Trim();
+                int col = kvp.Key;
+
+                if (h.Equals("*Intent to Bid", StringComparison.OrdinalIgnoreCase)) m.Intent = col;
+                else if (h.Equals("*Item name", StringComparison.OrdinalIgnoreCase)) m.ItemName = col;
+                else if (h.Equals("*Unit", StringComparison.OrdinalIgnoreCase)) m.Unit = col;
+                else if (h.Equals("*Volume", StringComparison.OrdinalIgnoreCase)) m.Qty = col;
+                else if (h.Equals("Incoterms Location", StringComparison.OrdinalIgnoreCase)) m.IncoLoc = col;
+                else if (h.Equals("Supplier Item Number", StringComparison.OrdinalIgnoreCase)) m.FullDesc = col;
+                else if (h.Equals("*Supplier Incoterms Location", StringComparison.OrdinalIgnoreCase)) m.SupIncLoc = col;
+                else if (h.Equals("*Estimated Lead Calendar Days", StringComparison.OrdinalIgnoreCase)) m.LeadDays = col;
+                else if (h.StartsWith("*Supplier Unit Price", StringComparison.OrdinalIgnoreCase)) m.UnitPrice = col;
+            }
+            return m;
+        }
+
 
         public static string ShowFileDialog()
         {
@@ -86,13 +90,8 @@ namespace RFQ_Generator_System.Services
             return ext == ".xlsx";
         }
 
-        /// <summary>
-        /// Imports RFQ data directly from a .xlsx file.
-        /// No NuGet packages, no COM, no Excel required.
-        /// </summary>
         public ImportedRFQData ImportFromExcel(string filePath)
         {
-            // Copy to temp so we can open it even if the original is locked by another process
             string tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
             try
             {
@@ -105,9 +104,7 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        // --------------------------------------------------------
-        // Core parser
-        // --------------------------------------------------------
+
 
         private ImportedRFQData ParseXlsx(string filePath)
         {
@@ -126,9 +123,7 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        // --------------------------------------------------------
-        // Step 1: Load shared strings table
-        // --------------------------------------------------------
+
 
         private List<string> LoadSharedStrings(ZipArchive zip)
         {
@@ -152,9 +147,7 @@ namespace RFQ_Generator_System.Services
                         if (t.InnerText != null)
                             sb.Append(t.InnerText);
                     }
-                    // Newlines are stored as literal \r\n escape sequences in the XML text.
-                    // XmlDocument reads these as characters \,r,\,n — not real line breaks.
-                    // Unescape them so multiline cells come through correctly.
+
                     string value = sb.ToString()
                         .Replace("\\r\\n", "\r\n")
                         .Replace("\\n", "\n")
@@ -165,9 +158,7 @@ namespace RFQ_Generator_System.Services
             return list;
         }
 
-        // --------------------------------------------------------
-        // Step 2: Find the data sheet file path inside the ZIP
-        // --------------------------------------------------------
+
 
         private string FindDataSheetFile(ZipArchive zip)
         {
@@ -182,7 +173,6 @@ namespace RFQ_Generator_System.Services
             wbNs.AddNamespace("x", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
             wbNs.AddNamespace("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
 
-            // Map rId -> file path from workbook rels
             Dictionary<string, string> rIdToFile = new Dictionary<string, string>();
             ZipArchiveEntry relsEntry = zip.GetEntry("xl/_rels/workbook.xml.rels");
             if (relsEntry != null)
@@ -200,8 +190,7 @@ namespace RFQ_Generator_System.Services
                 }
             }
 
-            // Prefer sheet whose name starts with a digit (e.g. "1.Materials")
-            // Fall back to first non-system sheet
+
             string fallbackRId = null;
             HashSet<string> systemNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 { "Instructions", "Sheet", "teehsecirP" };
@@ -227,9 +216,7 @@ namespace RFQ_Generator_System.Services
             return null;
         }
 
-        // --------------------------------------------------------
-        // Step 3: Parse the worksheet XML into ImportedRFQData
-        // --------------------------------------------------------
+
 
         private ImportedRFQData ParseSheet(ZipArchive zip, string sheetFile, List<string> sharedStrings)
         {
@@ -246,58 +233,65 @@ namespace RFQ_Generator_System.Services
             XmlNamespaceManager ns = new XmlNamespaceManager(doc.NameTable);
             ns.AddNamespace("x", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
 
+            ColumnMap cols = null;           
             bool deliveryPointRead = false;
             int itemNo = 1;
 
             foreach (XmlNode rowNode in doc.SelectNodes("//x:row", ns))
             {
                 int rowNum = int.Parse(rowNode.Attributes["r"]?.Value ?? "0");
+
+                if (rowNum == 1)
+                {
+                    var r1 = ReadRowCells(rowNode, ns, sharedStrings);
+                    result.RFQCode = ExtractRFQCode(GetCell(r1, COL_RFQ_CODE));
+                    continue;
+                }
+
+                if (rowNum == HEADER_ROW)
+                {
+                    cols = BuildColumnMap(ReadRowCells(rowNode, ns, sharedStrings));
+                    continue;
+                }
+
                 if (rowNum < DATA_START_ROW) continue;
+                if (cols == null) continue;   
 
                 Dictionary<int, string> cells = ReadRowCells(rowNode, ns, sharedStrings);
 
-                // Read delivery point once from the first data row
                 if (!deliveryPointRead)
                 {
-                    string loc = GetCell(cells, COL_INCO_LOC);
-                    if (string.IsNullOrWhiteSpace(loc))
-                        loc = GetCell(cells, COL_SUP_INC_LOC);
+                    string loc = cols.IncoLoc >= 0 ? GetCell(cells, cols.IncoLoc) : string.Empty;
+                    if (string.IsNullOrWhiteSpace(loc) && cols.SupIncLoc >= 0)
+                        loc = GetCell(cells, cols.SupIncLoc);
                     result.DeliveryPoint = loc?.Trim() ?? string.Empty;
                     deliveryPointRead = true;
                 }
 
-                // Only import rows marked "Yes"
-                string intent = GetCell(cells, COL_INTENT);
+                string intent = cols.Intent >= 0 ? GetCell(cells, cols.Intent) : string.Empty;
                 if (!string.Equals(intent, "Yes", StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                // Short name (col E) — used as guard and fallback
-                string shortName = GetCell(cells, COL_ITEM_NAME);
+                string shortName = cols.ItemName >= 0 ? GetCell(cells, cols.ItemName) : string.Empty;
                 if (string.IsNullOrWhiteSpace(shortName)) continue;
 
-                // Full specification text (col L) — primary description
-                // Format: "OFFER\n\n<shortname>\nTYPE : ...\nNOMINAL SIZE : ..."
-                // We strip the leading "OFFER" header line(s) to get the clean spec
-                string fullDesc = GetCell(cells, COL_FULL_DESC);
+                string fullDesc = cols.FullDesc >= 0 ? GetCell(cells, cols.FullDesc) : string.Empty;
                 string itemDesc = BuildDescription(fullDesc, shortName);
 
                 result.Items.Add(new ImportedItem
                 {
                     ItemNo = itemNo++,
                     ItemDesc = itemDesc,
-                    Unit = ParseUnit(GetCell(cells, COL_UNIT)),
-                    Quantity = ParseInt(GetCell(cells, COL_QTY), 1),
-                    UnitPrice = ParseDecimal(GetCell(cells, COL_UNIT_PRICE), 0m),
-                    DeliveryTime = CalendarDaysToWeeks(ParseInt(GetCell(cells, COL_LEAD_DAYS), 0))
+                    Unit = ParseUnit(cols.Unit >= 0 ? GetCell(cells, cols.Unit) : string.Empty),
+                    Quantity = ParseInt(cols.Qty >= 0 ? GetCell(cells, cols.Qty) : string.Empty, 1),
+                    UnitPrice = ParseDecimal(cols.UnitPrice >= 0 ? GetCell(cells, cols.UnitPrice) : string.Empty, 0m),
+                    DeliveryTime = CalendarDaysToWeeks(ParseInt(cols.LeadDays >= 0 ? GetCell(cells, cols.LeadDays) : string.Empty, 0))
                 });
             }
 
             return result;
         }
 
-        // --------------------------------------------------------
-        // Row cell reader
-        // --------------------------------------------------------
 
         private Dictionary<int, string> ReadRowCells(XmlNode rowNode, XmlNamespaceManager ns,
             List<string> sharedStrings)
@@ -318,7 +312,6 @@ namespace RFQ_Generator_System.Services
                 string value;
                 if (cellType == "s")
                 {
-                    // Shared string — rawValue is an index into the shared strings table
                     if (int.TryParse(rawValue, out int idx) && idx < sharedStrings.Count)
                         value = sharedStrings[idx];
                     else
@@ -331,7 +324,6 @@ namespace RFQ_Generator_System.Services
                 }
                 else
                 {
-                    // Numeric or other raw value
                     value = rawValue;
                 }
 
@@ -341,14 +333,19 @@ namespace RFQ_Generator_System.Services
             return dict;
         }
 
-        // --------------------------------------------------------
-        // Description builder
-        // --------------------------------------------------------
 
-        /// <summary>
-        /// Returns the full description from col L as-is (including OFFER header and all spec lines).
-        /// Falls back to shortName if fullDesc is empty.
-        /// </summary>
+
+ 
+        private static string ExtractRFQCode(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
+
+            int sepIdx = raw.IndexOf(" - ", StringComparison.Ordinal);
+            string code = sepIdx > 0 ? raw.Substring(0, sepIdx) : raw;
+            return code.Trim();
+        }
+
+
         private static string BuildDescription(string fullDesc, string shortName)
         {
             if (string.IsNullOrWhiteSpace(fullDesc))
@@ -357,13 +354,8 @@ namespace RFQ_Generator_System.Services
             return fullDesc.Trim();
         }
 
-        // --------------------------------------------------------
-        // Helpers
-        // --------------------------------------------------------
 
-        /// <summary>
-        /// Converts a cell reference like "D10" or "AA5" to a 0-based column index.
-        /// </summary>
+
         private static int CellRefToColIndex(string cellRef)
         {
             int result = 0;
@@ -372,7 +364,7 @@ namespace RFQ_Generator_System.Services
                 if (!char.IsLetter(ch)) break;
                 result = result * 26 + (char.ToUpper(ch) - 'A' + 1);
             }
-            return result - 1; // 0-based
+            return result - 1; 
         }
 
         private static string GetCell(Dictionary<int, string> cells, int colIndex)
@@ -380,9 +372,6 @@ namespace RFQ_Generator_System.Services
             return cells.TryGetValue(colIndex, out string val) ? val : string.Empty;
         }
 
-        /// <summary>
-        /// Parses "PC : PC; Piece" into "PC".
-        /// </summary>
         private static string ParseUnit(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return "PC";

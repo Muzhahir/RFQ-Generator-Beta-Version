@@ -15,9 +15,7 @@ namespace RFQ_Generator_System.Services
 {
     public class PDFGenerationService
     {
-        // ─────────────────────────────────────────────────────────────
-        // Placeholder constants (mirrors ExcelGenerationService)
-        // ─────────────────────────────────────────────────────────────
+
         private static class Placeholders
         {
             public const string ClientName = "client_name";
@@ -40,20 +38,13 @@ namespace RFQ_Generator_System.Services
             public const string HeaderDeliveryTime = "header_delivery_time";
         }
 
-        // ─────────────────────────────────────────────────────────────
-        // Template-based generation (unchanged from original)
-        // ─────────────────────────────────────────────────────────────
 
-        /// <summary>Generate priced PDF (default behavior).</summary>
         public string GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId)
         {
             return GenerateRFQPDF(templatePath, outputPdfPath, rfq, items, templateId, isPriced: true);
         }
 
-        /// <summary>
-        /// Generate PDF by first creating Excel from template, then converting to PDF.
-        /// Returns the version suffix used (e.g. "PRICED", "UNPRICED", "COMMERCIAL", "TECHNICAL").
-        /// </summary>
+
         public string GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId, bool isPriced)
         {
             string tempExcelPath = Path.Combine(Path.GetTempPath(), $"temp_rfq_{Guid.NewGuid()}.xlsx");
@@ -62,8 +53,6 @@ namespace RFQ_Generator_System.Services
             {
                 var excelService = new ExcelGenerationService();
                 string versionSuffix = excelService.GenerateRFQExcel(templatePath, tempExcelPath, rfq, items, templateId, isPriced);
-
-                ApplyPageBreakBordersToExcel(tempExcelPath, templatePath);
 
                 bool success = false;
                 try
@@ -92,10 +81,7 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        /// <summary>
-        /// Generate BOTH priced and unpriced PDF files.
-        /// Returns (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix).
-        /// </summary>
+
         public (string pricedPath, string unpricedPath, string pricedSuffix, string unpricedSuffix) GenerateBothVersionsPDF(
             string templatePath,
             string baseOutputPath,
@@ -125,40 +111,25 @@ namespace RFQ_Generator_System.Services
             return (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix);
         }
 
-        // ─────────────────────────────────────────────────────────────
-        // Direct PDF generation — logic now mirrors ExcelGenerationService
-        // ─────────────────────────────────────────────────────────────
 
-        /// <summary>Generate PDF directly from RFQ data (priced, default).</summary>
+
         public void GenerateDirectRFQPDF(string outputPdfPath, RFQ rfq, List<RFQItem> items, Company company, Client client)
         {
             GenerateDirectRFQPDF(outputPdfPath, rfq, items, company, client, isPriced: true);
         }
 
-        /// <summary>
-        /// Generate PDF directly from RFQ data.
-        /// Mirrors all ExcelGenerationService logic:
-        ///   • COMMERCIAL / TECHNICAL vs PRICED / UNPRICED terminology detection
-        ///   • header_delivery_time computed from item delivery weeks
-        ///   • payment_term included in header
-        ///   • currency substitution (replaces "RM" with rfq.Currency everywhere)
-        ///   • unpriced version zeroes discount and shows "Quoted"/"Unquoted" per item
-        ///   • multi-line item descriptions (split on newlines)
-        ///   • delivery time inline in description column when no dedicated delivery column
-        /// </summary>
+
         public void GenerateDirectRFQPDF(string outputPdfPath, RFQ rfq, List<RFQItem> items, Company company, Client client, bool isPriced)
         {
-            // ── 1. Terminology (mirrors DetectTemplateTerminology / ConvertToUnpricedVersion) ──
-            // For direct PDF there is no template to scan, so we default to PRICED/UNPRICED.
-            // If you ever embed a terminology hint in rfq or company, swap it here.
+
             string pricedTerm = "PRICED";
             string unpricedTerm = "UNPRICED";
             string versionLabel = isPriced ? pricedTerm : unpricedTerm;
 
-            // ── 2. Currency (mirrors ReplaceCurrencyInWorksheet) ──
+
             string currency = string.IsNullOrWhiteSpace(rfq.Currency) ? "RM" : rfq.Currency;
 
-            // ── 3. Header delivery time (mirrors FillHeaderFields / header_delivery_time) ──
+
             var deliveryWeeks = items
                 .Select(i => i.DeliveryTime)
                 .Distinct()
@@ -173,15 +144,11 @@ namespace RFQ_Generator_System.Services
                 headerDeliveryTimeText = string.Join(", ", deliveryWeeks) + " " + wLabel;
             }
 
-            // ── 4. Discount (mirrors FillSummary — zero when unpriced) ──
             decimal effectiveDiscount = isPriced ? rfq.Discount : 0m;
             decimal subtotal = items.Sum(i => i.UnitPrice * i.Quantity);
             decimal discountAmount = subtotal * effectiveDiscount / 100m;
             decimal grandTotal = subtotal - discountAmount;
 
-            // ─────────────────────────────────────────────────────────
-            // Build the PDF document
-            // ─────────────────────────────────────────────────────────
             Document document = new Document(PageSize.A4, 40, 40, 40, 40);
 
             using (FileStream fs = new FileStream(outputPdfPath, FileMode.Create))
@@ -197,8 +164,6 @@ namespace RFQ_Generator_System.Services
                 Font tableCellFont = FontFactory.GetFont(FontFactory.HELVETICA, 9);
                 Font italicFont = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 9);
 
-                // ── Title ──
-                // Mirrors ConvertToUnpricedVersion: replace pricedTerm with unpricedTerm in label
                 string titleText = $"REQUEST FOR QUOTATION ({versionLabel})";
                 Paragraph title = new Paragraph(titleText, titleFont)
                 {
@@ -207,9 +172,7 @@ namespace RFQ_Generator_System.Services
                 };
                 document.Add(title);
 
-                // ── Header table ──
-                // Mirrors FillHeaderFields: client_name, rfq_code, _date, quote_code,
-                // delivery_term, delivery_point, _validity, payment_term, header_delivery_time
+
                 PdfPTable headerTable = new PdfPTable(2)
                 {
                     WidthPercentage = 100,
@@ -224,11 +187,11 @@ namespace RFQ_Generator_System.Services
                 AddHeaderCell(headerTable, "Validity:", rfq.Validity ?? "", labelFont, normalFont);
                 AddHeaderCell(headerTable, "Delivery Point:", rfq.DeliveryPoint ?? "", labelFont, normalFont);
                 AddHeaderCell(headerTable, "Delivery Terms:", rfq.DeliveryTerm ?? "", labelFont, normalFont);
-                AddHeaderCell(headerTable, "Delivery Time:", headerDeliveryTimeText, labelFont, normalFont);  // header_delivery_time placeholder
+                AddHeaderCell(headerTable, "Delivery Time:", headerDeliveryTimeText, labelFont, normalFont);  
 
                 document.Add(headerTable);
 
-                // ── Items section ──
+              
                 Paragraph itemsTitle = new Paragraph("Items:", headerFont)
                 {
                     SpacingBefore = 10,
@@ -236,8 +199,7 @@ namespace RFQ_Generator_System.Services
                 };
                 document.Add(itemsTitle);
 
-                // 6 columns: No | Description | Delivery | Qty | Unit Price | Total
-                // Mirrors FillItems column layout including the delivery column
+                
                 PdfPTable itemsTable = new PdfPTable(6)
                 {
                     WidthPercentage = 100
@@ -248,12 +210,12 @@ namespace RFQ_Generator_System.Services
                 AddTableHeaderCell(itemsTable, "Description", tableHeaderFont);
                 AddTableHeaderCell(itemsTable, "Delivery", tableHeaderFont);
                 AddTableHeaderCell(itemsTable, "Qty", tableHeaderFont);
-                AddTableHeaderCell(itemsTable, $"Unit Price ({currency})", tableHeaderFont);  // currency substitution
-                AddTableHeaderCell(itemsTable, $"Total ({currency})", tableHeaderFont);  // currency substitution
+                AddTableHeaderCell(itemsTable, $"Unit Price ({currency})", tableHeaderFont);  
+                AddTableHeaderCell(itemsTable, $"Total ({currency})", tableHeaderFont);  
 
                 foreach (var item in items)
                 {
-                    // ── Multi-line description (mirrors FillItems newline split) ──
+                    
                     string[] descLines = (item.ItemDesc ?? "").Split(
                         new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
@@ -261,10 +223,8 @@ namespace RFQ_Generator_System.Services
                     string weekText = weeks < 2 ? "WEEK" : "WEEKS";
                     string deliveryStr = $"{weeks} {weekText}";
 
-                    // Build description cell with all lines joined by newline
                     string fullDesc = string.Join("\n", descLines);
 
-                    // Item No
                     PdfPCell noCell = new PdfPCell(new Phrase(item.ItemNo.ToString(), tableCellFont))
                     {
                         Padding = 6,
@@ -272,7 +232,6 @@ namespace RFQ_Generator_System.Services
                     };
                     itemsTable.AddCell(noCell);
 
-                    // Description (multi-line)
                     PdfPCell descCell = new PdfPCell(new Phrase(fullDesc, tableCellFont))
                     {
                         Padding = 6,
@@ -280,13 +239,10 @@ namespace RFQ_Generator_System.Services
                     };
                     itemsTable.AddCell(descCell);
 
-                    // Delivery time
                     AddTableCell(itemsTable, deliveryStr, tableCellFont);
 
-                    // Qty + unit
                     AddTableCell(itemsTable, $"{item.Quantity} {item.UnitName}", tableCellFont);
 
-                    // Unit price / Total — mirrors FillItems isPriced logic + Quoted/Unquoted
                     if (isPriced)
                     {
                         AddTableCell(itemsTable, item.UnitPrice.ToString("N2"), tableCellFont);
@@ -294,8 +250,7 @@ namespace RFQ_Generator_System.Services
                     }
                     else
                     {
-                        // Mirrors: UnitPrice > 0 → "Quoted", else "Unquoted"
-                        string tag = item.UnitPrice > 0 ? "Quoted" : "Unquoted";
+                        string tag = item.UnitPrice > 0 ? "QUOTED" : "UNQUOTED";
                         AddTableCell(itemsTable, tag, tableCellFont);
                         AddTableCell(itemsTable, tag, tableCellFont);
                     }
@@ -303,7 +258,6 @@ namespace RFQ_Generator_System.Services
 
                 document.Add(itemsTable);
 
-                // ── Totals table (mirrors FillSummary) ──
                 PdfPTable totalsTable = new PdfPTable(2)
                 {
                     WidthPercentage = 45,
@@ -313,22 +267,19 @@ namespace RFQ_Generator_System.Services
 
                 if (isPriced)
                 {
-                    // Mirrors: sub_total, _discount (as percentage), summary_total_price
                     AddTotalRow(totalsTable, "Subtotal:", subtotal.ToString("N2"), labelFont, normalFont);
                     AddTotalRow(totalsTable, $"Discount ({effectiveDiscount:0.##}%):", discountAmount.ToString("N2"), labelFont, normalFont);
                     AddTotalRow(totalsTable, $"Grand Total ({currency}):", grandTotal.ToString("N2"), labelFont, normalFont);
                 }
                 else
                 {
-                    // Mirrors unpriced FillSummary: discount = 0 %, totals shown as "Quoted"
-                    AddTotalRow(totalsTable, "Subtotal:", "Quoted", labelFont, normalFont);
+                    AddTotalRow(totalsTable, "Subtotal:", "QUOTED", labelFont, normalFont);
                     AddTotalRow(totalsTable, "Discount (0%):", "0.00", labelFont, normalFont);
-                    AddTotalRow(totalsTable, $"Grand Total ({currency}):", "Quoted", labelFont, normalFont);
+                    AddTotalRow(totalsTable, $"Grand Total ({currency}):", "QUOTED", labelFont, normalFont);
                 }
 
                 document.Add(totalsTable);
 
-                // ── Footer ──
                 Paragraph footer = new Paragraph(
                     $"\nGenerated on {DateTime.Now:dd/MM/yyyy HH:mm:ss}",
                     FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 8))
@@ -342,113 +293,6 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        // ─────────────────────────────────────────────────────────────
-        // Excel → PDF helpers (unchanged from original)
-        // ─────────────────────────────────────────────────────────────
-
-        private void ApplyPageBreakBordersToExcel(string excelPath, string templatePath)
-        {
-            try
-            {
-                string templateFileName = Path.GetFileName(templatePath);
-
-                var templateConfig = new Dictionary<string, (int firstRow, int increment, string startCol, string endCol)>(StringComparer.OrdinalIgnoreCase)
-                {
-                    { "CG TEMPLATE.xlsx", (68, 43, "A", "H") },
-                    { "DE TEMPLATE.xlsx", (61, 43, "A", "T") },
-                    { "GA TEMPLATE.xlsx", (65, 41, "A", "H") },
-                    { "OP TEMPLATE.xlsx", (70, 46, "A", "H") },
-                    { "PO TEMPLATE.xlsx", (70, 66, "A", "J") },
-                    { "SC TEMPLATE.xlsx", (66, 50, "A", "F") },
-                };
-
-                if (!templateConfig.ContainsKey(templateFileName)) return;
-
-                var (firstPageBreakRow, rowIncrement, startColumn, endColumn) = templateConfig[templateFileName];
-
-                if (!HasMultiplePages(excelPath)) return;
-
-                using (var workbook = new XLWorkbook(excelPath))
-                {
-                    var worksheet = workbook.Worksheet(1);
-                    var usedRange = worksheet.RangeUsed();
-                    if (usedRange == null) return;
-
-                    int lastRow = usedRange.LastRow().RowNumber();
-                    int lastItemDescRow = FindLastItemDescriptionRow(worksheet);
-                    int pageBreakRow = firstPageBreakRow;
-
-                    while (pageBreakRow <= lastRow)
-                    {
-                        // Only apply a border when the page break falls strictly
-                        // inside the items table — never after the last item row.
-                        if (lastItemDescRow > 0
-                            && pageBreakRow <= lastItemDescRow
-                            && IsRowInsideItemsTable(worksheet, pageBreakRow, startColumn))
-                        {
-                            ApplyBorderToExcelRange(worksheet, pageBreakRow, startColumn, endColumn);
-                            System.Diagnostics.Debug.WriteLine($"Applied border to row {pageBreakRow} ({templateFileName})");
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Skipped border at row {pageBreakRow} — outside items table ({templateFileName})");
-                        }
-
-                        pageBreakRow += rowIncrement;
-                    }
-
-                    workbook.SaveAs(excelPath);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error applying page break borders: {ex.Message}");
-            }
-        }
-
-        private void ApplyBorderToExcelRange(IXLWorksheet worksheet, int rowNumber, string startColumn, string endColumn)
-        {
-            try
-            {
-                var range = worksheet.Range($"{startColumn}{rowNumber}:{endColumn}{rowNumber}");
-                foreach (var cell in range.Cells())
-                {
-                    cell.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
-                    cell.Style.Border.BottomBorderColor = XLColor.Black;
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error applying border: {ex.Message}");
-            }
-        }
-
-        private bool HasMultiplePages(string excelPath)
-        {
-            try
-            {
-                using (var workbook = new XLWorkbook(excelPath))
-                {
-                    var worksheet = workbook.Worksheet(1);
-                    var usedRange = worksheet.RangeUsed();
-                    if (usedRange == null) return false;
-
-                    int lastRow = usedRange.LastRow().RowNumber();
-                    var pageSetup = worksheet.PageSetup;
-                    double available = 842 - pageSetup.Margins.Top - pageSetup.Margins.Bottom;
-                    double total = 0;
-
-                    for (int row = 1; row <= lastRow; row++)
-                    {
-                        double h = worksheet.Row(row).Height;
-                        total += (h > 0) ? h : 15;
-                    }
-
-                    return total > available;
-                }
-            }
-            catch { return false; }
-        }
 
         private bool ConvertExcelToPDFUsingInterop(string excelPath, string pdfPath)
         {
@@ -646,9 +490,6 @@ namespace RFQ_Generator_System.Services
             }
         }
 
-        // ─────────────────────────────────────────────────────────────
-        // PDF cell helpers (unchanged from original)
-        // ─────────────────────────────────────────────────────────────
 
         private void AddHeaderCell(PdfPTable table, string label, string value, Font labelFont, Font valueFont)
         {
@@ -710,79 +551,5 @@ namespace RFQ_Generator_System.Services
             };
             table.AddCell(valueCell);
         }
-        private int FindLastItemDescriptionRow(IXLWorksheet worksheet)
-        {
-            int lastItemNum = -1;
-            int lastItemStartRow = -1;
-
-            for (int row = 1; row <= 300; row++)
-            {
-                string cellAValue = worksheet.Cell(row, 1).GetString();
-                if (!string.IsNullOrEmpty(cellAValue) && int.TryParse(cellAValue.Trim(), out int itemNum))
-                {
-                    lastItemNum = itemNum;
-                    lastItemStartRow = row;
-                }
-            }
-
-            if (lastItemNum < 0) return -1;
-
-            int lastDescRow = lastItemStartRow;
-            for (int row = lastItemStartRow + 1; row <= 300; row++)
-            {
-                string cellAValue = worksheet.Cell(row, 1).GetString();
-                string cellBValue = worksheet.Cell(row, 2).GetString();
-                string cellCValue = worksheet.Cell(row, 3).GetString();
-
-                if (!string.IsNullOrEmpty(cellAValue) && int.TryParse(cellAValue.Trim(), out int nextItem) && nextItem > lastItemNum)
-                    break;
-
-                if (worksheet.Cell(row, 2).Style.Border.BottomBorder != XLBorderStyleValues.None)
-                    break;
-
-                if (!string.IsNullOrEmpty(cellBValue))
-                {
-                    lastDescRow = row;
-                }
-                else if (!string.IsNullOrEmpty(cellCValue)
-                    && !cellCValue.ToUpper().Contains("PC")
-                    && !cellCValue.ToUpper().Contains("UNIT"))
-                {
-                    lastDescRow = row;
-                }
-                else
-                {
-                    if (row > lastItemStartRow + 1 && string.IsNullOrEmpty(cellBValue) && string.IsNullOrEmpty(cellCValue))
-                    {
-                        bool foundMore = false;
-                        for (int check = row + 1; check <= row + 5 && check <= 300; check++)
-                        {
-                            if (!string.IsNullOrEmpty(worksheet.Cell(check, 2).GetString()))
-                            {
-                                foundMore = true;
-                                row = check - 1;
-                                break;
-                            }
-                        }
-                        if (!foundMore) break;
-                    }
-                }
-            }
-
-            return lastDescRow;
-        }
-
-        private bool IsRowInsideItemsTable(IXLWorksheet worksheet, int rowNumber, string startColumn)
-        {
-            try
-            {
-                var border = worksheet.Cell($"{startColumn}{rowNumber}").Style.Border;
-                return border.LeftBorder != XLBorderStyleValues.None
-                    || border.TopBorder != XLBorderStyleValues.None
-                    || border.RightBorder != XLBorderStyleValues.None;
-            }
-            catch { return false; }
-        }
-
     }
 }
