@@ -15,7 +15,6 @@ namespace RFQ_Generator_System.Services
         private readonly ClientRepo clientRepo;
         private readonly QuoteCodeSequenceRepo quoteCodeSequenceRepo;
 
-        // Cache the current quote code to avoid multiple increments
         private string cachedQuoteCode = null;
         private string cachedCompanyCode = null;
         private string cachedClientCode = null;
@@ -31,9 +30,6 @@ namespace RFQ_Generator_System.Services
             quoteCodeSequenceRepo = new QuoteCodeSequenceRepo();
         }
 
-        // -----------------------------
-        // Quote code generation
-        // -----------------------------
 
         /// <summary>
         /// Preview the next quote code WITHOUT incrementing
@@ -64,12 +60,11 @@ namespace RFQ_Generator_System.Services
             if (string.IsNullOrWhiteSpace(companyCode))
                 return string.Empty;
 
-            // Check if we already generated a code for this company/client combination
             if (cachedQuoteCode != null &&
                 cachedCompanyCode == companyCode &&
                 cachedClientCode == clientCode)
             {
-                return cachedQuoteCode; // Return cached code, don't increment again
+                return cachedQuoteCode; 
             }
 
             var company = companyRepo
@@ -79,11 +74,9 @@ namespace RFQ_Generator_System.Services
             if (company == null)
                 return string.Empty;
 
-            // Only increment sequence if this is a new company/client combination
             int sequence = quoteCodeSequenceRepo.GetNextSequence(company.Id);
             string quoteCode = FormatQuoteCode(companyCode, clientCode, sequence);
 
-            // Cache the generated code
             cachedQuoteCode = quoteCode;
             cachedCompanyCode = companyCode;
             cachedClientCode = clientCode;
@@ -117,13 +110,9 @@ namespace RFQ_Generator_System.Services
         {
             quoteCodeSequenceRepo.UpdateSequenceFromQuoteCode(companyId, quoteCode);
 
-            // Clear cache since user manually edited the code
             ClearQuoteCodeCache();
         }
 
-        // -----------------------------
-        // RFQ save and retrieval
-        // -----------------------------
 
         /// <summary>
         /// Save or update RFQ header and items.
@@ -136,11 +125,9 @@ namespace RFQ_Generator_System.Services
 
             if (existingId > 0)
             {
-                // ✅ UPDATE existing RFQ — preserve the same quote code, don't increment
                 rfq.Id = existingId;
                 rfqRepo.UpdateRFQ(rfq);
 
-                // ✅ Replace items: delete old ones and re-insert updated list
                 rfqItemRepo.DeleteRFQItemsByRFQId(existingId);
                 rfqItemRepo.SaveRFQItems(existingId, items);
 
@@ -148,11 +135,9 @@ namespace RFQ_Generator_System.Services
             }
             else
             {
-                // ✅ INSERT new RFQ
                 rfqId = rfqRepo.SaveRFQ(rfq, items);
             }
 
-            // Clear cache after saving
             ClearQuoteCodeCache();
 
             return rfqId;
@@ -170,9 +155,7 @@ namespace RFQ_Generator_System.Services
             return rfqRepo.GetAllRFQs();
         }
 
-        // -----------------------------
-        // Supporting data
-        // -----------------------------
+
 
         public Template GetTemplateByCompanyId(int companyId)
         {
@@ -194,9 +177,6 @@ namespace RFQ_Generator_System.Services
             return clientRepo.GetAllClients();
         }
 
-        // -----------------------------
-        // Sequence management
-        // -----------------------------
 
         public void ResetAllQuoteCodeSequences()
         {
@@ -210,9 +190,6 @@ namespace RFQ_Generator_System.Services
             ClearQuoteCodeCache();
         }
 
-        // -----------------------------
-        // Private helpers
-        // -----------------------------
 
         private string FormatQuoteCode(string companyCode, string clientCode, int sequence)
         {

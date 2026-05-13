@@ -75,32 +75,10 @@ namespace RFQ_Generator_System.Services
                 var (subtotalRow, summaryTotalRow) = FillSummary(worksheet, items, effectiveDiscount, isPriced);
                 var (insertedFrom, insertedTo) = EnsureTAndCFitsOnPage(worksheet, fullTemplatePath, subtotalRow, summaryTotalRow);
                 ReplaceCurrencyInWorksheet(worksheet, effectiveCurrency);
-                ApplyBottomBordersAtPageBreaks(worksheet, fullTemplatePath, insertedFrom, insertedTo);
+                ApplyBottomBordersAtPageBreaks(worksheet, fullTemplatePath, insertedFrom, insertedTo, subtotalRow);
                 workbook.SaveAs(outputPath);
                 return versionSuffix;
             }
-        }
-        public (string pricedPath, string unpricedPath, string pricedSuffix, string unpricedSuffix) GenerateBothVersionsExcel(
-            string templatePath,
-            string baseOutputPath,
-            RFQ rfq,
-            List<RFQItem> items,
-            int templateId)
-        {
-            string directory = Path.GetDirectoryName(baseOutputPath);
-            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(baseOutputPath);
-            string extension = Path.GetExtension(baseOutputPath);
-            string tempPricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_TEMP_PRICED{extension}");
-            string tempUnpricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_TEMP_UNPRICED{extension}");
-            string pricedSuffix = GenerateRFQExcel(templatePath, tempPricedPath, rfq, items, templateId, isPriced: true);
-            string unpricedSuffix = GenerateRFQExcel(templatePath, tempUnpricedPath, rfq, items, templateId, isPriced: false);
-            string pricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_{pricedSuffix}{extension}");
-            string unpricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_{unpricedSuffix}{extension}");
-            if (File.Exists(pricedPath)) File.Delete(pricedPath);
-            if (File.Exists(unpricedPath)) File.Delete(unpricedPath);
-            File.Move(tempPricedPath, pricedPath);
-            File.Move(tempUnpricedPath, unpricedPath);
-            return (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix);
         }
         private bool ShouldSuppressDeliveryColumn(string templateFileName, List<RFQItem> items)
         {
@@ -196,12 +174,12 @@ namespace RFQ_Generator_System.Services
             bool templateHasDeliveryTerm = HasPlaceholder(worksheet, Placeholders.DeliveryTerm);
             string effectiveDeliveryTerm = rfq.DeliveryTerm ?? "";
             if (!templateHasDeliveryPoint && !string.IsNullOrWhiteSpace(rfq.DeliveryPoint))
-                effectiveDeliveryTerm = $"{effectiveDeliveryTerm}, {rfq.DeliveryPoint}".Trim().TrimStart(',').Trim();
+                effectiveDeliveryTerm = $"{effectiveDeliveryTerm} {rfq.DeliveryPoint}".Trim();
             string effectiveDeliveryPoint = rfq.DeliveryPoint ?? "";
             if (!templateHasDeliveryTerm && !string.IsNullOrWhiteSpace(rfq.DeliveryTerm))
                 effectiveDeliveryPoint = string.IsNullOrWhiteSpace(effectiveDeliveryPoint)
                     ? rfq.DeliveryTerm
-                    : $"{rfq.DeliveryTerm}, {effectiveDeliveryPoint}";
+                    : $"{rfq.DeliveryTerm} {effectiveDeliveryPoint}";
             foreach (var cell in worksheet.CellsUsed())
             {
                 if (cell.IsEmpty()) continue;
@@ -414,17 +392,17 @@ namespace RFQ_Generator_System.Services
                 {
                     { "CG TEMPLATE.xlsx",   19 },
                     { "DE TEMPLATE.xlsx",   24 },
-                    { "GA TEMPLATE.xlsx",   26 },
+                    { "GA TEMPLATE.xlsx",   23 },
                     { "MA TEMPLATE.xlsx",   26 },
                     { "OGIT TEMPLATE.xlsx", 29 },
                     { "OP TEMPLATE.xlsx",   33 },
                     { "PO TEMPLATE.xlsx",   25 },
-                    { "SC TEMPLATE.xlsx",   25 },
+                    { "SC TEMPLATE.xlsx",   24 },
                 };
                 var templateConfig = new Dictionary<string, (int firstRow, int increment)>(StringComparer.OrdinalIgnoreCase)
                 {
                     { "CG TEMPLATE.xlsx",   (68, 43) },
-                    { "DE TEMPLATE.xlsx",   (63, 43) },
+                    { "DE TEMPLATE.xlsx",   (60, 43) },
                     { "GA TEMPLATE.xlsx",   (65, 42) },
                     { "MA TEMPLATE.xlsx",   (61, 44) },
                     { "OGIT TEMPLATE.xlsx", (67, 46) },
@@ -500,15 +478,15 @@ namespace RFQ_Generator_System.Services
                     cell.Style.NumberFormat.Format = numberFormat.Replace("RM", currency);
             }
         }
-        private void ApplyBottomBordersAtPageBreaks(IXLWorksheet worksheet, string templatePath, int insertedFrom, int insertedTo)
+        private void ApplyBottomBordersAtPageBreaks(IXLWorksheet worksheet, string templatePath, int insertedFrom, int insertedTo, int subtotalRow)
         {
             try
             {
                 string templateFileName = Path.GetFileName(templatePath);
                 var templateConfig = new Dictionary<string, (int firstRow, int increment, string startCol, string endCol)>(StringComparer.OrdinalIgnoreCase)
                 {
-                    { "CG TEMPLATE.xlsx",   (68, 43, "A", "H") },
-                    { "DE TEMPLATE.xlsx",   (61, 43, "A", "T") },
+                    { "CG TEMPLATE.xlsx",   (68, 43, "A", "J") },
+                    { "DE TEMPLATE.xlsx",   (60, 43, "A", "T") },
                     { "GA TEMPLATE.xlsx",   (65, 42, "A", "H") },
                     { "MA TEMPLATE.xlsx",   (61, 44, "A", "H") },
                     { "OGIT TEMPLATE.xlsx", (67, 46, "A", "H") },
@@ -527,10 +505,10 @@ namespace RFQ_Generator_System.Services
                 var usedRange = worksheet.RangeUsed();
                 if (usedRange == null) return;
                 int lastRow = usedRange.LastRow().RowNumber();
-                int lastItemDescRow = FindLastItemDescriptionRow(worksheet);
-                System.Diagnostics.Debug.WriteLine($"[ApplyBorders] Last item description row: {lastItemDescRow}");
                 int firstSummaryRow = FindFirstSummaryRow(worksheet);
                 System.Diagnostics.Debug.WriteLine($"[ApplyBorders] First summary row: {firstSummaryRow}");
+                int itemsTableEndRow = subtotalRow > 0 ? subtotalRow - 1 : (firstSummaryRow > 0 ? firstSummaryRow - 1 : -1);
+                System.Diagnostics.Debug.WriteLine($"[ApplyBorders] Items table end row: {itemsTableEndRow}");
                 EnsureSubtotalTopBorder(worksheet, firstSummaryRow, startColumn, endColumn);
                 var pageBreakRows = new HashSet<int>();
                 int pb = firstPageBreakRow;
@@ -552,9 +530,9 @@ namespace RFQ_Generator_System.Services
                         System.Diagnostics.Debug.WriteLine($"[ApplyBorders] Row {pageBreakRow}: Skipped (inside inserted blank rows)");
                         continue;
                     }
-                    if (lastItemDescRow <= 0 || pageBreakRow > lastItemDescRow)
+                    if (itemsTableEndRow > 0 && pageBreakRow > itemsTableEndRow)
                     {
-                        System.Diagnostics.Debug.WriteLine($"[ApplyBorders] Row {pageBreakRow}: Skipped (at or after last item row {lastItemDescRow})");
+                        System.Diagnostics.Debug.WriteLine($"[ApplyBorders] Row {pageBreakRow}: Skipped (past items table end row {itemsTableEndRow})");
                         continue;
                     }
                     if (!IsRowInsideItemsTable(worksheet, pageBreakRow, startColumn))
@@ -589,64 +567,6 @@ namespace RFQ_Generator_System.Services
                 }
             }
             return -1;
-        }
-        private int FindLastItemDescriptionRow(IXLWorksheet worksheet)
-        {
-            int lastItemNum = -1;
-            int lastItemStartRow = -1;
-            for (int row = 1; row <= 300; row++)
-            {
-                var cellA = worksheet.Cell(row, 1);
-                string cellAValue = cellA.GetString();
-                if (!string.IsNullOrEmpty(cellAValue) && int.TryParse(cellAValue.Trim(), out int itemNum))
-                {
-                    lastItemNum = itemNum;
-                    lastItemStartRow = row;
-                }
-            }
-            if (lastItemNum < 0) return -1;
-            int lastDescRow = lastItemStartRow;
-            for (int row = lastItemStartRow + 1; row <= 300; row++)
-            {
-                var cellA = worksheet.Cell(row, 1);
-                var cellB = worksheet.Cell(row, 2);
-                var cellC = worksheet.Cell(row, 3);
-                string cellAValue = cellA.GetString();
-                string cellBValue = cellB.GetString();
-                string cellCValue = cellC.GetString();
-                if (!string.IsNullOrEmpty(cellAValue) && int.TryParse(cellAValue.Trim(), out int nextItemNum) && nextItemNum > lastItemNum)
-                    break;
-                if (worksheet.Cell(row, 2).Style.Border.BottomBorder != XLBorderStyleValues.None)
-                    break;
-                if (!string.IsNullOrEmpty(cellBValue))
-                {
-                    lastDescRow = row;
-                }
-                else if (!string.IsNullOrEmpty(cellCValue) && !cellCValue.ToUpper().Contains("PC") && !cellCValue.ToUpper().Contains("UNIT"))
-                {
-                    lastDescRow = row;
-                }
-                else
-                {
-                    if (row > lastItemStartRow + 1 && string.IsNullOrEmpty(cellBValue) && string.IsNullOrEmpty(cellCValue))
-                    {
-                        bool foundMoreDesc = false;
-                        for (int checkRow = row + 1; checkRow <= row + 5 && checkRow <= 300; checkRow++)
-                        {
-                            string checkBValue = worksheet.Cell(checkRow, 2).GetString();
-                            if (!string.IsNullOrEmpty(checkBValue))
-                            {
-                                foundMoreDesc = true;
-                                row = checkRow - 1;
-                                break;
-                            }
-                        }
-                        if (!foundMoreDesc)
-                            break;
-                    }
-                }
-            }
-            return lastDescRow;
         }
         private bool IsRowInsideItemsTable(IXLWorksheet worksheet, int rowNumber, string startColumn)
         {

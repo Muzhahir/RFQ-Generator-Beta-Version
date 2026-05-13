@@ -47,7 +47,7 @@ namespace RFQ_Generator_System.Services
 
         public string GenerateRFQPDF(string templatePath, string outputPdfPath, RFQ rfq, List<RFQItem> items, int templateId, bool isPriced)
         {
-            string tempExcelPath = Path.Combine(Path.GetTempPath(), $"temp_rfq_{Guid.NewGuid()}.xlsx");
+            string tempExcelPath = Path.Combine(Path.GetTempPath(), $"temp-rfq-{Guid.NewGuid()}.xlsx");
 
             try
             {
@@ -93,14 +93,14 @@ namespace RFQ_Generator_System.Services
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(baseOutputPath);
             string extension = Path.GetExtension(baseOutputPath);
 
-            string tempPricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_TEMP_PRICED{extension}");
-            string tempUnpricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_TEMP_UNPRICED{extension}");
+            string tempPricedPath = Path.Combine(directory, $"{fileNameWithoutExt}-TEMP-PRICED{extension}");
+            string tempUnpricedPath = Path.Combine(directory, $"{fileNameWithoutExt}-TEMP-UNPRICED{extension}");
 
             string pricedSuffix = GenerateRFQPDF(templatePath, tempPricedPath, rfq, items, templateId, isPriced: true);
             string unpricedSuffix = GenerateRFQPDF(templatePath, tempUnpricedPath, rfq, items, templateId, isPriced: false);
 
-            string pricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_{pricedSuffix}{extension}");
-            string unpricedPath = Path.Combine(directory, $"{fileNameWithoutExt}_{unpricedSuffix}{extension}");
+            string pricedPath = Path.Combine(directory, $"{fileNameWithoutExt}-{pricedSuffix}{extension}");
+            string unpricedPath = Path.Combine(directory, $"{fileNameWithoutExt}-{unpricedSuffix}{extension}");
 
             if (File.Exists(pricedPath)) File.Delete(pricedPath);
             if (File.Exists(unpricedPath)) File.Delete(unpricedPath);

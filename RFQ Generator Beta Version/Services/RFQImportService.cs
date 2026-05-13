@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -11,10 +11,10 @@ namespace RFQ_Generator_System.Services
 {
     public class RFQImportService
     {
-       
+
         public class ImportedRFQData
         {
-            public string RFQCode { get; set; }        
+            public string RFQCode { get; set; }
             public string DeliveryPoint { get; set; }
             public string Validity { get; set; }
             public List<ImportedItem> Items { get; set; } = new List<ImportedItem>();
@@ -27,13 +27,13 @@ namespace RFQ_Generator_System.Services
             public string Unit { get; set; }
             public int Quantity { get; set; }
             public decimal UnitPrice { get; set; }
-            public int DeliveryTime { get; set; } 
+            public int DeliveryTime { get; set; }
         }
 
 
-        private const int COL_RFQ_CODE = 2;   
-        private const int HEADER_ROW = 9;   
-        private const int DATA_START_ROW = 10;  
+        private const int COL_RFQ_CODE = 2;
+        private const int HEADER_ROW = 9;
+        private const int DATA_START_ROW = 10;
 
         private class ColumnMap
         {
@@ -233,7 +233,7 @@ namespace RFQ_Generator_System.Services
             XmlNamespaceManager ns = new XmlNamespaceManager(doc.NameTable);
             ns.AddNamespace("x", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
 
-            ColumnMap cols = null;           
+            ColumnMap cols = null;
             bool deliveryPointRead = false;
             int itemNo = 1;
 
@@ -255,7 +255,7 @@ namespace RFQ_Generator_System.Services
                 }
 
                 if (rowNum < DATA_START_ROW) continue;
-                if (cols == null) continue;   
+                if (cols == null) continue;
 
                 Dictionary<int, string> cells = ReadRowCells(rowNode, ns, sharedStrings);
 
@@ -335,7 +335,7 @@ namespace RFQ_Generator_System.Services
 
 
 
- 
+
         private static string ExtractRFQCode(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
@@ -346,12 +346,81 @@ namespace RFQ_Generator_System.Services
         }
 
 
+        // Builds the item description from the full description field, falling back to
+        // the short name if the full description is empty.
+        //
+        // FIX: Some PETRONAS pricesheet cells contain the same spec block repeated
+        // multiple times. This can occur as either:
+        //   (a) blank-line-separated paragraphs  (\r\n\r\n / \n\n)
+        //   (b) single-newline-separated lines   (\r\n / \n)  ← root cause for Item 1 border bug
+        //
+        // Both cases are now deduplicated so that no item description is inflated
+        // beyond its true line count, which was causing a spurious page-break bottom
+        // border to appear mid-item in the generated quotation.
         private static string BuildDescription(string fullDesc, string shortName)
         {
             if (string.IsNullOrWhiteSpace(fullDesc))
                 return shortName.Trim();
 
-            return fullDesc.Trim();
+            string trimmed = fullDesc.Trim();
+
+            // ----------------------------------------------------------------
+            // Pass 1: try to deduplicate at the paragraph (blank-line) level.
+            // ----------------------------------------------------------------
+            string[] paragraphs = trimmed.Split(
+                new[] { "\r\n\r\n", "\n\n", "\r\r" },
+                StringSplitOptions.RemoveEmptyEntries);
+
+            if (paragraphs.Length > 1)
+            {
+                var seenParas = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var uniqueParas = new List<string>();
+                foreach (string para in paragraphs)
+                {
+                    string key = Regex.Replace(para.Trim(), @"\s+", " ");
+                    if (seenParas.Add(key))
+                        uniqueParas.Add(para.Trim());
+                }
+
+                // If deduplication removed anything, return the cleaned result.
+                if (uniqueParas.Count < paragraphs.Length)
+                    return uniqueParas.Count == 1
+                        ? uniqueParas[0]
+                        : string.Join("\r\n", uniqueParas);
+
+                // No duplicates at paragraph level — return as-is (joined with single newline).
+                return string.Join("\r\n", uniqueParas);
+            }
+
+            // ----------------------------------------------------------------
+            // Pass 2: no blank-line separators found.
+            // Try deduplication at the individual line level.
+            // This catches the case where the same spec lines are repeated
+            // with only \r\n between them (the root cause of the Item 1 bug).
+            // ----------------------------------------------------------------
+            string[] lines = trimmed.Split(
+                new[] { "\r\n", "\r", "\n" },
+                StringSplitOptions.RemoveEmptyEntries);
+
+            if (lines.Length > 1)
+            {
+                var seenLines = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var uniqueLines = new List<string>();
+                foreach (string line in lines)
+                {
+                    string key = Regex.Replace(line.Trim(), @"\s+", " ");
+                    if (seenLines.Add(key))
+                        uniqueLines.Add(line.Trim());
+                }
+
+                // Only use the deduplicated result if lines were actually removed.
+                // If every line was unique, preserve the original (no false positives).
+                if (uniqueLines.Count < lines.Length)
+                    return string.Join("\r\n", uniqueLines);
+            }
+
+            // Nothing to deduplicate — return the trimmed original.
+            return trimmed;
         }
 
 
@@ -364,7 +433,7 @@ namespace RFQ_Generator_System.Services
                 if (!char.IsLetter(ch)) break;
                 result = result * 26 + (char.ToUpper(ch) - 'A' + 1);
             }
-            return result - 1; 
+            return result - 1;
         }
 
         private static string GetCell(Dictionary<int, string> cells, int colIndex)

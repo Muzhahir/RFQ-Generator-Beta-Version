@@ -67,7 +67,6 @@ namespace RFQ_Generator_System
                 cmbClient.SelectedIndexChanged += HandleCompanyOrClientChange;
                 txtQuoteCode.TextChanged += txtQuoteCode_TextChanged;
 
-                // ✅ Enable drag and drop
                 this.AllowDrop = true;
                 this.DragEnter += Form1_DragEnter;
                 this.DragDrop += Form1_DragDrop;
@@ -151,8 +150,6 @@ namespace RFQ_Generator_System
                 rfqService.ClearQuoteCodeCache();
                 isQuoteCodeManuallyEdited = false;
                 isRFQSaved = false;
-
-                // ✅ Reset RFQ ID when company changes so a new record is created
                 currentRFQId = 0;
             }
 
@@ -161,11 +158,8 @@ namespace RFQ_Generator_System
                 rfqService.ClearQuoteCodeCache();
                 isQuoteCodeManuallyEdited = false;
                 isRFQSaved = false;
-
-                // ✅ Reset RFQ ID when client changes so a new record is created
                 currentRFQId = 0;
 
-                // ✅ Auto-set delivery term based on selected client
                 if (cmbClient.SelectedValue is int clientId && clientId > 0)
                 {
                     var selectedClient = allClients.FirstOrDefault(c => c.Id == clientId);
@@ -180,9 +174,22 @@ namespace RFQ_Generator_System
                             default: rbtnDAP.Checked = true; break;
                         }
                     }
+
+                    if (selectedClient != null)
+                    {
+                        string code = selectedClient.ClientCode?.Trim().ToUpper() ?? "";
+                        if (code == "PFLNG1")
+                        {
+                            int usdIndex = cmbCurrency.Items.IndexOf("USD");
+                            if (usdIndex >= 0) cmbCurrency.SelectedIndex = usdIndex;
+                        }
+                        else
+                        {
+                            cmbCurrency.SelectedIndex = 0;
+                        }
+                    }
                 }
             }
-
             if (!txtQuoteCode.Focused)
                 GenerateAndDisplayQuoteCodePreview();
         }
@@ -467,6 +474,13 @@ namespace RFQ_Generator_System
                 txtQuoteCode.Focus();
                 return false;
             }
+            if (string.IsNullOrWhiteSpace(txtValidity.Text))
+            {
+                MessageBox.Show("Please enter the validity period before continuing.",
+                    "Validity Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtValidity.Focus();
+                return false;
+            }
             return true;
         }
 
@@ -539,12 +553,6 @@ namespace RFQ_Generator_System
         #endregion
 
         #region Helper - Get Output Folder
-
-        /// <summary>
-        /// Returns the folder to use as the default save location.
-        /// If the user imported a pricesheet, that file's folder is returned first.
-        /// Otherwise falls back to the network RFQ folder.
-        /// </summary>
         private string GetOutputFolder()
         {
             if (!string.IsNullOrEmpty(importedFileFolder) && Directory.Exists(importedFileFolder))
@@ -572,7 +580,6 @@ namespace RFQ_Generator_System
                 return fallback;
             }
         }
-
 
         private string ShowModernFolderDialog(string description, string initialPath)
         {
@@ -686,22 +693,8 @@ namespace RFQ_Generator_System
         #endregion
         #endregion
 
-        #region Generate Excel (PRICED)
-        private void btnGenerateExcelPriced_Click(object sender, EventArgs e)
-        {
-            GenerateExcel(isPriced: true);
-        }
-        #endregion
-
-        #region Generate Excel (UNPRICED)
-        private void btnGenerateExcelUnpriced_Click(object sender, EventArgs e)
-        {
-            GenerateExcel(isPriced: false);
-        }
-        #endregion
-
-        #region Generate Excel (Common Method)
-        private void GenerateExcel(bool isPriced)
+        #region Generate Excel (PRICED only)
+        private void btnGenerateBothExcel_Click(object sender, EventArgs e)
         {
             try
             {
@@ -723,17 +716,23 @@ namespace RFQ_Generator_System
 
                 string versionSuffix = excelService.GenerateRFQExcel(
                     currentTemplate.TemplatePath,
-                    Path.Combine(Path.GetTempPath(), $"temp_{Guid.NewGuid()}.xlsx"),
-                    rfq, items, currentTemplate.Id, isPriced);
+                    Path.Combine(Path.GetTempPath(), $"temp-{Guid.NewGuid()}.xlsx"),
+                    rfq, items, currentTemplate.Id, isPriced: true);
 
                 string outputFolder = GetOutputFolder();
-                string defaultFileName = $"{rfq.QuoteCode}-{versionSuffix}.xlsx";
-
+                var fileCompany = allCompanies.FirstOrDefault(c => c.Id == rfq.CompanyId);
+                var fileClient = allClients.FirstOrDefault(c => c.Id == rfq.ClientId);
+                string companyCode = fileCompany?.CompanyCode ?? rfq.QuoteCode;
+                string clientCode = fileClient?.ClientCode ?? "";
+                string fileBaseName = string.IsNullOrEmpty(clientCode)
+                    ? companyCode
+                    : $"{companyCode}-{clientCode}";
+                string defaultFileName = $"{fileBaseName}.xlsx";
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
                     sfd.Filter = "Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*";
                     sfd.FileName = defaultFileName;
-                    sfd.Title = $"Save {versionSuffix} RFQ Excel File";
+                    sfd.Title = "Save PRICED RFQ Excel File";
                     sfd.InitialDirectory = outputFolder;
 
                     if (sfd.ShowDialog() == DialogResult.OK)
@@ -741,7 +740,7 @@ namespace RFQ_Generator_System
                         excelService.GenerateRFQExcel(
                             currentTemplate.TemplatePath,
                             sfd.FileName,
-                            rfq, items, currentTemplate.Id, isPriced);
+                            rfq, items, currentTemplate.Id, isPriced: true);
 
                         MessageBox.Show(
                             $"Excel file saved successfully!\n\nQuote Code: {rfq.QuoteCode}\nSaved to: {sfd.FileName}",
@@ -752,53 +751,6 @@ namespace RFQ_Generator_System
             catch (Exception ex)
             {
                 MessageBox.Show("Could not generate the Excel file. Please make sure the previous generated file with the same quote code is closed before generating and try again.",
-                    "Excel Generation Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        #endregion
-
-        #region Generate BOTH Excel Versions
-        private void btnGenerateBothExcel_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!ValidateRFQHeader() || !ValidateRFQItems()) return;
-                if (currentTemplate == null)
-                {
-                    MessageBox.Show("No template found for this company. Please select a valid company.",
-                        "Template Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                if (!SaveRFQ()) return;
-
-                var (rfq, items) = rfqService.GetRFQWithItems(currentRFQId);
-
-                string selectedCurrency = cmbCurrency.SelectedItem?.ToString() ?? "RM";
-                if (string.IsNullOrEmpty(rfq.Currency) || rfq.Currency != selectedCurrency)
-                    rfq.Currency = selectedCurrency;
-
-                string selectedFolder = ShowModernFolderDialog(
-                    "Select folder to save both Excel files",
-                    GetOutputFolder());
-
-                if (selectedFolder != null)
-                {
-                    string baseOutputPath = Path.Combine(selectedFolder, $"{rfq.QuoteCode}.xlsx");
-
-                    var (pricedPath, unpricedPath, pricedSuffix, unpricedSuffix) =
-                        excelService.GenerateBothVersionsExcel(
-                            currentTemplate.TemplatePath,
-                            baseOutputPath, rfq, items, currentTemplate.Id);
-
-                    MessageBox.Show(
-                        $"Both Excel files saved successfully!\n\nQuote Code: {rfq.QuoteCode}\n\n{pricedSuffix}: {pricedPath}\n{unpricedSuffix}: {unpricedPath}",
-                        "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Could not generate the Excel files. Please make sure the template file is closed before generating and try again.",
                     "Excel Generation Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
