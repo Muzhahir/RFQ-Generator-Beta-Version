@@ -25,7 +25,7 @@ namespace RFQ_Generator_Beta_Version
                     MessageBox.Show(args.Error.Message, "Update Error");
                 }
             };
-            AutoUpdater.Start("https://drive.google.com/uc?export=download&id=11cmu1EMPreEyTEzfQYhDb_uZG7hclqwj");
+            AutoUpdater.Start("https://raw.githubusercontent.com/Muzhahir/RFQ-Generator-Beta-Version/main/RFQ%20Generator%20Beta%20Version/Updates/update.xml");
 
             Application.Run(new Form1()); 
         }
