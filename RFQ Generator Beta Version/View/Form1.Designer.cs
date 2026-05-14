@@ -100,7 +100,7 @@
             // 
             // grpHeader
             // 
-            this.grpHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.grpHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grpHeader.Controls.Add(this.tlpHeader);
             this.grpHeader.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
@@ -481,7 +481,7 @@
             // 
             // grpDragDrop
             // 
-            this.grpDragDrop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.grpDragDrop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grpDragDrop.Controls.Add(this.lblDragDropHint);
             this.grpDragDrop.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
@@ -507,7 +507,7 @@
             // 
             // grpCurrentItem
             // 
-            this.grpCurrentItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.grpCurrentItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.grpCurrentItem.Controls.Add(this.txtItemDescription);
             this.grpCurrentItem.Controls.Add(this.lblItemDescription);
@@ -535,8 +535,8 @@
             // txtItemDescription
             // 
             this.txtItemDescription.AcceptsReturn = true;
-            this.txtItemDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtItemDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtItemDescription.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtItemDescription.Location = new System.Drawing.Point(14, 44);
@@ -720,8 +720,8 @@
             // 
             // grpItemsList
             // 
-            this.grpItemsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.grpItemsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grpItemsList.Controls.Add(this.lstItems);
             this.grpItemsList.Controls.Add(this.btnEditItem);
@@ -738,8 +738,8 @@
             // 
             // lstItems
             // 
-            this.lstItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.lstItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstItems.Font = new System.Drawing.Font("Consolas", 8.25F);
             this.lstItems.FormattingEnabled = true;
@@ -790,7 +790,7 @@
             // 
             // grpActions
             // 
-            this.grpActions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.grpActions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grpActions.Controls.Add(this.btnNew);
             this.grpActions.Controls.Add(this.btnGenerateBothExcel);
@@ -878,7 +878,7 @@
             this.MinimumSize = new System.Drawing.Size(960, 700);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "RFQ Generator System updated";
+            this.Text = "RFQ Generator System updateddd";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.grpHeader.ResumeLayout(false);
             this.tlpHeader.ResumeLayout(false);
